@@ -15,6 +15,9 @@ public class PlayerUpdate : MonoBehaviour
     [SerializeField] private Slider _sliderEXP;
     [SerializeField] private GameObject _buffField;
     [SerializeField] private Transform _containBuffFields;
+    // Buttons
+    [SerializeField] private Transform _jerkButton;
+
     private float needEXP = 1000;
 
     private void Start() { _playerStats = GetComponent<PlayerStats>(); _sliderHP.minValue = 0; }
@@ -41,6 +44,16 @@ public class PlayerUpdate : MonoBehaviour
             _timerUpdateUI = 0;
             UpdateHPSlider();
             UpdateBuffFields();
+            UpdateJerkButton();
+        }
+    }
+    private void UpdateJerkButton()
+    {
+        if (_playerStats.stats.Skills[1].Level > 0)
+        {
+
+            _jerkButton.GetComponent<JerkButton>().Update();
+
         }
     }
     private void UpdateBuffFields()

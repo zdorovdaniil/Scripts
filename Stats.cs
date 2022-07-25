@@ -170,15 +170,3 @@ namespace stats
     }
 
 }
-public class ContainBuff
-{
-    public Buff Buff;
-    public float Time;
-    public int Value;
-    public ContainBuff(Buff buff, float time, int value)
-    {
-        Buff = buff;
-        Time = time;
-        Value = value;
-    }
-}
