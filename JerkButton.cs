@@ -5,28 +5,31 @@ using TMPro;
 
 public class JerkButton : MonoBehaviour
 {
-    public static JerkButton Instance; private void Awake() { Instance = this; }
     [SerializeField] private PlayerController _playerController;
+    [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private GameObject _buttonObject;
-    [SerializeField] private TMP_Text _timer;
+    [SerializeField] private TMP_Text _timerTMP;
 
-    private float _timer;
-    public void Update(PlayerStats playerStats)
+    private float _timer = 0;
+    private float _timeForReUse;
+
+    public void UpdateButton()
     {
-        _timer += 0.2f;
+        _timer += 0.25f;
         _buttonObject.SetActive(true);
-        int curJerkLevel = playerStats.stats.Skills[1].Level;
-        float time = 7.5f - (0.5 * curJerkLevel);
-
-        if (_timer <= time)
+        int curJerkLevel = _playerStats.stats.Skills[1].Level;
+        _timeForReUse = Mathf.Floor(8f - (0.5f * curJerkLevel));
+        if (_timer <= _timeForReUse)
         {
-            _timer.text = (time - _timer).ToString();
+            _timerTMP.text = (_timeForReUse - _timer).ToString();
         }
-        else return;
+        else _timerTMP.text = "";
+
+
     }
-    public void Click()
+    public void ClickJerk()
     {
-        if (_timer >= time)
+        if (_timer >= _timeForReUse)
         {
             _timer = 0;
             _playerController.SetJerk();

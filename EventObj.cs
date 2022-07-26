@@ -18,7 +18,7 @@ public class EventObj : Photon.MonoBehaviour
             {
                 GUIControl guiControl = other.GetComponent<PlayerLinks>().GetGUIControl;
                 guiControl.UseButton.SetActive(true);
-                guiControl.UseButton.GetComponent<ButtonUse>().Activate(_buff);
+                guiControl.UseButton.GetComponent<ButtonUse>().Activate(this);
             }
         }
     }

@@ -44,8 +44,13 @@ public class GameManager : Photon.MonoBehaviour
 
     public void SendAllBuff(int id)
     {
-        foreach (PlayerStats player in PhotonPlayers)
-        { player.photonView.RPC("AddBuff", PhotonTargets.All, (int)id); }
+        if (!PhotonNetwork.offlineMode)
+        {
+            foreach (PlayerStats player in PhotonPlayers)
+            { player.photonView.RPC("AddBuff", PhotonTargets.All, (int)id); }
+        }
+        else { PhotonPlayers[0].AddBuff(id); }
+
     }
     public bool CheckDungeonLevel()
     {

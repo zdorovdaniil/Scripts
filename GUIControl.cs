@@ -87,6 +87,7 @@ public class GUIControl : MonoBehaviour
         BigMap.SetActive(status);
         QuestPanel.SetActive(status);
         DeathWindow.SetActive(status);
+        UseButton.SetActive(status);
     }
     public void ClickDungeonUp()
     {

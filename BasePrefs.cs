@@ -9,7 +9,11 @@ public class BasePrefs : MonoBehaviour
     public BuffClass GetBuffId(int id)
     {
         foreach (BuffClass buff in AllBuffs)
-        { if (buff.BuffId == id) return buff; }
+        {
+            if (buff.BuffId == id) return buff;
+            else return null;
+        }
+        return null;
     }
 
     // Получение доступа к базе данных предметов

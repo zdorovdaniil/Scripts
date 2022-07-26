@@ -20,15 +20,16 @@ public class ButtonUse : MonoBehaviour
     {
         if (_eventObj.IsForAllPlayers)
         {
-            GameManager.Instance.SendAllBuff(_eventObj.BuffId);
+            GameManager.Instance.SendAllBuff(_eventObj.GetBuff.BuffId);
         }
         else
         {
-            _playerStats.AddBuff(_eventObj.BuffId);
+            _playerStats.AddBuff(_eventObj.GetBuff.BuffId);
         }
-        if (PhotonNetwork.offlineMode)
-            _eventObj.photonView.RPC("Activate", PhotonTarget.All);
+        if (!PhotonNetwork.offlineMode)
+            _eventObj.photonView.RPC("Activate", PhotonTargets.All);
         else _eventObj.Activate();
+        Remove();
     }
 
 

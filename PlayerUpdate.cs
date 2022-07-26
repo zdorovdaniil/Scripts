@@ -16,7 +16,7 @@ public class PlayerUpdate : MonoBehaviour
     [SerializeField] private GameObject _buffField;
     [SerializeField] private Transform _containBuffFields;
     // Buttons
-    [SerializeField] private Transform _jerkButton;
+    [SerializeField] private JerkButton _jerkButton;
 
     private float needEXP = 1000;
 
@@ -35,23 +35,24 @@ public class PlayerUpdate : MonoBehaviour
     }
     private float _timerRegenHP;
     private float _timerUpdateUI;
+
     private void FixedUpdate()
     {
         RegeneHP();
         _timerUpdateUI += Time.deltaTime;
-        if (_timerUpdateUI >= 0.2f)
+        if (_timerUpdateUI >= 0.25f)
         {
             _timerUpdateUI = 0;
             UpdateHPSlider();
             UpdateBuffFields();
-            UpdateJerkButton(_playerStats);
+            UpdateJerkButton();
         }
     }
     private void UpdateJerkButton()
     {
         if (_playerStats.stats.Skills[1].Level > 0)
         {
-            _jerkButton.GetComponent<JerkButton>().Update();
+            _jerkButton.UpdateButton();
         }
     }
     private void UpdateBuffFields()
@@ -61,9 +62,9 @@ public class PlayerUpdate : MonoBehaviour
             ProcessCommand.ClearChildObj(_containBuffFields);
             foreach (BuffClass buffClass in _playerStats.stats.ActiveBuffes)
             {
-                buffClass.Time -= 0.2f;
+                buffClass.Time -= 0.25f;
                 Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffClass);
-                if (buffClass.Time <= 0.2f)
+                if (buffClass.Time <= 0.25f)
                 {
                     _playerStats.stats.ResetBuff(buffClass);
                     _playerStats.ChangeSpeed();
