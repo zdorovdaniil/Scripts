@@ -44,16 +44,14 @@ public class PlayerUpdate : MonoBehaviour
             _timerUpdateUI = 0;
             UpdateHPSlider();
             UpdateBuffFields();
-            UpdateJerkButton();
+            UpdateJerkButton(_playerStats);
         }
     }
     private void UpdateJerkButton()
     {
         if (_playerStats.stats.Skills[1].Level > 0)
         {
-
             _jerkButton.GetComponent<JerkButton>().Update();
-
         }
     }
     private void UpdateBuffFields()

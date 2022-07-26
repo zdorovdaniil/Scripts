@@ -30,20 +30,20 @@ public class PlayerController : Photon.MonoBehaviour
     {
         _curSpeedMove = _defaultSpeed;
     }
-    public void SpawnParticle (int isInverse = 0)
-	{
+    public void SpawnParticle(int isInverse = 0)
+    {
         Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         GameObject obj = Instantiate(_particleObj, spawnPos, transform.rotation).gameObject;
         if (isInverse != 0) { obj.transform.Rotate(0, 0, 180); }
         StartCoroutine(DestroyParticle(obj));
-	}
+    }
     private IEnumerator DestroyParticle(GameObject obj)
-	{
+    {
         yield return new WaitForSecondsRealtime(0.6f);
         {
             Destroy(obj);
         }
-	}
+    }
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -64,7 +64,7 @@ public class PlayerController : Photon.MonoBehaviour
         SwitchDamageZone(); // обновление DamageZone данного игрока
 
     }
-    public void ClickJerk()
+    public void SetJerk()
     {
         anim.SetTrigger("Roll");
     }
@@ -172,14 +172,6 @@ public class PlayerController : Photon.MonoBehaviour
         }
         else gravityForce = -1f;
     }
-    private IEnumerator ResetJerk()
-    {
-        yield return new WaitForSecondsRealtime(0.4f);
-        {
-            anim.SetBool("Jump", false);
-        }
-    }
-
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         // если отсылаем данные

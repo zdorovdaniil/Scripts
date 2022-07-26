@@ -11,8 +11,6 @@ public class AttackController : MonoBehaviour, IDragHandler, IPointerDownHandler
     [SerializeField] private float Reset = 1.5f; //Таймер сброса атаки
     [SerializeField] private float ResetTime; // Время для сброса атаки
 
-
-
     [SerializeField] private bool isDownButtonAttack = false;
     [SerializeField] private float timer;
     [SerializeField] private int NumComboAttack; // кол-во комбо ударов, которые персонаж может выполнить
