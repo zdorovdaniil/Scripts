@@ -7,7 +7,7 @@ public enum RoomType
 public class RoomControl : Photon.MonoBehaviour
 {
     [SerializeField] private RoomType _roomType; public RoomType GetRoomType => _roomType;
-    [SerializeField] private List<Transform> _teleportPointRoom; 
+    [SerializeField] private List<Transform> _teleportPointRoom;
     // места спавна противников
     [SerializeField] private List<Transform> _spawnPointsForEnemy = new List<Transform>();
     // противники которые могут появиться в _spawnPointsForEnemy
@@ -44,7 +44,7 @@ public class RoomControl : Photon.MonoBehaviour
         StartCoroutine(AddRoomToDungeonObjects());
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {}
+    { }
     // событие вызываемое после уничтожения 1 противника в комнате
     public void DefeatEnemyInRoom()
     {
@@ -52,8 +52,9 @@ public class RoomControl : Photon.MonoBehaviour
         if (!PhotonNetwork.offlineMode) photonView.RPC("GetCountDefeatedEnemyes", PhotonTargets.Others, (int)CountDefeatEnemy);
         UpdateParametrs();
     }
-    [PunRPC] public void GetCountDefeatedEnemyes(int count)
-	{
+    [PunRPC]
+    public void GetCountDefeatedEnemyes(int count)
+    {
         CountDefeatEnemy = count;
         UpdateParametrs();
     }
@@ -75,7 +76,7 @@ public class RoomControl : Photon.MonoBehaviour
             SwitchGameObjectsAfterDefeatEnemyes(false);
         }
         if (!PhotonNetwork.offlineMode && PhotonNetwork.isMasterClient)
-		{
+        {
             chunk.SendAllThisChunkData();
         }
     }
@@ -93,7 +94,7 @@ public class RoomControl : Photon.MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            if (!ListPlayers.Contains(other.gameObject)) {ListPlayers.Add(other.gameObject);}
+            if (!ListPlayers.Contains(other.gameObject)) { ListPlayers.Add(other.gameObject); }
             PlayerStats playerStats = other.GetComponent<PlayerStats>();
             playerStats.SetCurRoom(this);
             RoomControl roomControl = GetComponent<RoomControl>();
@@ -123,7 +124,7 @@ public class RoomControl : Photon.MonoBehaviour
             chunk.EnterPlayer();
             chunk.EnterFirst();
             if (_countEnemy >= 1)
-			{
+            {
                 chunk.BlockDoors();
                 chunk.BlockNearRooms();
             }
@@ -133,7 +134,7 @@ public class RoomControl : Photon.MonoBehaviour
             StartCoroutine(CloseDoors());
         }
         foreach (Transform tr in _activingObjAfterEnter)
-		{
+        {
             if (tr != null) tr.gameObject.SetActive(true);
         }
     }
@@ -158,8 +159,8 @@ public class RoomControl : Photon.MonoBehaviour
                 Debug.Log("Спавн противников");
                 foreach (Transform point in _spawnPointsForEnemy)
                 {
-                    int en = Random.Range(0, SpawnEnemies.Length);
-                    GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[en].PrefabEnemy);
+                    int num = Random.Range(0, SpawnEnemies.Length);
+                    GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[num].PrefabEnemy);
                     if (_enemy != null)
                     {
                         EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();

@@ -226,9 +226,10 @@ public class PlayerStats : Photon.MonoBehaviour
             playerController.ChangeAlwaysSpeed(speed);
         }
     }
-    public void AddBuff(BuffClass buffClass)
+    [PunRPC]
+    public void AddBuff(int id)
     {
-        stats.AddBuff(buffClass);
+        stats.AddBuff(BasePrefs.instance.GetBuffId(id));
     }
 
     // понижение атрибута

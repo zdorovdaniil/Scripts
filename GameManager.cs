@@ -41,6 +41,12 @@ public class GameManager : Photon.MonoBehaviour
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }
+
+    public void SendAllBuff(int id)
+    {
+        foreach (PlayerStats player in PhotonPlayers)
+        { player.photonView.RPC("AddBuff", PhotonTargets.All, (int)id); }
+    }
     public bool CheckDungeonLevel()
     {
         if (PhotonNetwork.isMasterClient || PhotonNetwork.isNonMasterClientInRoom)
@@ -57,10 +63,6 @@ public class GameManager : Photon.MonoBehaviour
             if (_dungeonLevel <= 4) { UpDungeonLevel(); return true; }
             else { Debug.Log("Dungeon level is already max"); return false; }
         }
-    }
-    public void CreateItemInErrorPoint()
-    {
-
     }
     private void UpDungeonLevel()
     {

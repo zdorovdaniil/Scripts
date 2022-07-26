@@ -11,7 +11,6 @@ public class ButtonUse : MonoBehaviour
     {
         _buttonObj.SetActive(true);
         _eventObj = eventObj;
-
     }
     public void Remove()
     {
@@ -19,14 +18,17 @@ public class ButtonUse : MonoBehaviour
     }
     public void ClickUse()
     {
-        if (_eventItem.IsForAllPlayers)
+        if (_eventObj.IsForAllPlayers)
         {
-
+            GameManager.Instance.SendAllBuff(_eventObj.BuffId);
         }
         else
         {
-            _playerStats.AddBuff(_eventItem.GetBuff);
+            _playerStats.AddBuff(_eventObj.BuffId);
         }
+        if (PhotonNetwork.offlineMode)
+            _eventObj.photonView.RPC("Activate", PhotonTarget.All);
+        else _eventObj.Activate();
     }
 
 
