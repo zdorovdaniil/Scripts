@@ -2,17 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EventItemContain : MonoBehaviour
+public class ButtonUse : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private PlayerStats _playerStats;
+    [SerializeField] private GameObject _buttonObj;
+    private EventObj _eventObj;
+    public void Activate(EventObj eventObj)
     {
-        
+        _buttonObj.SetActive(true);
+        _eventObj = eventObj;
+
+    }
+    public void Remove()
+    {
+        _buttonObj.SetActive(false);
+    }
+    public void ClickUse()
+    {
+        if (_eventItem.IsForAllPlayers)
+        {
+
+        }
+        else
+        {
+            _playerStats.AddBuff(_eventItem.GetBuff);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
