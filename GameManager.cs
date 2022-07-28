@@ -223,7 +223,6 @@ public class GameManager : Photon.MonoBehaviour
             return PhotonNetwork.Instantiate(prefab.name, pos.position, pos.rotation, 0);
         }
         else return null;
-
     }
     static public GameObject SpawnDrop(Transform pos, GameObject prefab)
     {

@@ -98,7 +98,7 @@ public class Item : ScriptableObject
             {
                 if (buffClass.Buff == Buff.Healing) { playerUpdate.UseHealPoison(slot.item); }
                 if (buffClass.Buff == Buff.Heal) { playerStats.AddHP(buffClass.Value); }
-                playerStats.stats.AddBuff(buffClass); playerStats.ChangeSpeed();
+                playerStats.AddBuff(buffClass.BuffId); playerStats.ChangeSpeed();
             }
             return true;
         }

@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerUpdate : MonoBehaviour
 {
     private PlayerStats _playerStats;
+    private PlayerEffects _playerEffects;
     [SerializeField] private float timerRegenHP = 1f; // колво времени на еденицу регенирации
     [SerializeField] private Item usingPoison;
     [SerializeField] private float timeRegenPoison = 0.1f;
@@ -17,10 +19,16 @@ public class PlayerUpdate : MonoBehaviour
     [SerializeField] private Transform _containBuffFields;
     // Buttons
     [SerializeField] private JerkButton _jerkButton;
+    [SerializeField] private List<BuffClass> _buffObjParticles = new List<BuffClass>();
 
     private float needEXP = 1000;
 
-    private void Start() { _playerStats = GetComponent<PlayerStats>(); _sliderHP.minValue = 0; }
+    private void Start()
+    {
+        _playerStats = GetComponent<PlayerStats>();
+        _playerEffects = GetComponent<PlayerEffects>();
+        _sliderHP.minValue = 0;
+    }
 
     private void UpdateHPSlider()
     {
@@ -64,11 +72,16 @@ public class PlayerUpdate : MonoBehaviour
             {
                 buffClass.Time -= 0.25f;
                 Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffClass);
+
                 if (buffClass.Time <= 0.25f)
                 {
                     _playerStats.stats.ResetBuff(buffClass);
                     _playerStats.ChangeSpeed();
                     break;
+                }
+                else
+                {
+
                 }
             }
         }

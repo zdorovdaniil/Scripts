@@ -11,6 +11,7 @@ public class BuffClass : ScriptableObject
     public Sprite Icon;
     public GameObject EffectOnUse;
     public GameObject EffectOnUsing;
+    public float EffectLifetime;
 }
 public enum Buff
 {

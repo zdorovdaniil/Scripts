@@ -24,11 +24,13 @@ public class PlayerStats : Photon.MonoBehaviour
     //
     private Inventory _inventory; public Inventory GetInventory => _inventory;
     private Vector3 _spawnPosition;
+    private PlayerEffects _playerEffects;
     private RoomControl curRoom; public void SetCurRoom(RoomControl room) { curRoom = room; }
 
     private void Awake() { SetStats(); }
     private void Start()
     {
+        _playerEffects = GetComponent<PlayerEffects>();
         _inventory = GetComponent<Inventory>();
         IdStats = Random.Range(1, 1000);
         isTakeDamage = true;
@@ -234,7 +236,7 @@ public class PlayerStats : Photon.MonoBehaviour
         if (buff != null)
         {
             stats.AddBuff(buff);
-            Instalete
+            _playerEffects.ActivateEffect(buff);
         }
         else Debug.Log("Null Buff");
         Debug.Log("Add buff: " + id.ToString() + "with id: " + buff.BuffId);
@@ -267,6 +269,7 @@ public class PlayerStats : Photon.MonoBehaviour
     {
         IsDeath = true;
         stats.ResetAllBuff();
+        _playerEffects.DiactivateEffects();
         ChangeSpeed();
         gameObject.GetComponent<Sound>().StartSound(SoundType.Death);
         PlayerController plControl = GetComponent<PlayerController>();
