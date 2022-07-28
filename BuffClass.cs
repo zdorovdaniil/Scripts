@@ -9,6 +9,8 @@ public class BuffClass : ScriptableObject
     public float Time;
     public int Value;
     public Sprite Icon;
+    public GameObject EffectOnUse;
+    public GameObject EffectOnUsing;
 }
 public enum Buff
 {

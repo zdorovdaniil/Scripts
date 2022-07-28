@@ -229,14 +229,15 @@ public class PlayerStats : Photon.MonoBehaviour
     [PunRPC]
     public void AddBuff(int id)
     {
-        BasePrefs basePrefs = BasePrefs.instance;
-        BuffClass buff = basePrefs.GetBuffId(id);
+        BuffDatabase buffDatabase = BasePrefs.instance.GetBuffDatabase;
+        BuffClass buff = buffDatabase.GetBuff(id);
         if (buff != null)
         {
             stats.AddBuff(buff);
+            Instalete
         }
         else Debug.Log("Null Buff");
-        Debug.Log("Add buff: " + id.ToString());
+        Debug.Log("Add buff: " + id.ToString() + "with id: " + buff.BuffId);
     }
 
     // понижение атрибута
