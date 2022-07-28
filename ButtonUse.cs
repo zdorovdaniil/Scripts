@@ -18,17 +18,7 @@ public class ButtonUse : MonoBehaviour
     }
     public void ClickUse()
     {
-        if (_eventObj.IsForAllPlayers)
-        {
-            GameManager.Instance.SendAllBuff(_eventObj.GetBuff.BuffId);
-        }
-        else
-        {
-            _playerStats.AddBuff(_eventObj.GetBuff.BuffId);
-        }
-        if (!PhotonNetwork.offlineMode)
-            _eventObj.photonView.RPC("Activate", PhotonTargets.All);
-        else _eventObj.Activate();
+        _eventObj.SendToActivate(_playerStats);
         Remove();
     }
 

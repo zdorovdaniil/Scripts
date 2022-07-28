@@ -33,12 +33,25 @@ public class EventObj : Photon.MonoBehaviour
             }
         }
     }
+    public void SendToActivate(PlayerStats playerStats)
+    {
+        if (IsForAllPlayers)
+        {
+            GameManager.Instance.SendAllBuff(_buff.BuffId);
+        }
+        else
+        {
+            playerStats.AddBuff(_buff.BuffId);
+        }
+        if (!PhotonNetwork.offlineMode)
+            photonView.RPC("Activate", PhotonTargets.All);
+        else Activate();
+    }
     [PunRPC]
     public void Activate()
     {
         _isActivated = true;
         onEventExe.Invoke();
-
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }

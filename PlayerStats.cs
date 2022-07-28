@@ -236,7 +236,7 @@ public class PlayerStats : Photon.MonoBehaviour
             stats.AddBuff(buff);
         }
         else Debug.Log("Null Buff");
-        Debug.Log("Add buff" + BasePrefs.instance.GetBuffId(id));
+        Debug.Log("Add buff: " + id.ToString());
     }
 
     // понижение атрибута
