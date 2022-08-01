@@ -39,106 +39,118 @@ public class ReferenceUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _nameSkill;
     [SerializeField] private TextMeshProUGUI _needLevel;
     [SerializeField] private TextMeshProUGUI _features;
-    
+
 
     public void ClickMoveToChest()
     {
         int temp = _slot.amount;
         ChestUI.Instance.PlaceItemToChest(_slot);
         if (temp == 1)
-        {DestroyReferenceUI();}
-        else {SetValueSlot(_slot,_buttonsType);}
+        { Destroy(this.gameObject); }
+        else { SetValueSlot(_slot, _buttonsType); }
+        GlobalSounds.Instance.SPlaceItem();
     }
     public void ClickMoveToInvFromChest()
     {
         int temp = _slot.amount;
         ChestUI.Instance.PlaceItemToInventory(_slot);
         if (temp == 1)
-        {DestroyReferenceUI();}
-        else {SetValueSlot(_slot,_buttonsType);}
+        { Destroy(this.gameObject); }
+        else { SetValueSlot(_slot, _buttonsType); }
+        GlobalSounds.Instance.SPlaceItem();
     }
     public void ClickSellAll()
     {
-        ShopingUI.instance.SellSlot(_slot.item,_slot.amount);
-        DestroyReferenceUI();
+        ShopingUI.instance.SellSlot(_slot.item, _slot.amount);
+        GlobalSounds.Instance.SBuySell();
+        Destroy(this.gameObject);
     }
     public void ClickBuyOne()
     {
         ShopingUI.instance.BuyItem(_slot.item);
+        GlobalSounds.Instance.SBuySell();
     }
     public void ClickSellOne()
     {
         int temp = _slot.amount;
-        ShopingUI.instance.SellSlot(_slot.item,1);
-        SetValueSlot(_slot,_buttonsType);
+        ShopingUI.instance.SellSlot(_slot.item, 1);
+        SetValueSlot(_slot, _buttonsType);
         if (temp <= 1)
-        {DestroyReferenceUI();}
-        else {SetValueSlot(_slot,_buttonsType);}
+        { Destroy(this.gameObject); }
+        else { SetValueSlot(_slot, _buttonsType); }
+        GlobalSounds.Instance.SBuySell();
     }
     // переключение видимости родительских объектов у TextMeshProUGUI
     private void OnOffParentGameObject(bool status, TextMeshProUGUI mesh)
     {
-        GameObject parent = mesh.transform.parent.gameObject; 
+        GameObject parent = mesh.transform.parent.gameObject;
         parent.SetActive(status);
     }
     public void ClickDeleteItem()
     {
         int temp = _slot.amount;
-        if (_buttonsType == ReferenceButtonType.Inventory) 
-        { if (PlayerUI.Instance != null) PlayerUI.Instance.DeleteSlot(_slot);}
-        else if (_buttonsType == ReferenceButtonType.Move) 
-        { if (Storage.instance != null) {Storage.instance.DeleteItemFromInvId(_slot.item.Id);}}
+        if (_buttonsType == ReferenceButtonType.Inventory)
+        { if (PlayerUI.Instance != null) PlayerUI.Instance.DeleteSlot(_slot); }
+        else if (_buttonsType == ReferenceButtonType.Move)
+        { if (Storage.instance != null) { Storage.instance.DeleteItemFromInvId(_slot.item.Id); } }
         if (temp == 1)
-        {DestroyReferenceUI();}
-        else {SetValueSlot(_slot,_buttonsType);}
+        { Destroy(this.gameObject); }
+        else { SetValueSlot(_slot, _buttonsType); }
     }
     public void ClickMoveOutAll()
     {
-        Storage.instance.MoveToStorageSlot(_slot.item,_slot.amount);
-        DestroyReferenceUI();
+        Storage.instance.MoveToStorageSlot(_slot.item, _slot.amount);
+        GlobalSounds.Instance.SPlaceItem();
+        Destroy(this.gameObject);
     }
     public void ClickMoveOutOne()
     {
         int temp = _slot.amount;
-        Storage.instance.MoveToStorageSlot(_slot.item,1);
+        Storage.instance.MoveToStorageSlot(_slot.item, 1);
         if (temp <= 1)
-        {DestroyReferenceUI();}
-        else {SetValueSlot(_slot,_buttonsType);}
+        { Destroy(this.gameObject); }
+        else { SetValueSlot(_slot, _buttonsType); }
+        GlobalSounds.Instance.SPlaceItem();
     }
     public void ClickMoveGetAll()
     {
-        Storage.instance.MoveToInvFromStorage(_slot.item,_slot.amount);
-        DestroyReferenceUI();
+        Storage.instance.MoveToInvFromStorage(_slot.item, _slot.amount);
+        GlobalSounds.Instance.SPlaceItem();
+        Destroy(this.gameObject);
     }
     public void ClickMoveGetOne()
     {
         int temp = _slot.amount;
-        Storage.instance.MoveToInvFromStorage(_slot.item,1);
-        DestroyReferenceUI();
+        Storage.instance.MoveToInvFromStorage(_slot.item, 1);
+        GlobalSounds.Instance.SPlaceItem();
+        Destroy(this.gameObject);
     }
     public void ClickRemoveEquip()
     {
         if (PlayerUI.Instance != null)
-        {PlayerUI.Instance.RemoveEquipSlot(_slot.item);}
-        else {Storage.instance.RemoveEquipSlot(_slot.item);}
-        DestroyReferenceUI();
+        { PlayerUI.Instance.RemoveEquipSlot(_slot.item); }
+        else { Storage.instance.RemoveEquipSlot(_slot.item); }
+        GlobalSounds.Instance.SPlaceItem();
+        Destroy(this.gameObject);
     }
     public void ClickEquipSlotInStorage()
     {
         Storage.instance.Equip(_slot);
-        DestroyReferenceUI();
+        GlobalSounds.Instance.SEquipArmor();
+        Destroy(this.gameObject);
     }
     public void ClickUseSlotInInventory()
     {
         PlayerUI.Instance.UseSlot(_slot);
-        DestroyReferenceUI();
+        Destroy(this.gameObject);
     }
     public void DestroyReferenceUI()
     {
         Destroy(this.gameObject);
+        GlobalSounds.Instance.SCloseWindow();
     }
-    private void CheckSlotAmount(int amount) 
-    { if (amount <= 1) DestroyReferenceUI();}
+    private void CheckSlotAmount(int amount)
+    { if (amount <= 1) Destroy(this.gameObject); }
     private void CheckReferenceButtonType(ReferenceButtonType buttonsType)
     {
         CloseDoingButtons();
@@ -154,8 +166,8 @@ public class ReferenceUI : MonoBehaviour
         else if (buttonsType == ReferenceButtonType.Move)
         {
             _buttonsMoveOut.gameObject.SetActive(true);
-            if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon )
-            {_buttonsEquip.gameObject.SetActive(true);}
+            if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
+            { _buttonsEquip.gameObject.SetActive(true); }
             _buttonsDelete.gameObject.SetActive(true);
         }
         else if (buttonsType == ReferenceButtonType.Get)
@@ -168,10 +180,10 @@ public class ReferenceUI : MonoBehaviour
         }
         else if (buttonsType == ReferenceButtonType.Inventory)
         {
-            if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon )
-            {_buttonsUse.gameObject.SetActive(true);}
+            if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
+            { _buttonsUse.gameObject.SetActive(true); }
             else if (_slot.item.itemTupe == ItemTupe.Food || _slot.item.itemTupe == ItemTupe.Poison || _slot.item.itemTupe == ItemTupe.Usable || _slot.item.itemTupe == ItemTupe.Improve)
-            {_buttonsUse.gameObject.SetActive(true);}
+            { _buttonsUse.gameObject.SetActive(true); }
             _buttonsDelete.gameObject.SetActive(true);
         }
         else if (buttonsType == ReferenceButtonType.ToChest)
@@ -188,7 +200,7 @@ public class ReferenceUI : MonoBehaviour
         _playerStats = playerStats;
     }
 
-    public void SetValueSlot(InventorySlot slot ,ReferenceButtonType buttonsType)
+    public void SetValueSlot(InventorySlot slot, ReferenceButtonType buttonsType)
     {
         _buttonsType = buttonsType;
         Item item = slot.item;
@@ -201,8 +213,8 @@ public class ReferenceUI : MonoBehaviour
         if (buttonsType == ReferenceButtonType.Buy)
         {
             //if (_playerStats.stats.GetBuyModif() != 0) 
-                _itemCost.text = (item.cost * _playerStats.stats.GetBuyModif()).ToString();
-           // else _itemCost.text = (item.cost * 2).ToString();
+            _itemCost.text = (item.cost * _playerStats.stats.GetBuyModif()).ToString();
+            // else _itemCost.text = (item.cost * 2).ToString();
         }
         else if (buttonsType == ReferenceButtonType.Sell) _itemCost.text = (item.cost * _playerStats.stats.GetSaleModif()).ToString();
         else _itemCost.text = item.cost.ToString();
@@ -210,16 +222,16 @@ public class ReferenceUI : MonoBehaviour
         _itemType.text = _tupe.ToString().ToLower();
         _level.text = item.Level.ToString();
         _features.text = item.Features;
-        if (item.Attack > 0) 
+        if (item.Attack > 0)
         {
             OnOffParentGameObject(true, _attack);
-            _attack.text = item.Attack.ToString(); 
+            _attack.text = item.Attack.ToString();
         }
         else { OnOffParentGameObject(false, _attack); }
-        if (item.Armor > 0) 
+        if (item.Armor > 0)
         {
             OnOffParentGameObject(true, _armor);
-            _armor.text = item.Armor.ToString(); 
+            _armor.text = item.Armor.ToString();
         }
         else { OnOffParentGameObject(false, _armor); }
         /*if (item.BuffValue > 0)
@@ -259,11 +271,11 @@ public class ReferenceUI : MonoBehaviour
         _buttonsMoveOut.gameObject.SetActive(false);
         _buttonsRemove.gameObject.SetActive(false);
         _buttonsUse.gameObject.SetActive(false);
-        _buttonsMoveToChest.gameObject.SetActive(false);   
-        _buttonsMoveFromChest.gameObject.SetActive(false);    
+        _buttonsMoveToChest.gameObject.SetActive(false);
+        _buttonsMoveFromChest.gameObject.SetActive(false);
         _buttonsDelete.gameObject.SetActive(false);
     }
-    
+
 }
 
 public enum ReferenceButtonType

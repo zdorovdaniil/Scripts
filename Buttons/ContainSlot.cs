@@ -87,6 +87,8 @@ public class ContainSlot : MonoBehaviour
         {
             ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest);
         }
+
+        GlobalSounds.Instance.SClickItem();
     }
 
 }

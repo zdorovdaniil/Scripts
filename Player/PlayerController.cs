@@ -24,17 +24,21 @@ public class PlayerController : Photon.MonoBehaviour
     private float curSpeed;
     // параметры боя
     public bool isAttack;
-    [SerializeField] private GameObject _particleObj;
+    [SerializeField] private GameObject _weaponParticle;
+    [SerializeField] private ParticleSystem _jercParticle;
 
     private void Awake()
     {
         _curSpeedMove = _defaultSpeed;
     }
-    public void SpawnParticle(int isInverse = 0)
+    public void SpawnParticle(int zRoration = 0)
     {
         Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        GameObject obj = Instantiate(_particleObj, spawnPos, transform.rotation).gameObject;
-        if (isInverse != 0) { obj.transform.Rotate(0, 0, 180); }
+        GameObject obj = Instantiate(_weaponParticle, spawnPos, transform.rotation).gameObject;
+        if (zRoration != 0)
+        {
+            obj.transform.Rotate(0, 0, zRoration);
+        }
         StartCoroutine(DestroyParticle(obj));
     }
     private IEnumerator DestroyParticle(GameObject obj)
@@ -67,6 +71,7 @@ public class PlayerController : Photon.MonoBehaviour
     public void SetJerk()
     {
         anim.SetTrigger("Roll");
+        _jercParticle.Play();
     }
 
     public void ChangeAlwaysSpeed(float value)

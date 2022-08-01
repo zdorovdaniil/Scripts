@@ -70,6 +70,10 @@ public class Chunk : Photon.MonoBehaviour
     {
         bool[] data = GetChunkData();
         photonView.RPC("SetChunk", PhotonTargets.AllBuffered, (bool[])data);
+        float[] pos = GetChunkPos();
+        photonView.RPC("SetChunkPosition", PhotonTargets.AllBuffered, (float[])pos);
+        //float[] rot = GetChunkRot();
+        //photonView.RPC("SetChunkRotation", PhotonTargets.AllBuffered, (float[])rot);
     }
     public void SendUpdatePortals()
     {
@@ -82,9 +86,9 @@ public class Chunk : Photon.MonoBehaviour
     }
     [PunRPC]
     public void BlockDoors(bool isIgnorePassAcrossDoor = false)
-	{
+    {
         if (!isIgnorePassAcrossDoor)
-		{
+        {
             foreach (DoorBlock door in DoorBlocks)
             {
                 if (!door.IsEnterPlayerInDoor) { door.SwitchDoor(true); }
@@ -92,24 +96,24 @@ public class Chunk : Photon.MonoBehaviour
             }
         }
         else
-		{
+        {
             foreach (DoorBlock door in DoorBlocks)
             {
                 door.SwitchDoor(false);
             }
         }
-       
-	}
+
+    }
     [PunRPC]
     public void UnlockDoors()
-	{
+    {
         foreach (DoorBlock door in DoorBlocks)
         {
             door.SwitchDoor(false);
         }
     }
     public void UnlockNearRooms()
-	{
+    {
         foreach (Chunk chunk in _nearConnectedRooms)
         {
             if (PhotonNetwork.offlineMode) chunk.UnlockDoors();
@@ -117,10 +121,10 @@ public class Chunk : Photon.MonoBehaviour
         }
     }
     public void BlockNearRooms()
-	{
+    {
         foreach (Chunk chunk in _nearConnectedRooms)
         {
-            if (!chunk.IsPlayerInter) 
+            if (!chunk.IsPlayerInter)
             {
                 if (PhotonNetwork.offlineMode) chunk.BlockDoors();
                 else chunk.photonView.RPC("BlockDoors", PhotonTargets.All, (bool)false);
@@ -141,7 +145,7 @@ public class Chunk : Photon.MonoBehaviour
                 if (fChunk.IsSupportBiggest) fChunk.SwitchFog(false);
             }
         }
-        
+
         UpdatePortals();
 
     }
@@ -164,6 +168,17 @@ public class Chunk : Photon.MonoBehaviour
         }
     }
     [PunRPC]
+    public void SetChunkPosition(float[] pos)
+    {
+        transform.position = new Vector3(pos[0], pos[1], pos[2]);
+    }
+    [PunRPC]
+    public void SetChunkRotation(float[] rot)
+    {
+        transform.Rotate(rot[0], rot[1], rot[2]);
+    }
+
+    [PunRPC]
     public void SetChunk(bool[] data)
     {
         if (DoorU != null) DoorU.SetActive(data[0]);
@@ -185,7 +200,17 @@ public class Chunk : Photon.MonoBehaviour
     private void SetFog(bool status)
     {
         if (_fog != null) _fog.SetActive(status);
-        if (_floorMesh != null) _floorMesh.material = BasePrefs.instance.GetGreyMaterial; 
+        if (_floorMesh != null) _floorMesh.material = BasePrefs.instance.GetGreyMaterial;
+    }
+    public float[] GetChunkPos()
+    {
+        float[] pos = new float[3]; pos[0] = transform.position.x; pos[1] = transform.position.y; pos[2] = transform.position.z;
+        return pos;
+    }
+    public float[] GetChunkRot()
+    {
+        float[] rot = new float[3]; rot[0] = transform.rotation.x; rot[1] = transform.rotation.y; rot[2] = transform.rotation.z;
+        return rot;
     }
     public bool[] GetChunkData()
     {

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -12,20 +10,24 @@ public class JerkButton : MonoBehaviour
 
     private float _timer = 0;
     private float _timeForReUse;
-
-    public void UpdateButton()
+    private void Start()
     {
-        _timer += 0.25f;
-        _buttonObject.SetActive(true);
-        int curJerkLevel = _playerStats.stats.Skills[1].Level;
-        _timeForReUse = Mathf.Floor(8f - (0.5f * curJerkLevel));
-        if (_timer <= _timeForReUse)
+        _buttonObject.SetActive(false);
+    }
+
+    public void UpdateButton(int jerkSkill)
+    {
+        if (jerkSkill > 0)
         {
-            _timerTMP.text = (_timeForReUse - _timer).ToString();
+            _timer += 0.25f;
+            _buttonObject.SetActive(true);
+            _timeForReUse = Mathf.Floor(8f - (0.5f * jerkSkill));
+            if (_timer <= _timeForReUse)
+            {
+                _timerTMP.text = (_timeForReUse - _timer).ToString();
+            }
+            else _timerTMP.text = "";
         }
-        else _timerTMP.text = "";
-
-
     }
     public void ClickJerk()
     {
@@ -35,8 +37,5 @@ public class JerkButton : MonoBehaviour
             _playerController.SetJerk();
         }
         else return;
-
     }
-
-
 }

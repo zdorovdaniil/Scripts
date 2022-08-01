@@ -53,14 +53,7 @@ public class PlayerUpdate : MonoBehaviour
             _timerUpdateUI = 0;
             UpdateHPSlider();
             UpdateBuffFields();
-            UpdateJerkButton();
-        }
-    }
-    private void UpdateJerkButton()
-    {
-        if (_playerStats.stats.Skills[1].Level > 0)
-        {
-            _jerkButton.UpdateButton();
+            _jerkButton.UpdateButton(_playerStats.stats.Skills[1].Level);
         }
     }
     private void UpdateBuffFields()

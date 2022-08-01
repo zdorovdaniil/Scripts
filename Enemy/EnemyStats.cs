@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using stats; // Пространство имен stats из скрипта Stats
 using TMPro;
@@ -20,6 +20,7 @@ public class EnemyStats : Photon.MonoBehaviour
     public Transform EnemyGUI;
     [SerializeField] Transform _mapPoint;
     private EnemyController enemyController;
+    
     private Sound _sound;
 
     // обновление состояний для отображения UI

@@ -15,14 +15,9 @@ public class ProfileSlot : MonoBehaviour
     public Text SlotSpeed;
     public GameObject FreeSlot;
 
-    private void Awake()
-    {
-        // PlayerPrefs.DeleteAll();
-    }
     private void Start()
     {
         OpenStatsToSlot();
-
     }
     public void OpenStatsToSlot()
     {
@@ -44,7 +39,7 @@ public class ProfileSlot : MonoBehaviour
         PlayerPrefs.SetInt("activeSlot", NumSlot);
         // если уровень игрока равен 0, то создается новый персонаж
         // и открывается меню создание нового персонажа
-        if (PlayerPrefs.GetInt(NumSlot + "_slot_level") == 0) 
+        if (PlayerPrefs.GetInt(NumSlot + "_slot_level") == 0)
         {
             menuUI.ClickCreateNewCharacter();
         }
@@ -54,15 +49,17 @@ public class ProfileSlot : MonoBehaviour
             menuUI.CreatePlayerStats();
             menuUI.ClickSelSlot();
         }
-        
+        GlobalSounds.Instance.SButtonClick();
+
     }
     public void GetReport(ReportType reportType)
     {
         if (reportType == ReportType.Accept)
-        { RemoveSlot(NumSlot);}
+        { RemoveSlot(NumSlot); }
     }
     public void DeleteSlot()
     {
+        GlobalSounds.Instance.SButtonClick();
         MsgBoxUI.Instance.Show(this.gameObject, "deleting", "do you really want delete this game slot");
     }
     private void RemoveSlot(int _slot)
@@ -71,7 +68,7 @@ public class ProfileSlot : MonoBehaviour
         PlayerPrefs.SetInt(_slot + "_for_new_game", 0);
         PlayerPrefs.DeleteKey(_slot + "_slot_level");
         PlayerPrefs.DeleteKey(_slot + "_slot_exp");
-        PlayerPrefs.DeleteKey(_slot+"_slot_nickName");
+        PlayerPrefs.DeleteKey(_slot + "_slot_nickName");
 
         PlayerPrefs.DeleteKey(_slot + "_slot_dungeonLevel");
 
@@ -115,7 +112,7 @@ public class ProfileSlot : MonoBehaviour
         // очистка квестов, 50 имерное колво квестов
         for (int i = 0; i < 50; i++)
         {
-            if (PlayerPrefs.HasKey(_slot + "_questProcess_" + i ))
+            if (PlayerPrefs.HasKey(_slot + "_questProcess_" + i))
             {
                 PlayerPrefs.DeleteKey(_slot + "_questProcess_" + i);
                 PlayerPrefs.DeleteKey(_slot + "_questCompleted_" + i);

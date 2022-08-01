@@ -60,6 +60,7 @@ public class Item : ScriptableObject
                 inv.DeleteItemId(_slot.item.Id, 1);
                 inv.UpdateClothVisible();
                 LogUI.Instance.Loger("Equip " + _slot.item.armorTupe);
+                GlobalSounds.Instance.SEquipArmor();
                 return true;
             }
             else { MsgBoxUI.Instance.ShowAttention("the item does not match the characteristics of the player"); return false; }
