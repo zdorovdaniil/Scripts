@@ -32,19 +32,21 @@ public class SettingsUI : MonoBehaviour
             if (_isGoingGame)
             {
                 ActivateGoingGameObjs();
+                GlobalSounds.Instance.SOpenWindow();
             }
             else
             {
                 ActivateMainMenuObjs();
+                GlobalSounds.Instance.SCloseWindow();
             }
         }
-        else{ return;}
+        else { return; }
     }
     private void SaveSettings()
     {
-        PlayerPrefs.SetFloat("musicValue",_musicValue);
-        PlayerPrefs.SetFloat("soundsValue",_soundsValue);
-        PlayerPrefs.SetInt("qualityLevel",_qualityLevel);
+        PlayerPrefs.SetFloat("musicValue", _musicValue);
+        PlayerPrefs.SetFloat("soundsValue", _soundsValue);
+        PlayerPrefs.SetInt("qualityLevel", _qualityLevel);
         if (_isAlwayesNetwork) PlayerPrefs.SetInt("alwayesNetwork", 1);
         else PlayerPrefs.SetInt("alwayesNetwork", 0);
     }
@@ -55,15 +57,15 @@ public class SettingsUI : MonoBehaviour
     }
     public void ChangeSoundsValue(float value)
     {
-        _soundsValue =  value;
-        _audioMixer.SetFloat("Sounds", Mathf.Lerp(-80,0,value));
+        _soundsValue = value;
+        _audioMixer.SetFloat("Sounds", Mathf.Lerp(-80, 0, value));
         SaveSettings();
 
     }
     public void ChangeMusicValue(float value)
     {
-        _musicValue =  value;
-        _audioMixer.SetFloat("Music", Mathf.Lerp(-80,0,value));
+        _musicValue = value;
+        _audioMixer.SetFloat("Music", Mathf.Lerp(-80, 0, value));
         SaveSettings();
     }
     public void SetQuality(int qualityIndex)
@@ -74,7 +76,7 @@ public class SettingsUI : MonoBehaviour
     }
     public void LoadSetting()
     {
-        int id = PlayerPrefs.GetInt("activeSlot"); 
+        int id = PlayerPrefs.GetInt("activeSlot");
         _dungeonLevel = PlayerPrefs.GetInt(id + "_slot_dungeonLevel");
         _musicValue = PlayerPrefs.GetFloat("musicValue");
         _soundsValue = PlayerPrefs.GetFloat("soundsValue");
@@ -88,8 +90,8 @@ public class SettingsUI : MonoBehaviour
     }
     public void ClickDungeonLevelDown()
     {
-        MsgBoxUI.Instance.Show(this.gameObject, "down dungeon level","select button","dungeonLevelDown");
-        
+        MsgBoxUI.Instance.Show(this.gameObject, "down dungeon level", "select button", "dungeonLevelDown");
+
     }
     private void DungeonLevelDown()
     {
@@ -106,34 +108,34 @@ public class SettingsUI : MonoBehaviour
     public void GetReport(string reportStatus)
     {
         if (reportStatus == "dungeonLeave")
-        {CheckLeaveDengeon();}
+        { CheckLeaveDengeon(); }
         else if (reportStatus == "dungeonLevelDown")
-        {DungeonLevelDown();}
+        { DungeonLevelDown(); }
     }
     public void ClickLeaveDungeon()
     {
-        MsgBoxUI.Instance.Show(this.gameObject, "Exit from dungeon","select button","dungeonLeave");
+        MsgBoxUI.Instance.Show(this.gameObject, "Exit from dungeon", "select button", "dungeonLeave");
         // если выходит владелец подземелья, то выкидываюся все игроки
 
     }
     private void CheckLeaveDengeon()
     {
-        SceneLoadingUI.Instance.OpenLoadingUI("exit from dungeon",true);
+        SceneLoadingUI.Instance.OpenLoadingUI("exit from dungeon", true);
 
         // если выходит владелец подземелья, то выкидываюся все игроки
         if (PhotonNetwork.offlineMode == true)
         { PhotonNetwork.offlineMode = false; SceneManager.LoadScene("Menu"); }
         else if (PhotonNetwork.isMasterClient)
         {
-            if (_gameManager != null) {GameManager.Instance.SendAllLeaveDungeon();}
+            if (_gameManager != null) { GameManager.Instance.SendAllLeaveDungeon(); }
             else GameManager.Instance.LeaveDungeon();
         }
-        else { GameManager.Instance.LeaveDungeon();}
+        else { GameManager.Instance.LeaveDungeon(); }
     }
     private void ActivateGoingGameObjs()
     {
         _exitFromDungeonButton.gameObject.SetActive(true);
-        _changeLevelDungeonPanel.gameObject.SetActive( false);
+        _changeLevelDungeonPanel.gameObject.SetActive(false);
     }
     private void ActivateMainMenuObjs()
     {
@@ -142,5 +144,5 @@ public class SettingsUI : MonoBehaviour
         _changeLevelDungeonPanel.gameObject.SetActive(true);
     }
     public void SetPlayerStats(PlayerStats playerStats)
-    {_playerStats = playerStats;}
+    { _playerStats = playerStats; }
 }

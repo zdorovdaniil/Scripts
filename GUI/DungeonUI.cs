@@ -23,7 +23,7 @@ public class DungeonUI : MonoBehaviour
     public void ActivateUI(bool status)
     {
         this.gameObject.SetActive(status);
-        if (_dungeonStats == null) {_dungeonStats = DungeonStats.Instance;}
+        if (_dungeonStats == null) { _dungeonStats = DungeonStats.Instance; }
         _gameManager = GameManager.Instance;
         if (status)
         {
@@ -31,20 +31,22 @@ public class DungeonUI : MonoBehaviour
             SetValuesInFields();
             StartCoroutine(UpdateTimer());
             if (PhotonNetwork.offlineMode != true)
-            { 
+            {
                 StartCoroutine(UpdatePing());
             }
+            GlobalSounds.Instance.SOpenWindow();
         }
-        else 
+        else
         {
             StopCoroutine(UpdateTimer());
             StopCoroutine(UpdatePing());
+            GlobalSounds.Instance.SCloseWindow();
         }
     }
     private void SetValuesInFields()
     {
         DungeonStats dungeonStats = DungeonStats.Instance;
-         _dungeonLevelTMP.text = _gameManager.GetDungeonLevel.ToString();
+        _dungeonLevelTMP.text = _gameManager.GetDungeonLevel.ToString();
         _enemyiesDefeated.text = dungeonStats.curKills.ToString() + " of " + dungeonStats.numEnemyInDungeon.ToString();
         _roomsPassed.text = dungeonStats.passedRoom.ToString() + " of " + dungeonStats.numRoomsInDungeon.ToString();
         _chestsOpened.text = dungeonStats.numOpenChest.ToString() + " of " + dungeonStats.numChestsInDungeon.ToString();
@@ -52,27 +54,27 @@ public class DungeonUI : MonoBehaviour
     private IEnumerator UpdateTimer()
     {
         yield return new WaitForSecondsRealtime(1f);
-        { 
+        {
             float time = _gameManager.GetTimeDungeonGoing;
-            _timerTMP.text = Mathf.Floor(time / 60).ToString() +" : " + (time % 60).ToString();
+            _timerTMP.text = Mathf.Floor(time / 60).ToString() + " : " + (time % 60).ToString();
         }
         StartCoroutine(UpdateTimer());
     }
     private IEnumerator UpdatePing()
     {
         yield return new WaitForSecondsRealtime(0.5f);
-        { 
-           PlayerStats playerStats1 = _gameManager.GetPlayerIndex(0);
-           PlayerStats playerStats2 = _gameManager.GetPlayerIndex(1);
-           _1playerConditionTMP.text = playerStats1.GetPing.ToString();
-           if (playerStats2 != null) _2playerConditionTMP.text = playerStats2.GetPing.ToString();
+        {
+            PlayerStats playerStats1 = _gameManager.GetPlayerIndex(0);
+            PlayerStats playerStats2 = _gameManager.GetPlayerIndex(1);
+            _1playerConditionTMP.text = playerStats1.GetPing.ToString();
+            if (playerStats2 != null) _2playerConditionTMP.text = playerStats2.GetPing.ToString();
         }
         StartCoroutine(UpdatePing());
     }
     private void SetFieldsName()
     {
         if (PhotonNetwork.offlineMode != true)
-        { 
+        {
             _tabPlayers.gameObject.SetActive(true);
             PlayerStats playerStats1 = _gameManager.GetPlayerIndex(0);
             PlayerStats playerStats2 = _gameManager.GetPlayerIndex(1);

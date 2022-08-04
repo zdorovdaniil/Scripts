@@ -2,6 +2,7 @@ using UnityEngine;
 public class PlayerUI : MonoBehaviour
 {
     public static PlayerUI Instance;
+    [SerializeField] private GameObject _playerUIObject;
     [SerializeField] private Camera _characterViewCamera;
     [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private Inventory _inventory;
@@ -13,6 +14,12 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private SlotsUI _equipSlots;
     private void Start() { Instance = this; }
 
+    public void SwitchPlayerUIObject(bool status)
+    {
+        _playerUIObject.SetActive(status);
+        if (!status) GlobalSounds.Instance.SCloseWindow();
+            else GlobalSounds.Instance.SOpenWindow();
+    }
     public void FillPlayerUI()
     {
         _invSlots.FullSlots(_inventory.GetItems);

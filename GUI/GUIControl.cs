@@ -8,6 +8,7 @@ public class GUIControl : MonoBehaviour
     public static GUIControl Instance;
     public GameObject Player;
     // GUI элементы
+    public GameObject PlayerUIObject;
     public GameObject MapPicture;
     public GameObject Joystick;
     public GameObject ChestButton;
@@ -79,6 +80,7 @@ public class GUIControl : MonoBehaviour
     }
     public void SwitchAllPanels(bool status)
     {
+        PlayerUIObject.SetActive(status);
         ExitButton.SetActive(status);
         Joystick.SetActive(status);
         AttackButton.SetActive(status);
@@ -98,21 +100,25 @@ public class GUIControl : MonoBehaviour
         QuestPanel.SetActive(true);
         PlayerQuest Plquest = Player.GetComponent<PlayerQuest>();
         _questUI.FillListsOfQuest(Plquest);
+        GlobalSounds.Instance.SOpenWindow();
     }
     public void CloseQuests()
     {
         QuestPanel.SetActive(false);
+        GlobalSounds.Instance.SCloseWindow();
     }
     public void CloseMapPicture()
     {
         MapPicture.SetActive(false);
         minMapCamera.gameObject.SetActive(false);
+        GlobalSounds.Instance.SButtonClick();
     }
     public void OpenMapPicture()
     {
         MapPicture.SetActive(true);
         CloseBigMap();
         minMapCamera.gameObject.SetActive(true);
+        GlobalSounds.Instance.SButtonClick();
     }
     public void CloseBigMap()
     {

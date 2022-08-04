@@ -4,6 +4,7 @@ using UnityEngine;
 public class ChestUI : MonoBehaviour
 {
     public static ChestUI Instance;
+    [SerializeField] private GameObject _chestUI;
     [SerializeField] private Inventory _inventory;
     [SerializeField] private SlotsUI _chestSlotsUI;
     [SerializeField] private SlotsUI _inventorySlotsUI;
@@ -23,6 +24,12 @@ public class ChestUI : MonoBehaviour
     { _curChest = null; _buttonOpenChest.gameObject.SetActive(false); }
     public void SetCurChest(Chest curChest)
     { _curChest = curChest; _buttonOpenChest.gameObject.SetActive(true); }
+    public void SwitchChestUI(bool status)
+    {
+        _chestUI.SetActive(status);
+        if (status) GlobalSounds.Instance.SOpenChest();
+        else GlobalSounds.Instance.SCloseChest();
+    }
     public void FillChestUI()
     {
         _chestSlotsUI.FullSlots(_curChest.GetChestSlot);
@@ -46,6 +53,7 @@ public class ChestUI : MonoBehaviour
             { _curChest.DeleteItemId(slot.item.Id, slot.amount); }
         }
         FillChestUI();
+        GlobalSounds.Instance.STakeAll();
     }
     public void PlaceItemToInventory(InventorySlot slot)
     {

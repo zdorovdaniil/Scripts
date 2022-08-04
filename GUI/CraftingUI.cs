@@ -87,10 +87,12 @@ public class CraftingUI : MonoBehaviour
             {
                 _inv.AddItems(SelectedSlot.item);
                 MsgBoxUI.Instance.ShowInfo("info", "item created successfully");
+                GlobalSounds.Instance.SCrafting();
             }
             else
             {
                 MsgBoxUI.Instance.ShowInfo("info", "unsuccessful craft. Items used for craft are lost");
+                GlobalSounds.Instance.SAttention();
             }
             DeletingItemsInInv();
             _inv.SaveItemsId();

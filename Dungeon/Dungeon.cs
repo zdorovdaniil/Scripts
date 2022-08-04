@@ -129,13 +129,13 @@ public class Dungeon : Photon.MonoBehaviour
             else
             {
                 DisconnecteFromServer();
-                SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon",true);
+                SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon", true);
                 SceneManager.LoadScene("Level_2");
             }
         }
         else
         {
-            SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon",true);
+            SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon", true);
             SceneManager.LoadScene("Level_2");
 
         }
@@ -144,7 +144,8 @@ public class Dungeon : Photon.MonoBehaviour
     [PunRPC]
     public void SendLoadScene()
     {
-        SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon",true);
+        GlobalSounds.Instance.SLadder();
+        SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon", true);
         PhotonNetwork.LoadLevel("Level_2");
     }
     public void JoinToRoom()

@@ -28,6 +28,7 @@ public class SkillButton : MonoBehaviour
         _playerStats.MinusPointSkill(_skill.SpendToLeveling());
         _skill.LevelUp();
         CharacterUI.Instance.UpdateButtons();
+        GlobalSounds.Instance.SSkillUp();
     }
     public void ClickUpSkill()
     {

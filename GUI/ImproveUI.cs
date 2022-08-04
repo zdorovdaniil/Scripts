@@ -27,6 +27,7 @@ public class ImproveUI : MonoBehaviour
     }
     public void ClickLvlUp()
     {
+        GlobalSounds.Instance.SButtonClick();
         if (Improve.IsLvlUp())
         {
             MsgBoxUI.Instance.Show(this.gameObject, "improve", "do you really want to spend coins on ipgrades");
