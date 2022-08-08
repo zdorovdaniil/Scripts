@@ -54,7 +54,6 @@ namespace stats
         public float GetSaleModif()
         {
             return (((((Skills[3].Level * 0.2f) + 5) * 0.2f) * 0.5f) * 100.00f) * 0.01f;
-
         }
         public float GetMaxBlockDamage()
         {
@@ -83,7 +82,6 @@ namespace stats
                 SetValueBuff(buffClass.Buff, buffClass.Value);
                 Debug.Log(buffClass.Value + " / " + buffClass.Time);
             }
-
         }
         public void ResetBuff(BuffClass buffClass)
         {

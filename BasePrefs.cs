@@ -15,6 +15,8 @@ public class BasePrefs : MonoBehaviour
 
     // Получение материала для комнат где побывал игрок
     [SerializeField] private Material _matGrey; public Material GetGreyMaterial => _matGrey;
+    [SerializeField] private Mesh _meshOpenedChest; public Mesh GetMeshOpenedChest => _meshOpenedChest;
+    [SerializeField] private Mesh _meshClosedChest; public Mesh GetMeshClosedChest => _meshClosedChest;
 
 
 }

@@ -71,7 +71,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             target_2 = null;
-            pl2 = null;
+            pl2 = null; 
         }
     }
     private float distanceToSpawn;

@@ -16,12 +16,17 @@ public class Chest : MonoBehaviour
     // База данных предметов от куда будут браться предметы для спавна
     [SerializeField] private ItemDatabase _itemDatabase;
     // 
+    private bool _isOpened = false; public bool IsOpened => _isOpened;
     private void Start()
     {
         DungeonObjects.Instance.AddChest(this);
     }
-
-    private bool _isOpened = false; public bool IsOpened => _isOpened;
+    public void ChangeMesh(bool status)
+    {
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        if (status) meshFilter.mesh = BasePrefs.instance.GetMeshOpenedChest;
+        else meshFilter.mesh = BasePrefs.instance.GetMeshClosedChest;
+    }
 
     public void SpawnItemsInChest()
     {

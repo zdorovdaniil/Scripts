@@ -2,14 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerEffects : MonoBehaviour
+public class HumanEffects : MonoBehaviour
 {
     private BasePrefs _basePrefs;
     private List<GameObject> _buffEffects = new List<GameObject>();
+    [SerializeField] private GameObject _weaponParticle;
+    [SerializeField] private ParticleSystem _jercParticle;
 
     private void Start()
     {
         _basePrefs = BasePrefs.instance;
+    }
+    public void SpawnSwordEffects(int zRoration = 0)
+    {
+        Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        GameObject obj = Instantiate(_weaponParticle, spawnPos, transform.rotation).gameObject;
+        if (zRoration != 0)
+        {
+            obj.transform.Rotate(0, 0, zRoration);
+        }
+        StartCoroutine(DestroyParticle(obj));
+    }
+    public void PlayeJercEffect()
+    {
+        _jercParticle.Play();
+    }
+    private IEnumerator DestroyParticle(GameObject obj)
+    {
+        yield return new WaitForSecondsRealtime(0.6f);
+        {
+            Destroy(obj);
+        }
     }
     public void ActivateEffect(BuffClass buff)
     {

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class PlayerUpdate : MonoBehaviour
 {
     private PlayerStats _playerStats;
-    private PlayerEffects _playerEffects;
     [SerializeField] private float timerRegenHP = 1f; // колво времени на еденицу регенирации
     [SerializeField] private Item usingPoison;
     [SerializeField] private float timeRegenPoison = 0.1f;
@@ -26,7 +25,6 @@ public class PlayerUpdate : MonoBehaviour
     private void Start()
     {
         _playerStats = GetComponent<PlayerStats>();
-        _playerEffects = GetComponent<PlayerEffects>();
         _sliderHP.minValue = 0;
     }
 
@@ -71,10 +69,6 @@ public class PlayerUpdate : MonoBehaviour
                     _playerStats.stats.ResetBuff(buffClass);
                     _playerStats.ChangeSpeed();
                     break;
-                }
-                else
-                {
-
                 }
             }
         }

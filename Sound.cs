@@ -5,16 +5,14 @@ public class Sound : MonoBehaviour
     [SerializeField] private AudioSource[] _attackAir;
     [SerializeField] private AudioSource[] _hit;
     [SerializeField] private AudioSource[] _step;
-
     [SerializeField] private AudioSource[] _idle;
-
     [SerializeField] private AudioSource[] _hearth;
 
     public void StartSound(SoundType type)
     {
         switch (type)
         {
-            case SoundType.Death: if (RandomOfSource(_death) != null) RandomOfSource(_death).Play() ; break;
+            case SoundType.Death: if (RandomOfSource(_death) != null) RandomOfSource(_death).Play(); break;
             case SoundType.AttackAir: if (RandomOfSource(_attackAir) != null) RandomOfSource(_attackAir).Play(); break;
             case SoundType.Hit: if (RandomOfSource(_hit) != null) RandomOfSource(_hit).Play(); break;
 

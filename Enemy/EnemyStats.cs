@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using stats; // Пространство имен stats из скрипта Stats
-using TMPro;
+
 using UnityEngine;
 
 public class EnemyStats : Photon.MonoBehaviour
@@ -14,38 +14,23 @@ public class EnemyStats : Photon.MonoBehaviour
     [SerializeField] public Enemy enemyTupe;
     public RoomControl BelongRoom; // принадлежит комнате
     // UI для отображения уровня, названия и здоровья
-    public TextMeshPro lvlUI;
-    public TextMeshPro NameEnemyUI;
-    public TextMeshPro HealthEnemyUI;
-    public Transform EnemyGUI;
+    [SerializeField] private EnemyUI _enemyUI;
     [SerializeField] Transform _mapPoint;
     private EnemyController enemyController;
-    
-    private Sound _sound;
-
-    // обновление состояний для отображения UI
-    private void UpdateConditionStatsUI()
-    {
-        if (lvlUI != null)
-        {
-            lvlUI.SetText("lvl - " + stats.Level.ToString());
-            NameEnemyUI.SetText(enemyTupe.Name);
-            HealthEnemyUI.SetText(curHP.ToString() + " / " + stats.HP);
-        }
-    }
+    private Sound _enemySounds;
     void Start()
     {
         int level = GameManager.Instance.GetDungeonLevel;
         stats = new Stats(level, 0, enemyTupe.Strenght(level), enemyTupe.Agility(level), enemyTupe.Endurance(level), enemyTupe.Speed(level));
         curHP = stats.HP;
         enemyController = gameObject.GetComponent<EnemyController>();
-        _sound = GetComponent<Sound>();
+        _enemySounds = GetComponent<Sound>();
         stats.attackWeapon = enemyTupe.AttackWeapon(level);
         stats.armorEquip = enemyTupe.ArmorClass(level);
         stats.recount();
         enemyController.SetActionDoing(enemyTupe.enemyType);
         isTakeDamage = true;
-        UpdateConditionStatsUI();
+        _enemyUI.UpdateUI(this, stats);
     }
     public bool TakeDamage(float value, bool isAbsoluteHit = false, float kickStrenght = 1f)
     {
@@ -71,14 +56,14 @@ public class EnemyStats : Photon.MonoBehaviour
             LogUI.Instance.Loger("You hit " + enemyTupe.Name + " <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + " armor</color>" + deathMessage);
             if (takeDamage >= 0)
             {
-                if (_sound != null) _sound.StartSound(SoundType.Hit);
+                if (_enemySounds != null) _enemySounds.StartSound(SoundType.Hit);
                 if (PhotonNetwork.offlineMode != true) { photonView.RPC("MinusDamage", PhotonTargets.All, (float)takeDamage); }
-                else curHP -= takeDamage;
+                else MinusDamage(takeDamage);
                 if (enemyTupe.enemyType != EnemyFightingType.DistanceCrosser)
                 {
                     kickChance = Mathf.FloorToInt((100 - (1 + Mathf.Sqrt(stats.armor / takeDamage) + 10)));
                     int random = Random.Range(0, 100);
-                    _sound.StartSound(SoundType.Step);
+                    _enemySounds.StartSound(SoundType.Step);
                     if (random < kickChance)
                     {
                         if (PhotonNetwork.offlineMode) enemyController.KickBack(kickStrenght);
@@ -147,7 +132,7 @@ public class EnemyStats : Photon.MonoBehaviour
             curHP = stats.HP;
         }
         CheckIsDeath();
-        UpdateConditionStatsUI();
+        _enemyUI.UpdateUI(this, stats);
     }
     public int GetLevel()
     {
@@ -162,8 +147,8 @@ public class EnemyStats : Photon.MonoBehaviour
             IsDeath = true;
             if (BelongRoom != null) BelongRoom.DefeatEnemyInRoom();
             if (_mapPoint != null) _mapPoint.gameObject.SetActive(false);
-            if (EnemyGUI != null) EnemyGUI.gameObject.SetActive(false);
-            _sound.StartSound(SoundType.Death);
+            Destroy(_enemyUI.gameObject);
+            _enemySounds.StartSound(SoundType.Death);
             enemyController.Death();
         }
     }

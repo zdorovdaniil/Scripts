@@ -11,6 +11,7 @@ public class PlayerController : Photon.MonoBehaviour
     [SerializeField] private GameObject WeaponZone; // damage зона оружия
 
     private Animator anim;
+    private HumanEffects _playerEffects;
     private CharacterController ch_control;
     [SerializeField] private AttackController att_control;
 
@@ -24,8 +25,7 @@ public class PlayerController : Photon.MonoBehaviour
     private float curSpeed;
     // параметры боя
     public bool isAttack;
-    [SerializeField] private GameObject _weaponParticle;
-    [SerializeField] private ParticleSystem _jercParticle;
+
 
     private void Awake()
     {
@@ -33,25 +33,14 @@ public class PlayerController : Photon.MonoBehaviour
     }
     public void SpawnParticle(int zRoration = 0)
     {
-        Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        GameObject obj = Instantiate(_weaponParticle, spawnPos, transform.rotation).gameObject;
-        if (zRoration != 0)
-        {
-            obj.transform.Rotate(0, 0, zRoration);
-        }
-        StartCoroutine(DestroyParticle(obj));
+        _playerEffects.SpawnSwordEffects(zRoration);
     }
-    private IEnumerator DestroyParticle(GameObject obj)
-    {
-        yield return new WaitForSecondsRealtime(0.6f);
-        {
-            Destroy(obj);
-        }
-    }
+
     void Start()
     {
         anim = GetComponent<Animator>();
         ch_control = GetComponent<CharacterController>();
+        _playerEffects = GetComponent<HumanEffects>();
     }
 
     public void FixedUpdate()
@@ -71,7 +60,7 @@ public class PlayerController : Photon.MonoBehaviour
     public void SetJerk()
     {
         anim.SetTrigger("Roll");
-        _jercParticle.Play();
+        _playerEffects.PlayeJercEffect();
     }
 
     public void ChangeAlwaysSpeed(float value)

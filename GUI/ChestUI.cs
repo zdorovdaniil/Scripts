@@ -26,6 +26,7 @@ public class ChestUI : MonoBehaviour
     { _curChest = curChest; _buttonOpenChest.gameObject.SetActive(true); }
     public void SwitchChestUI(bool status)
     {
+        _curChest.ChangeMesh(status);
         _chestUI.SetActive(status);
         if (status) GlobalSounds.Instance.SOpenChest();
         else GlobalSounds.Instance.SCloseChest();

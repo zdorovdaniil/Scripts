@@ -24,13 +24,13 @@ public class PlayerStats : Photon.MonoBehaviour
     //
     private Inventory _inventory; public Inventory GetInventory => _inventory;
     private Vector3 _spawnPosition;
-    private PlayerEffects _playerEffects;
+    private HumanEffects _playerEffects;
     private RoomControl curRoom; public void SetCurRoom(RoomControl room) { curRoom = room; }
 
     private void Awake() { SetStats(); }
     private void Start()
     {
-        _playerEffects = GetComponent<PlayerEffects>();
+        _playerEffects = GetComponent<HumanEffects>();
         _inventory = GetComponent<Inventory>();
         IdStats = Random.Range(1, 1000);
         isTakeDamage = true;
