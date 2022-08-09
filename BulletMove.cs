@@ -4,12 +4,13 @@ public class BulletMove : Photon.MonoBehaviour
 {
     public float TimeToDestruct = 1f;
     public int StartSpeed = 2;
+    [SerializeField] private ParticleSystem _flyTrail;
     public GameObject particleHit;
     private Rigidbody rb;
 
     Vector3 PreviousStep;
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {}
+    { }
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -43,6 +44,8 @@ public class BulletMove : Photon.MonoBehaviour
     }
     void DestroyNow()
     {
+        _flyTrail.Stop();
+        _flyTrail.SetParent(null);
         Destroy(this.gameObject);
     }
 }

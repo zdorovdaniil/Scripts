@@ -14,7 +14,8 @@ public class ChestUI : MonoBehaviour
     [SerializeField] private Transform _spawnReferenceGUI;
     [SerializeField] private GameObject _prefReferenceGUI;
     private GameObject _spawnedPreferanceGUI;
-    private void Start() { Instance = this; }
+    private PlayerController _playerController;
+    private void Start() { Instance = this; _playerController = _inventory.gameObject.GetComponent<PlayerController>(); }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
     {
         DestroyReferenceUI();

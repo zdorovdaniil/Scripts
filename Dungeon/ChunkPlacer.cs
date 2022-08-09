@@ -13,10 +13,11 @@ public class ChunkPlacer : MonoBehaviour
     [Range(9, 100)]
     public int NumRooms = 9; // задает количество комнат
     public int NumSpawnedRooms = 0; // количество появившихся комнат 
+    public int NumFailSpawned = 0;
     public int TrySpawnRooms = 0; // попыток спавна комнат
     private Chunk[,] SpawnedRooms; // Для хранения комнат что появились на карте
     [SerializeField] private DungeonObjects _dungeonObjects; // Скрипт содержит объекты подземелья
-    
+
 
     private GameManager _gameManager;
     private Vector3 _posStartSpawnRooms = new Vector3(0, 110, 0);
@@ -38,9 +39,16 @@ public class ChunkPlacer : MonoBehaviour
                 PlaceOneRoom();
             }
         }
-        _gameManager.DungeonSuccessGenerated();
-        _dungeonObjects.UpdateParametrsRooms();
-        UpdateDataInChunks();
+        if (NumFailSpawned <= 0)
+        {
+            _gameManager.DungeonSuccessGenerated();
+            _dungeonObjects.UpdateParametrsRooms();
+            UpdateDataInChunks();
+        }
+        else
+        {
+            _gameManager.DungeonFailGenerated();
+        }
 
     }
     private void UpdateDataInChunks()
@@ -51,7 +59,7 @@ public class ChunkPlacer : MonoBehaviour
         }
         else
         {
-             _dungeonObjects.UpdatePortalsInRooms();
+            _dungeonObjects.UpdatePortalsInRooms();
         }
 
     }
@@ -134,9 +142,9 @@ public class ChunkPlacer : MonoBehaviour
                 newRoom = CreateRoomForSinglePlayer(SelectChunkFromCollection(_dungeonConfig.GetRoomType()));
         }
         else if (NumSpawnedRooms >= NumRooms - 1 - RoomsAppearOnce.Count && NumSpawnedRooms < NumRooms - 1)
-		{
+        {
             if (isMyltiplayer == true)
-                newRoom = CreateRoomForMyltiplayer(RoomsAppearOnce[NumSpawnedRooms - (NumRooms-1 - RoomsAppearOnce.Count)]);
+                newRoom = CreateRoomForMyltiplayer(RoomsAppearOnce[NumSpawnedRooms - (NumRooms - 1 - RoomsAppearOnce.Count)]);
             else
                 newRoom = CreateRoomForSinglePlayer(RoomsAppearOnce[NumSpawnedRooms - (NumRooms - 1 - RoomsAppearOnce.Count)]);
         }
@@ -186,6 +194,7 @@ public class ChunkPlacer : MonoBehaviour
         Debug.Log("Spawn Fail");
         Destroy(newRoom.gameObject); // удаляется комната,которой некуда присоедениться
         NumSpawnedRooms -= 1; // удаляется комната из списка появишихся
+        NumFailSpawned += 1;
         _countEnemyesInRooms -= newRoom.gameObject.GetComponent<RoomControl>().GetCountEnemy;
     }
 

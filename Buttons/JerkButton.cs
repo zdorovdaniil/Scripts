@@ -31,7 +31,7 @@ public class JerkButton : MonoBehaviour
     }
     public void ClickJerk()
     {
-        if (_timer >= _timeForReUse)
+        if (_timer >= _timeForReUse && _playerStats.stats.Skills[1].Level >= 1)
         {
             _timer = 0;
             _playerController.SetJerk();

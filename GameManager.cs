@@ -105,6 +105,17 @@ public class GameManager : Photon.MonoBehaviour
     {
         StartCoroutine(LoadingDungeonDataWithDelay());
     }
+    public void GetReport(string reportStatus)
+    {
+        if (reportStatus == "dungeonLeave")
+        { LeaveDungeon(); }
+    }
+    [PunRPC]
+    public void DungeonFailGenerated()
+    {
+        MsgBoxUI.Instance.Show(this, "Fail Generation", "Dungeon creation error. Try creating the dungeon agein", "dungeonLeave", true);
+        if (PhotonNetwork.isMasterClient) photonView.RPC("DungeonFailGenerated", PhotonTargets.Others);
+    }
 
     public void DungeonSuccessGenerated()
     {

@@ -139,16 +139,20 @@ public class PlayerController : Photon.MonoBehaviour
     }
     public void PlayerDeath()
     {
+        ResetControllers();
+        if (anim != null) anim.SetBool("Death", true);
+    }
+    public void ResetControllers()
+    {
         isAttack = false;
         att_control.UpPressAttack();
-        if (anim != null) anim.SetBool("Death", true);
         _fixedJoystick.ResetPosition();
     }
     public void PlayerAlive()
     {
+        ResetControllers();
         anim.SetBool("Death", false);
         anim.SetBool("Idle", true);
-        _fixedJoystick.ResetPosition();
     }
     public void ResetAnim()
     {

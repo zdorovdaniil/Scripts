@@ -14,13 +14,13 @@ public class MsgBoxUI : MonoBehaviour
     [SerializeField] private Transform _buttonOkey;
     [SerializeField] private Transform _box;
     private string _reportStatus;
-    private void Start() { Instance = this;}
-    public void Show(GameObject obj,string title,string description, string reportStatus = "")
+    private void Start() { Instance = this; }
+    public void Show(GameObject obj, string title, string description, string reportStatus = "", bool isOnlyAcceptButton = false)
     {
         _box.gameObject.SetActive(true);
         CloseButtons();
         _buttonAccept.gameObject.SetActive(true);
-        _buttonCancel.gameObject.SetActive(true);
+        if (!isOnlyAcceptButton) _buttonCancel.gameObject.SetActive(true);
         _workingObj = obj;
         _title.text = title;
         _description.text = description;
@@ -35,7 +35,7 @@ public class MsgBoxUI : MonoBehaviour
         CloseButtons();
         _buttonOkey.gameObject.SetActive(true);
     }
-    public void ShowInfo(string title,string description)
+    public void ShowInfo(string title, string description)
     {
         _title.text = title;
         _description.text = description;
@@ -54,15 +54,17 @@ public class MsgBoxUI : MonoBehaviour
         {
             _report = ReportType.Accept;
             if (_workingObj.GetComponent<AttributeButton>())
-            {_workingObj.GetComponent<AttributeButton>().GetReport(_report);}
+            { _workingObj.GetComponent<AttributeButton>().GetReport(_report); }
             else if (_workingObj.GetComponent<SkillButton>())
-            { _workingObj.GetComponent<SkillButton>().GetReport(_report);}
+            { _workingObj.GetComponent<SkillButton>().GetReport(_report); }
             else if (_workingObj.GetComponent<SettingsUI>())
-            { _workingObj.GetComponent<SettingsUI>().GetReport(_reportStatus);}
+            { _workingObj.GetComponent<SettingsUI>().GetReport(_reportStatus); }
             else if (_workingObj.GetComponent<ProfileSlot>())
             { _workingObj.GetComponent<ProfileSlot>().GetReport(_report); }
             else if (_workingObj.GetComponent<ImproveUI>())
             { _workingObj.GetComponent<ImproveUI>().GetReport(_report); }
+            else if (_workingObj.GetComponent<GameManager>())
+            { _workingObj.GetComponent<GameManager>().GetReport(_reportStatus); }
 
         }
         _box.gameObject.SetActive(false);

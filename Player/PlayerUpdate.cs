@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class PlayerUpdate : MonoBehaviour
 {
     private PlayerStats _playerStats;
+    private PlayerLeveling _playerLeveling;
     [SerializeField] private float timerRegenHP = 1f; // колво времени на еденицу регенирации
     [SerializeField] private Item usingPoison;
     [SerializeField] private float timeRegenPoison = 0.1f;
@@ -26,6 +27,7 @@ public class PlayerUpdate : MonoBehaviour
     {
         _playerStats = GetComponent<PlayerStats>();
         _sliderHP.minValue = 0;
+        _playerLeveling = PlayerLeveling.instance;
     }
 
     private void UpdateHPSlider()
@@ -52,6 +54,7 @@ public class PlayerUpdate : MonoBehaviour
             UpdateHPSlider();
             UpdateBuffFields();
             _jerkButton.UpdateButton(_playerStats.stats.Skills[1].Level);
+            if (playerLeveling) needEXP = playerLeveling.GetHeedExp(_playerStats.stats.Level);
         }
     }
     private void UpdateBuffFields()
@@ -85,9 +88,6 @@ public class PlayerUpdate : MonoBehaviour
         {
             _timerRegenHP = 0f;
             DefaultRegenHP();
-            PlayerLeveling playerLeveling = PlayerLeveling.instance;
-            if (playerLeveling != null)
-                needEXP = playerLeveling.GetHeedExp(_playerStats.stats.Level);
         }
         else if (numAddHPfromPoison <= 0) return;
         else if (usingPoison != null && _timerRegenHP >= timeRegenPoison)
@@ -116,22 +116,8 @@ public class PlayerUpdate : MonoBehaviour
     private void DefaultRegenHP(int _regenLvl = 0)
     {
         int endurance = _playerStats.stats.Endurance;
-        int skillMedicene = _playerStats.stats.Skills[2].Level;
-        int addHP = 0;
-        timerRegenHP = Mathf.Floor(8 - (endurance / 10));
-
-        if (skillMedicene >= 0 && skillMedicene < 7)
-        {
-            addHP = 1;
-        }
-        if (skillMedicene >= 7 && skillMedicene < 14)
-        {
-            addHP = 2;
-        }
-        if (skillMedicene >= 14)
-        {
-            addHP = 3;
-        }
+        int addHP = _playerStats.stats.GetAddHP();
+        timerRegenHP = _playerStats.stats.GetTimeRegenHP();
         _playerStats.AddHP(addHP);
         _playerStats.UpdateHP();
     }

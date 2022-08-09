@@ -86,6 +86,7 @@ public class TriggerZone : MonoBehaviour
         {
             if (player.GetComponent<Inventory>().GetCountItemsWithId(_item.Id) >= 1)
             {
+                player.GetComponent<Inventory>().DeleteItemId(_item.Id, 1);
                 foreach (GameObject obj in _objs)
                 {
                     if (obj.GetComponent<DoorBlock>() != null)

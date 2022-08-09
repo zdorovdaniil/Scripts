@@ -318,7 +318,6 @@ public class Inventory : Photon.MonoBehaviour
                     slot.amount -= countDeleting;
                     break;
                 }
-
             }
         }
         if (deletingSlot != null) items.Remove(deletingSlot);
