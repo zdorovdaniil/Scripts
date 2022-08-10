@@ -61,23 +61,24 @@ namespace stats
         }
         public float GetTimeRegenHP()
         {
-            return Mathf.Floor((8 - (endurance / 10)) * 100.00f) * 0.01f;
+            return Mathf.Floor((8 - (Endurance / 10)) * 100.00f) * 0.01f;
         }
         public int GetAddHP()
         {
-            skillMedicene = Skills[2].Level;
+            int skillMedicene = Skills[2].Level;
             if (skillMedicene >= 0 && skillMedicene < 7)
             {
-                addHP = 1;
+                return 1;
             }
-            if (skillMedicene >= 7 && skillMedicene < 14)
+            else if (skillMedicene >= 7 && skillMedicene < 14)
             {
-                addHP = 2;
+                return 2;
             }
-            if (skillMedicene >= 14)
+            else if (skillMedicene >= 14)
             {
-                addHP = 3;
+                return 3;
             }
+            return 1;
         }
         public float Damage()
         {

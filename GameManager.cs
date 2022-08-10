@@ -113,7 +113,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void DungeonFailGenerated()
     {
-        MsgBoxUI.Instance.Show(this, "Fail Generation", "Dungeon creation error. Try creating the dungeon agein", "dungeonLeave", true);
+        MsgBoxUI.Instance.Show(this.gameObject, "Fail Generation", "Dungeon creation error. Try creating the dungeon agein", "dungeonLeave", true);
         if (PhotonNetwork.isMasterClient) photonView.RPC("DungeonFailGenerated", PhotonTargets.Others);
     }
 

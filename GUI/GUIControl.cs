@@ -124,10 +124,6 @@ public class GUIControl : MonoBehaviour
     {
         _gameManager.SwitchAllMapCamera(false);
     }
-    public void OpenBigMap()
-    {
-        _gameManager.SwitchAllMapCamera(true);
-    }
     public void GainEXP(int _value)
     {
         PlayerStats LinkPlayerStats = Player.GetComponent<PlayerStats>();

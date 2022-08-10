@@ -8,10 +8,15 @@ public class HumanEffects : MonoBehaviour
     private List<GameObject> _buffEffects = new List<GameObject>();
     [SerializeField] private GameObject _weaponParticle;
     [SerializeField] private ParticleSystem _jercParticle;
+    [SerializeField] private GameObject _teleportParticles;
 
     private void Start()
     {
         _basePrefs = BasePrefs.instance;
+    }
+    public void TeleportParticle()
+    {
+        //foreach (GameObject particle in _teleportParticles)
     }
     public void SpawnSwordEffects(int zRoration = 0)
     {
@@ -21,15 +26,15 @@ public class HumanEffects : MonoBehaviour
         {
             obj.transform.Rotate(0, 0, zRoration);
         }
-        StartCoroutine(DestroyParticle(obj));
+        StartCoroutine(DestroyParticle(obj, 0.6f));
     }
     public void PlayeJercEffect()
     {
         _jercParticle.Play();
     }
-    private IEnumerator DestroyParticle(GameObject obj)
+    private IEnumerator DestroyParticle(GameObject obj, float time)
     {
-        yield return new WaitForSecondsRealtime(0.6f);
+        yield return new WaitForSecondsRealtime(time);
         {
             Destroy(obj);
         }

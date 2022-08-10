@@ -28,7 +28,7 @@ public class ViewStatsUI : MonoBehaviour
     [SerializeField] private TMP_Text _moveSpeedAttrText;
     [SerializeField] private TMP_Text _moveSpeedBuffText;
 
-    [SerializeField] private TMP_Text _regenValue; d
+    [SerializeField] private TMP_Text _regenValue;
     [SerializeField] private TMP_Text _timeRegen;
     [SerializeField] private TMP_Text _blockText;
     [SerializeField] private TMP_Text _damageText;

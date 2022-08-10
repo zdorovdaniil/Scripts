@@ -25,6 +25,7 @@ public class DungeonUI : MonoBehaviour
         this.gameObject.SetActive(status);
         if (_dungeonStats == null) { _dungeonStats = DungeonStats.Instance; }
         _gameManager = GameManager.Instance;
+        _gameManager.SwitchAllMapCamera(status);
         if (status)
         {
             SetFieldsName();

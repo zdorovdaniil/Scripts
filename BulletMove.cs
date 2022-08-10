@@ -44,8 +44,11 @@ public class BulletMove : Photon.MonoBehaviour
     }
     void DestroyNow()
     {
-        _flyTrail.Stop();
-        _flyTrail.SetParent(null);
+        if (_flyTrail != null)
+        {
+            _flyTrail.Stop();
+            _flyTrail.transform.SetParent(null);
+        }
         Destroy(this.gameObject);
     }
 }

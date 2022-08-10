@@ -54,7 +54,7 @@ public class PlayerUpdate : MonoBehaviour
             UpdateHPSlider();
             UpdateBuffFields();
             _jerkButton.UpdateButton(_playerStats.stats.Skills[1].Level);
-            if (playerLeveling) needEXP = playerLeveling.GetHeedExp(_playerStats.stats.Level);
+            if (_playerLeveling) needEXP = _playerLeveling.GetHeedExp(_playerStats.stats.Level);
         }
     }
     private void UpdateBuffFields()
