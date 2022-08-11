@@ -299,16 +299,21 @@ public class PlayerStats : Photon.MonoBehaviour
     public void UpdateArmor()
     {
         int armor = 0;
+        int critValue = 0;
+        int critChance = 0;
         int equipModif = 0;
-        for (int i = 1; i < 7; i++)
+        for (int i = 0; i < 7; i++)
         {
             InventorySlot eqArmor = _inventory.GetEquipSlot(i);
             if (eqArmor == null) continue;
             armor += eqArmor.item.Armor;
+            critChance += eqArmor.item.CritChance;
+            critValue += eqArmor.item.CritValue;
             if (eqArmor.item.armorTupe != ArmorTupe.Amulet || eqArmor.item.armorTupe != ArmorTupe.Ring)
                 equipModif += 1;
         }
         stats.SetArmorEquip(armor, equipModif);
+        stats.SetCritEquip(critChance, critValue);
         stats.newArmDmg();
     }
     // Обновление здоровья

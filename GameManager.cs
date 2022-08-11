@@ -31,7 +31,7 @@ public class GameManager : Photon.MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 60;
-        SceneLoadingUI.Instance.OpenLoadingUI("creating rooms");
+        //SceneLoadingUI.Instance.OpenLoadingUI("creating rooms");
         InterstitialAd.S.LoadAd();
         RewardedAds.S.LoadAd();
         _dungeonStats = DungeonStats.Instance;

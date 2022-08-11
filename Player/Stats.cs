@@ -15,6 +15,13 @@ namespace stats
         public int Speed; // Скорость, влияет на Скорость Персонажа, увеличивает Атаку
 
         // Данные параметры зависят от характеристик и надетых предметов на персонажа
+        public float critChance;
+        public float critChanceEquip;
+        public float critChanceSkill;
+        public float critValue;
+        public float critValueEquip;
+        public float critValueSkill;
+
         public float attack; // Атака получается от Скорости и Силы и экипированного оружия
         public float attackWeapon; // урон экипированного оружия
         public float attackSkill; // урон от навыка владения оружием
@@ -29,6 +36,8 @@ namespace stats
 
 
         // Параметры зависят от бафа игрока
+        public int buffCritChance;
+        public int buffCritValue;
         public int buffAttack;
         public int buffDefence;
         public int buffMinusDMG;
@@ -41,6 +50,16 @@ namespace stats
         {
             if (value != 0) attackSkill = Mathf.Floor(((Skills[6].Level * 0.2f)) * 100.00f) * 0.01f; else attackSkill = 0;
             attackWeapon = Mathf.Floor((value) * 100.00f) * 0.01f;
+        }
+        public void SetCritEquip(int critChanceE, int critValueE)
+        {
+            critChanceEquip = critChanceE;
+            critChanceSkill = Skills[6].Level * 2;
+            critValueEquip = critValueE;
+            critValueSkill = Skills[6].Level * 4;
+
+            critChance = 2 + critChanceEquip + critChanceSkill + buffCritChance;
+            critValue = 100 + critValueEquip + critValueSkill + buffCritValue;
         }
         public void SetArmorEquip(int value, int countModifire)
         {
@@ -117,6 +136,8 @@ namespace stats
                 case Buff.ArmorClass: { buffDefence += value; } break;
                 case Buff.MinusDamage: { buffMinusDMG += value; } break;
                 case Buff.MoveSpeed: { buffSpeed += value; } break;
+                case Buff.CritChance: { buffCritChance += value; } break;
+                case Buff.CritValue: { buffCritValue += value; } break;
             }
             recount();
         }
@@ -162,6 +183,7 @@ namespace stats
         //функция пересчета урона для игрока
         public void newArmDmg()
         {
+            critChance =
             attack = (GetAttackAttr() + attackWeapon + attackSkill + buffAttack);
             armor = Mathf.Floor((GetDefenceAttr() + armorEquip + armorSkill + buffDefence) * 100.00f) * 0.01f;
 

@@ -12,6 +12,7 @@ public class Dungeon : Photon.MonoBehaviour
     [SerializeField] private Transform _enterPlayerName;
     private string _nickName;
     [SerializeField] private bool _isConnectedMasterServer;
+    [SerializeField] private bool _isConnectedToLobby;
     private int _curRegion;
     [SerializeField] private TMP_Dropdown _regionDropdown;
     private void Start()
@@ -79,15 +80,18 @@ public class Dungeon : Photon.MonoBehaviour
     public virtual void OnJoinedLobby()
     {
         LobbyRoom.instance.SetRoomsList();
+        _isConnectedToLobby = true;
     }
     public void DisconnecteFromServer()
     {
+        _isConnectedMasterServer = false;
+        _isConnectedToLobby = false;
         PhotonNetwork.Disconnect();
     }
     public void ClickCreateOwnRoom()
     {
         LobbyRoom.instance.ClearFields();
-        if (_isConnectedMasterServer)
+        if (_isConnectedMasterServer && _isConnectedToLobby)
         {
             string roomName = NickNameField.text.ToLower();
             PlayerPrefs.SetString("NickName", NickNameField.text);
@@ -119,25 +123,32 @@ public class Dungeon : Photon.MonoBehaviour
     public void ClickCreateRoom()
     {
         Settings.Instance.LoadingSettings();
-        if (_isConnectedMasterServer)
+        if (_isConnectedMasterServer && _isConnectedToLobby)
         {
-            LobbyRoom.instance.ClearFields();
-            if (PhotonNetwork.room.PlayerCount >= 2 || Settings.Instance.GetIsAlwayesNetwork)
+            if (PhotonNetwork.room != null)
             {
-                photonView.RPC("SendLoadScene", PhotonTargets.All);
+                LobbyRoom.instance.ClearFields();
+                if (PhotonNetwork.room.PlayerCount >= 2 || Settings.Instance.GetIsAlwayesNetwork)
+                {
+                    photonView.RPC("SendLoadScene", PhotonTargets.All);
+                }
+                else { SinglePlayerStart(); }
             }
-            else
-            {
-                DisconnecteFromServer();
-                SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon", true);
-                SceneManager.LoadScene("Level_2");
-            }
+            else { SinglePlayerStart(); }
         }
-        else
+        else { SinglePlayerStart(); }
+    }
+    private void SinglePlayerStart()
+    {
+        DisconnecteFromServer();
+        SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon", true);
+        StartCoroutine(LoadLevelWithDelay(2, "Level_2"));
+    }
+    private IEnumerator LoadLevelWithDelay(float time, string levelName)
+    {
+        yield return new WaitForSecondsRealtime(time);
         {
-            SceneLoadingUI.Instance.OpenLoadingUI("loading dungeon", true);
-            SceneManager.LoadScene("Level_2");
-
+            SceneManager.LoadScene(levelName);
         }
     }
 

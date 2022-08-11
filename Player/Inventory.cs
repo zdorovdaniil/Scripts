@@ -47,9 +47,12 @@ public class Inventory : Photon.MonoBehaviour
     }
     public void UpdateClothVisible()
     {
-        SendOthersInventoryCloth();
-        if (PhotonNetwork.offlineMode) { _clothAdder.IterateCloth(); }
-        else { photonView.RPC("GetUpdateClothVisible", PhotonTargets.AllBuffered); }
+        if (_clothAdder != null)
+        {
+            SendOthersInventoryCloth();
+            if (PhotonNetwork.offlineMode) { _clothAdder.IterateCloth(); }
+            else { photonView.RPC("GetUpdateClothVisible", PhotonTargets.AllBuffered); }
+        }
     }
     [PunRPC]
     private void GetUpdateClothVisible()

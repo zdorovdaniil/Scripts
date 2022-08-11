@@ -14,14 +14,18 @@ public class SceneLoadingUI : MonoBehaviour
         Instance = this;
         _anim = GetComponent<Animator>();
     }
+    private void Start()
+    {
+        if (GameManager.Instance != null) { OpenLoadingUI("creating rooms"); }
+    }
     public void OpenLoadingUI(string mainText, bool isNewLoading = false)
-	{
+    {
         _loadingMainText.text = mainText;
         _anim.SetBool("IsActive", true);
         _loadingPanel.gameObject.SetActive(true);
     }
     public void CloseLoadingUI()
-	{
+    {
         _anim.SetBool("IsActive", false);
         _loadingPanel.gameObject.SetActive(false);
     }

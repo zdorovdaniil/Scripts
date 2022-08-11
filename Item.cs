@@ -10,6 +10,8 @@ public class Item : ScriptableObject
     public string Name;
     public int MaxSizeSlot = 1;
     public int Level = 1;
+    public int CritChance = 0;
+    public int CritValue = 0;
     public int Attack = 0;
     public int Armor = 0;
     public int cost = 0;

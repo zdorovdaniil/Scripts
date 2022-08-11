@@ -27,4 +27,6 @@ public enum Buff
     MinusDamagePercent,
     AttackIgnoreArmor,
     MaxAttack,
+    CritChance,
+    CritValue,
 }
