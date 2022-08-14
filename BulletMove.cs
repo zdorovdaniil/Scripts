@@ -5,6 +5,7 @@ public class BulletMove : Photon.MonoBehaviour
     public float TimeToDestruct = 1f;
     public int StartSpeed = 2;
     [SerializeField] private ParticleSystem _flyTrail;
+    [SerializeField] private AudioSource _hitSound;
     public GameObject particleHit;
     private Rigidbody rb;
 
@@ -44,10 +45,16 @@ public class BulletMove : Photon.MonoBehaviour
     }
     void DestroyNow()
     {
-        if (_flyTrail != null)
+        if (_flyTrail)
         {
             _flyTrail.Stop();
             _flyTrail.transform.SetParent(null);
+        }
+        if (_hitSound)
+        {
+            _hitSound.Play();
+            _hitSound.transform.SetParent(null);
+            _hitSound.GetComponent<DestroyWithDelay>().StartTick();
         }
         Destroy(this.gameObject);
     }

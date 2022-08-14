@@ -18,10 +18,11 @@ public class PlayerUI : MonoBehaviour
     {
         _playerUIObject.SetActive(status);
         if (!status) GlobalSounds.Instance.SCloseWindow();
-            else GlobalSounds.Instance.SOpenWindow();
+        else GlobalSounds.Instance.SOpenWindow();
     }
     public void FillPlayerUI()
     {
+        _playerStats.UpdateArmor();
         _invSlots.FullSlots(_inventory.GetItems);
         _equipSlots.FullSlots(_inventory.GetEquipsList());
         ViewStatsUI.Instance.UpdateViewStatsUI(_playerStats);
@@ -56,6 +57,10 @@ public class PlayerUI : MonoBehaviour
     public void SwitchCharacterCamera(bool status)
     {
         _characterViewCamera.gameObject.SetActive(status);
+    }
+    public void PlaySound()
+    {
+        GlobalSounds.Instance.SOpenWindow();
     }
 
 }

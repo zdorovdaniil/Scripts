@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -15,7 +14,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject _craftingMenu;
     [SerializeField] private GameObject _shopingMenu;
     [SerializeField] private Inventory _inv;
-    [SerializeField] private Dungeon _dungeon;
+    [SerializeField] private NetworkCreateGame _networkCreateGame;
     [SerializeField] private CharacterUI _characterUI;
     [SerializeField] private ShopingUI _shopingUI;
     [SerializeField] private SettingsUI _settingsUI;
@@ -69,7 +68,7 @@ public class MainMenuUI : MonoBehaviour
         CreateNewCharacter.SetActive(true);
         Profile.SetActive(true);
         _propertyUI.UpdateProperty();
-        _dungeon.CheckPlayerName();
+        _networkCreateGame.CheckPlayerName();
     }
     public void ClickSelSlot()
     {
@@ -77,7 +76,7 @@ public class MainMenuUI : MonoBehaviour
         _inv.LoadItemsId();
         _inv.SetInvSlotsFromItemsIDs();
         _propertyUI.UpdateProperty();
-        _dungeon.CheckPlayerName();
+        _networkCreateGame.CheckPlayerName();
         Profile.SetActive(true);
         DangeonOptions.SetActive(true);
     }
@@ -140,7 +139,7 @@ public class MainMenuUI : MonoBehaviour
     {
         UpdateProfileSlots();
         Profile.SetActive(false);
-        _dungeon.DisconnecteFromServer();
+        _networkCreateGame.DisconnecteFromServer();
         CloseAllPanels();
         Destroy(this.GetComponent<PlayerStats>());
         Destroy(this.GetComponent<PlayerStats>());

@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public class SkillButton : MonoBehaviour
 {
-    [SerializeField]
-    private Skill _skill;
+    [SerializeField] private Skill _skill;
     [SerializeField] private Image _imageSkill;
     [SerializeField] private TMP_Text _nameSkill;
     [SerializeField] private TMP_Text _level;

@@ -42,12 +42,12 @@ public class Item : ScriptableObject
 
     public static bool CheckReqirement(Item _item, PlayerStats playerStats)
     {
-        if (_item.itemTupe == ItemTupe.Weapon && _item.neededAttr <= playerStats.stats.Strenght &&
+        if (_item.itemTupe == ItemTupe.Weapon && _item.neededAttr <= playerStats.stats.Attributes[0].Level &&
             _item.neededSkill <= playerStats.stats.Skills[6].Level && _item.neededLevel <= playerStats.stats.Level)
         { return true; }
         else if (_item.itemTupe == ItemTupe.Armor
             && _item.neededSkill <= playerStats.stats.Skills[5].Level &&
-            _item.neededAttr <= playerStats.stats.Strenght && _item.neededLevel <= playerStats.stats.Level)
+            _item.neededAttr <= playerStats.stats.Attributes[0].Level && _item.neededLevel <= playerStats.stats.Level)
         { return true; }
         else return false;
     }
@@ -101,7 +101,7 @@ public class Item : ScriptableObject
             {
                 if (buffClass.Buff == Buff.Healing) { playerUpdate.UseHealPoison(slot.item); }
                 if (buffClass.Buff == Buff.Heal) { playerStats.AddHP(buffClass.Value); }
-                playerStats.AddBuff(buffClass.BuffId); playerStats.ChangeSpeed();
+                playerStats.AddBuff(buffClass.BuffId);
             }
             return true;
         }

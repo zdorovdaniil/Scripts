@@ -8,8 +8,8 @@ public class Skill : ScriptableObject
     public Sprite Icon;
     public string Name;
     public string Description;
-    public int Level = 0;
-    public int MaxLevel = 1;
+    public int Level;
+    public int MaxLevel;
 
     public void LevelUp()
     {
@@ -20,22 +20,22 @@ public class Skill : ScriptableObject
         if (Level <= 0) return 3;
         else return 1;
     }
-    public bool IsAvaibleToLevelUp(int skillPoints = 1)
+    public virtual bool IsAvaibleToLevelUp(int points = 1)
     {
-        if (Level < MaxLevel && skillPoints >= SpendToLeveling()) return true;
+        if (Level < MaxLevel && points >= SpendToLeveling()) return true;
         else return false;
     }
-    public void ResetSkill()
+    public void Reset()
     {
         Level = 0;
-        SaveSkill();
+        Save();
     }
-    public void SaveSkill()
+    public virtual void Save()
     {
         int id = PlayerPrefs.GetInt("activeSlot");
         PlayerPrefs.SetInt(id + "_slot_" + Id + "_skill", Level);
     }
-    public void LoadSkill()
+    public virtual void Load()
     {
         int id = PlayerPrefs.GetInt("activeSlot");
         Level = PlayerPrefs.GetInt(id + "_slot_" + Id + "_skill");

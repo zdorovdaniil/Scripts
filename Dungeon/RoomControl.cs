@@ -14,6 +14,8 @@ public class RoomControl : Photon.MonoBehaviour
     public Enemy[] SpawnEnemies;
     // количество противников которые заспавняться в комнате
     [SerializeField] private int _countEnemy; public int GetCountEnemy => _countEnemy;
+    private int _countSpawnedEnemyes;
+    private List<EnemyStats> _enemyesInRoom = new List<EnemyStats>();
     // определяет, будут ли появляться объекты после смерти всех противников в комнате
     [SerializeField] private bool _isActivingObjects;
     // объекты, что будут активироваться после смерти всех противников в комнате
@@ -159,12 +161,17 @@ public class RoomControl : Photon.MonoBehaviour
                 Debug.Log("Спавн противников");
                 foreach (Transform point in _spawnPointsForEnemy)
                 {
-                    int num = Random.Range(0, SpawnEnemies.Length);
-                    GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[num].PrefabEnemy);
-                    if (_enemy != null)
+                    if (_countSpawnedEnemyes < _countEnemy)
                     {
-                        EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
-                        _enemyStats.BelongRoom = this.gameObject.GetComponent<RoomControl>();
+                        int num = Random.Range(0, SpawnEnemies.Length);
+                        GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[num].PrefabEnemy);
+                        if (_enemy != null)
+                        {
+                            EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
+                            _enemyStats.BelongRoom = this.gameObject.GetComponent<RoomControl>();
+                            _countSpawnedEnemyes += 1;
+                            _enemyesInRoom.Add(_enemyStats);
+                        }
                     }
                 }
             }
@@ -182,6 +189,14 @@ public class RoomControl : Photon.MonoBehaviour
         ListPlayers.Remove(obj);
         if (ListPlayers.Count <= 0) SwitchDoorsInChunk(false);
         UpdateParametrs();
+        if (_roomType == RoomType.MiniBoss) HealEnemyesInRoom();
+    }
+    private void HealEnemyesInRoom()
+    {
+        foreach (EnemyStats enemy in _enemyesInRoom)
+        {
+            if (enemy) enemy.Heal();
+        }
     }
     public void SwitchDoorsInChunk(bool status)
     {

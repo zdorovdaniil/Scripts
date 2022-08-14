@@ -36,12 +36,25 @@ public class Quest : ScriptableObject
     // текущий ход выполнения
     public float progressStatus;
     // выполнен ли квест(если да то за него нельзя получит награду)
+    public bool IsCompletePermanent = false;
     public bool isComplete = false;
     // тип противника для выполнения квеста
     public Enemy EnemyType;
 
     public Item ItemQuest;
+
+    public void CheckPermanentComplete()
+    {
+        if (neededProgress >= progressStatus)
+        {
+            IsCompletePermanent = true;
+            GlobalSounds.Instance.SCompleteQuest();
+
+        }
+
+    }
 }
+
 public enum PriceType
 {
     None,

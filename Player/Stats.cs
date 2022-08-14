@@ -9,10 +9,6 @@ namespace stats
         public int Level; // Уровень персонажа, влияет на уровень сложности
         public float HP;// Максимальное здоровье персонажа, зависит от Выносливости
         public int EXP;// Необходимое количество очков опыта для повышения
-        public int Strenght; // Сила, влияет на Урон
-        public int Agility; // Ловкость, влияет на Класс брони и скорость атаки.
-        public int Endurance; // Выносливость, влияет на максимальное значение Очков Здоровья и на скорость регенерации Очков Здоровья
-        public int Speed; // Скорость, влияет на Скорость Персонажа, увеличивает Атаку
 
         // Данные параметры зависят от характеристик и надетых предметов на персонажа
         public float critChance;
@@ -43,8 +39,10 @@ namespace stats
         public int buffMinusDMG;
         public int buffSpeed;
         public int buffKickStrenght;
+        public List<AttributeStat> Attributes = new List<AttributeStat>(); // список аттрибутов
         public List<Skill> Skills = new List<Skill>(); // список навыков 
         public List<BuffClass> ActiveBuffes = new List<BuffClass>(); // список активных баффов
+
 
         public void SetAttackWeapon(int value)
         {
@@ -80,7 +78,7 @@ namespace stats
         }
         public float GetTimeRegenHP()
         {
-            return Mathf.Floor((8 - (Endurance / 10)) * 100.00f) * 0.01f;
+            return Mathf.Floor((8 - (Attributes[2].Level / 10)) * 100.00f) * 0.01f;
         }
         public int GetAddHP()
         {
@@ -107,7 +105,7 @@ namespace stats
         // сила отбрасывания от удара
         public float KickStrenght()
         {
-            return Mathf.Floor((((Strenght * 0.3f) + (buffKickStrenght * 0.5f) + 10f) * 0.1f) * 100.00f) * 0.01f;
+            return Mathf.Floor((((Attributes[0].Level * 0.3f) + (buffKickStrenght * 0.5f) + 10f) * 0.1f) * 100.00f) * 0.01f;
         }
         public void AddBuff(BuffClass buffClass)
         {
@@ -153,20 +151,39 @@ namespace stats
         }
         // значение защиты от атрибутов
         public float GetDefenceAttr()
-        { return Mathf.Floor((Agility / 5 + Endurance / 5) * 100.00f) * 0.01f; }
+        { return Mathf.Floor((Attributes[1].Level / 5 + Attributes[2].Level / 5) * 100.00f) * 0.01f; }
         // значение атаки от атрибутов
         public float GetAttackAttr()
-        { return Mathf.Floor((Strenght / 5 + Speed / 5) * 100.00f) * 0.01f; }
-        public Stats(int lvl, int exp, int STR, int AGI, int ENDURANCE, int SPEED)
+        { return Mathf.Floor((Attributes[1].Level / 5 + Attributes[3].Level / 5) * 100.00f) * 0.01f; }
+        public Stats(int lvl, int exp)
         {
             Level = lvl;
             EXP = exp;
-            Strenght = STR;
-            Agility = AGI;
-            Endurance = ENDURANCE;
-            Speed = SPEED;
-            newArmDmg(); //Считаем урон
-            newhp(); //считаем кол-во жизни
+        }
+        public void SaveAttributes()
+        {
+            foreach (AttributeStat attribute in Attributes)
+            {
+                attribute.Save();
+            }
+        }
+        public void SetPlayerAttributes()
+        {
+            foreach (Attribut attribute in BasePrefs.instance.AvaibleAttributes)
+            {
+
+                AttributeStat attr = new AttributeStat(attribute);
+                attr.Load();
+                Attributes.Add(attr);
+            }
+        }
+        public void SetEnemyAttributes(int[] attributeLevels)
+        {
+            for (int i = 0; i < attributeLevels.Length; i++)
+            {
+                AttributeStat attr = new AttributeStat(BasePrefs.instance.AvaibleAttributes[i], attributeLevels[i]);
+                Attributes.Add(attr);
+            }
         }
 
         //функция вызываемая при повышении уровня
@@ -183,7 +200,6 @@ namespace stats
         //функция пересчета урона для игрока
         public void newArmDmg()
         {
-            critChance =
             attack = (GetAttackAttr() + attackWeapon + attackSkill + buffAttack);
             armor = Mathf.Floor((GetDefenceAttr() + armorEquip + armorSkill + buffDefence) * 100.00f) * 0.01f;
 
@@ -191,14 +207,14 @@ namespace stats
             maxDMG = Mathf.Floor((attack + (attack / 5)) * 100.00f) * 0.01f;
 
             minusDMG = Mathf.Floor(((armor / 10) + buffMinusDMG) * 100.00f) * 0.01f;
-            moveSpeedAttr = Mathf.Floor((Speed * 0.2f) * 100.00f) * 0.01f;
+            moveSpeedAttr = Mathf.Floor((Attributes[3].Level * 0.2f) * 100.00f) * 0.01f;
             moveSpeed = Mathf.Floor((moveSpeedAttr + buffSpeed + 8) * 100.00f) * 0.01f;
         }
 
         //Пересчет кол-ва максимальных жизней
         public void newhp()
         {
-            HP = Mathf.Floor((Endurance * 3f) * 100.00f) * 0.01f;
+            HP = Mathf.Floor((Attributes[2].Level * 3f) * 100.00f) * 0.01f;
         }
         public void recount()
         {

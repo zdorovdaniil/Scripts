@@ -7,7 +7,8 @@ public class CharacterUI : MonoBehaviour
     public static CharacterUI Instance;
     [SerializeField] private PlayerStats _playerStats;
     public void SetPlayerStats(PlayerStats playerStats) { _playerStats = playerStats; }
-    [SerializeField] private List<AttributeButton> _attributeButtons = new List<AttributeButton>(4);
+    [SerializeField] private Transform _posSpawnAttrButtons;
+    [SerializeField] private GameObject _prefabAttrButton;
     [SerializeField] private Transform _posSpawnSkillButtons;
     [SerializeField] private GameObject _prefabSkillButton;
     [SerializeField] private bool _isAskConfirm;
@@ -17,17 +18,15 @@ public class CharacterUI : MonoBehaviour
 
     public void UpdateButtons()
     {
-        foreach (AttributeButton attrButton in _attributeButtons)
+        ProcessCommand.ClearChildObj(_posSpawnSkillButtons);
+        ProcessCommand.ClearChildObj(_posSpawnAttrButtons);
+        foreach (AttributeStat attribute in _playerStats.stats.Attributes)
         {
-            attrButton.SetText(_playerStats, _isAskConfirm);
-        }
-        for (int i = 0; i < _posSpawnSkillButtons.childCount; i++)
-        {
-            Destroy(_posSpawnSkillButtons.GetChild(i).gameObject);
+            Instantiate(_prefabAttrButton, _posSpawnAttrButtons).GetComponent<AttributeButton>().SetText(_playerStats, attribute, _isAskConfirm);
         }
         foreach (Skill skill in _playerStats.stats.Skills)
         {
-            if (skill != null)
+            if (skill)
                 Instantiate(_prefabSkillButton, _posSpawnSkillButtons).GetComponent<SkillButton>().SetText(_playerStats, skill, _isAskConfirm);
         }
         UpdateFieldsUI();

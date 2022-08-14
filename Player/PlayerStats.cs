@@ -75,28 +75,25 @@ public class PlayerStats : Photon.MonoBehaviour
             Debug.Log("Active slot" + _id);
             int _lvl = PlayerPrefs.GetInt(_id + "_slot_level");
             int _exp = (int)Mathf.Floor(PlayerPrefs.GetFloat(_id + "_slot_exp"));
-            int _str = PlayerPrefs.GetInt(_id + "_slot_strenght");
-            int _agi = PlayerPrefs.GetInt(_id + "_slot_agility");
-            int _vit = PlayerPrefs.GetInt(_id + "_slot_endurance");
-            int _speed = PlayerPrefs.GetInt(_id + "_slot_speed");
             PointStat = PlayerPrefs.GetInt(_id + "_slot_point");
             PointSkill = PlayerPrefs.GetInt(_id + "_slot_pointSkill");
             curEXP = PlayerPrefs.GetInt(_id + "_slot_curEXP");
             // создание нового экземпляра stats из загруженных данных
-            stats = new Stats(_lvl, _exp, _str, _agi, _vit, _speed);
+            stats = new Stats(_lvl, _exp);
             DungeonStats.Instance.LoadDungeonStats();
             curHP = stats.HP;
             foreach (Skill skill in BasePrefs.instance.AvaibleSkills)
             {
-                skill.LoadSkill();
+                skill.Load();
             }
-            stats.Skills = BasePrefs.instance.AvaibleSkills;
+            stats.SetPlayerAttributes();
         }
         else
         {
             New_Game(_id);
         }
-
+        stats.Skills = BasePrefs.instance.AvaibleSkills;
+        stats.recount();
     }
 
     // получение урона
@@ -145,15 +142,15 @@ public class PlayerStats : Photon.MonoBehaviour
     private void New_Game(int _id)
     {
         Debug.Log("New Game");
-        stats = new Stats(1, 800, 10, 10, 10, 10);
+        stats = new Stats(1, 800);
         AddStandartPoints();
         curHP = 30;
         curEXP = 0;
         foreach (Skill skill in BasePrefs.instance.AvaibleSkills)
         {
-            skill.ResetSkill();
+            skill.Reset();
         }
-        stats.Skills = BasePrefs.instance.AvaibleSkills;
+        stats.SetPlayerAttributes();
         PlayerPrefs.SetInt(_id + "_for_new_game", 1);
         PlayerPrefs.SetInt(_id + "_slot_dungeonLevel", 1);
         DungeonStats.Instance.ResetDungeonStats();
@@ -162,6 +159,7 @@ public class PlayerStats : Photon.MonoBehaviour
     // Обновление уровня в stats
     public void PlayerLevelUp()
     {
+        GlobalSounds.Instance.SLevelUp();
         stats.lvlUP();
         curEXP = 0;
         PointStat += 3;
@@ -172,6 +170,7 @@ public class PlayerStats : Photon.MonoBehaviour
     public void GainExperience(int _value)
     {
         curEXP += _value;
+        if (curEXP >= stats.EXP) GlobalSounds.Instance.SAwaibleLvlUp();
     }
     // восстановление здоровья персонажа
     public void HealPlayer()
@@ -196,10 +195,7 @@ public class PlayerStats : Photon.MonoBehaviour
     {
         if (TryUpgradeAttrubute() || !isMinusPointStat)
         {
-            if (i_attr == 0) { stats.Strenght += 1; } // повышение силы
-            if (i_attr == 1) { stats.Agility += 1; } // ловкости
-            if (i_attr == 2) { stats.Endurance += 1; }// живучести
-            if (i_attr == 3) { stats.Speed += 1; } // скорости
+            stats.Attributes[i_attr].Level += 1;
             if (isMinusPointStat == true)
             { PointStat -= 1; }
             if (i_attr == 2) { HealPlayer(); }
@@ -212,12 +208,7 @@ public class PlayerStats : Photon.MonoBehaviour
     }
     public int GetLevelAttribute(int i_attr)
     {
-        int n = 0;
-        if (i_attr == 0) { n = stats.Strenght; } // повышение силы
-        if (i_attr == 1) { n = stats.Agility; } // ловкости
-        if (i_attr == 2) { n = stats.Endurance; }// живучести
-        if (i_attr == 3) { n = stats.Speed; } // скорости
-        return n;
+        return stats.Attributes[i_attr].Level;
     }
     public void ChangeSpeed()
     {
@@ -240,17 +231,19 @@ public class PlayerStats : Photon.MonoBehaviour
         }
         else Debug.Log("Null Buff");
         Debug.Log("Add buff: " + id.ToString() + "with id: " + buff.BuffId);
+        ChangeSpeed();
     }
 
     // понижение атрибута
     public bool DownAttribute(int i_attr)
     {
-        if (i_attr == 0 && stats.Strenght > 10) { stats.Strenght -= 1; stats.recount(); return true; } // понижение силы
-        if (i_attr == 1 && stats.Agility > 10) { stats.Agility -= 1; stats.recount(); return true; } // ловкости
-        if (i_attr == 2 && stats.Endurance > 10) { stats.Endurance -= 1; stats.recount(); return true; }// живучести
-        if (i_attr == 3 && stats.Speed > 10) { stats.Speed -= 1; stats.recount(); return true; } // скорости
-
-        return false;
+        if (stats.Attributes[i_attr].Level > 10)
+        {
+            stats.Attributes[i_attr].Level -= 1;
+            stats.recount();
+            return true;
+        }
+        else return false;
     }
     // Обновление атаки в stats
     public void CheckStatusEquip()
@@ -269,7 +262,7 @@ public class PlayerStats : Photon.MonoBehaviour
     {
         IsDeath = true;
         stats.ResetAllBuff();
-        _playerEffects.DiactivateEffects();
+        if (_playerEffects) _playerEffects.DiactivateEffects();
         ChangeSpeed();
         gameObject.GetComponent<Sound>().StartSound(SoundType.Death);
         PlayerController plControl = GetComponent<PlayerController>();
@@ -335,10 +328,6 @@ public class PlayerStats : Photon.MonoBehaviour
             PlayerPrefs.SetInt(_slot + "_for_new_game", 1);
             PlayerPrefs.SetInt(_slot + "_slot_level", _stats.Level);
             PlayerPrefs.SetFloat(_slot + "_slot_exp", _stats.EXP);
-            PlayerPrefs.SetInt(_slot + "_slot_strenght", _stats.Strenght);
-            PlayerPrefs.SetInt(_slot + "_slot_agility", _stats.Agility);
-            PlayerPrefs.SetInt(_slot + "_slot_endurance", _stats.Endurance);
-            PlayerPrefs.SetInt(_slot + "_slot_speed", _stats.Speed);
             PlayerPrefs.SetInt(_slot + "_slot_point", PointStat);
             PlayerPrefs.SetInt(_slot + "_slot_pointSkill", PointSkill);
             PlayerPrefs.SetFloat(_slot + "_slot_curHP", curHP);
@@ -347,8 +336,9 @@ public class PlayerStats : Photon.MonoBehaviour
             // Сохранение навыков
             foreach (Skill skill in BasePrefs.instance.AvaibleSkills)
             {
-                skill.SaveSkill();
+                skill.Save();
             }
+            stats.SaveAttributes();
         }
     }
 }

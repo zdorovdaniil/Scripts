@@ -28,11 +28,13 @@ public class PlayerQuest : MonoBehaviour
     {
         if (_listActiveQuests.Contains(quest)) { Debug.Log("Player is already have quest in active list"); }
         else _listActiveQuests.Add(quest);
+        GlobalSounds.Instance.SGetQuest();
     }
     public void UpdateProcessQuests(EnemyStats enemy = null, Item item = null, string param = "")
     {
         foreach (Quest quest in _listActiveQuests)
         {
+            if (quest.IsCompletePermanent) continue;
             PlayerStats plStats = GetComponent<PlayerStats>();
             switch (quest.questType)
             {
@@ -107,7 +109,9 @@ public class PlayerQuest : MonoBehaviour
                         }
                     }
                     break;
+
             }
+            quest.CheckPermanentComplete();
         }
 
         SaveQuestsValue();

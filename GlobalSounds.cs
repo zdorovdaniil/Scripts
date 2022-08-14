@@ -21,5 +21,5 @@ public class GlobalSounds : MonoBehaviour
     [SerializeField] private AudioSource _sSkillUp; public void SSkillUp() { _sSkillUp.Play(); }
     [SerializeField] private AudioSource _sAttributeUp; public void SAttributeUp() { _sAttributeUp.Play(); }
     [SerializeField] private AudioSource _sOpenChest; public void SOpenChest() { _sOpenChest.Play(); }
-    [SerializeField] private AudioSource _CloseChest; public void SCloseChest() { _CloseChest.Play(); }
+    [SerializeField] private AudioSource _sCloseChest; public void SCloseChest() { _sCloseChest.Play(); }
 }

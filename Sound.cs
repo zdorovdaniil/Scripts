@@ -7,6 +7,7 @@ public class Sound : MonoBehaviour
     [SerializeField] private AudioSource[] _step;
     [SerializeField] private AudioSource[] _idle;
     [SerializeField] private AudioSource[] _hearth;
+    [SerializeField] private AudioSource[] _takeDrop;
 
     public void StartSound(SoundType type)
     {
@@ -19,6 +20,7 @@ public class Sound : MonoBehaviour
             case SoundType.Step: if (RandomOfSource(_step) != null) RandomOfSource(_step).Play(); break;
             case SoundType.Idle: if (RandomOfSource(_idle) != null) RandomOfSource(_idle).Play(); break;
             case SoundType.Hearth: if (RandomOfSource(_hearth) != null) RandomOfSource(_hearth).Play(); break;
+            case SoundType.TakeDrop: if (RandomOfSource(_takeDrop) != null) RandomOfSource(_takeDrop).Play(); break;
         }
     }
     private AudioSource RandomOfSource(AudioSource[] source)
@@ -34,5 +36,6 @@ public enum SoundType
     Step,
     Idle,
     Hearth,
+    TakeDrop,
 }
 

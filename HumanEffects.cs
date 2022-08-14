@@ -8,15 +8,10 @@ public class HumanEffects : MonoBehaviour
     private List<GameObject> _buffEffects = new List<GameObject>();
     [SerializeField] private GameObject _weaponParticle;
     [SerializeField] private ParticleSystem _jercParticle;
-    [SerializeField] private GameObject _teleportParticles;
 
     private void Start()
     {
         _basePrefs = BasePrefs.instance;
-    }
-    public void TeleportParticle()
-    {
-        //foreach (GameObject particle in _teleportParticles)
     }
     public void SpawnSwordEffects(int zRoration = 0)
     {

@@ -18,19 +18,23 @@ public class EnemyStats : Photon.MonoBehaviour
     [SerializeField] Transform _mapPoint;
     private EnemyController enemyController;
     private Sound _enemySounds;
+    private HumanEffects _humanEffects;
     void Start()
     {
         int level = GameManager.Instance.GetDungeonLevel;
-        stats = new Stats(level, 0, enemyTupe.Strenght(level), enemyTupe.Agility(level), enemyTupe.Endurance(level), enemyTupe.Speed(level));
+        stats = new Stats(level, 0);
+        SetAttributesToStats(level);
         curHP = stats.HP;
         enemyController = gameObject.GetComponent<EnemyController>();
         _enemySounds = GetComponent<Sound>();
+        _humanEffects = GetComponent<HumanEffects>();
         stats.attackWeapon = enemyTupe.AttackWeapon(level);
         stats.armorEquip = enemyTupe.ArmorClass(level);
         stats.recount();
         enemyController.SetActionDoing(enemyTupe.enemyType);
         isTakeDamage = true;
         _enemyUI.UpdateUI(this, stats);
+        Heal();
     }
     public bool TakeDamage(float value, bool isAbsoluteHit = false, float kickStrenght = 1f)
     {
@@ -74,6 +78,7 @@ public class EnemyStats : Photon.MonoBehaviour
                 {
                     if (!CheckIsDeath())
                     {
+
                         Vector3 vector3 = BelongRoom.GetRandomTeleportPointRoom();
                         float[] newPos = new float[3];
                         newPos[0] = vector3.x; newPos[1] = vector3.y; newPos[2] = vector3.z;
@@ -95,15 +100,16 @@ public class EnemyStats : Photon.MonoBehaviour
     [PunRPC]
     private void SendPosition(float[] newPos)
     {
+        GlobalEffects.Instance.CreateParticle(this.transform, EffectType.TeleportTrail, -1f);
         this.transform.position = new Vector3(newPos[0], newPos[1], newPos[2]);
         enemyController.LookAtActiveTarget();
+        GlobalEffects.Instance.CreateParticle(this.transform, EffectType.Teleport, -1.75f);
     }
     [PunRPC]
     private void SendKickBack(float kickStrenght)
     {
         enemyController.KickBack(kickStrenght);
     }
-
     [PunRPC]
     public void MinusDamage(float damage)
     {
@@ -134,6 +140,11 @@ public class EnemyStats : Photon.MonoBehaviour
         CheckIsDeath();
         _enemyUI.UpdateUI(this, stats);
     }
+    public void Heal()
+    {
+        curHP = stats.HP;
+        UpdateHP();
+    }
     public int GetLevel()
     {
         return stats.Level;
@@ -160,7 +171,11 @@ public class EnemyStats : Photon.MonoBehaviour
             lootDrop.CreateDrop();
         }
     }
-
+    private void SetAttributesToStats(int level)
+    {
+        int[] levels = new int[] { enemyTupe.Strenght(level), enemyTupe.Agility(level), enemyTupe.Endurance(level), enemyTupe.Speed(level) };
+        stats.SetEnemyAttributes(levels);
+    }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }
     public Stats GetStats()

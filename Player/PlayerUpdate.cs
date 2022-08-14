@@ -115,7 +115,7 @@ public class PlayerUpdate : MonoBehaviour
     }
     private void DefaultRegenHP(int _regenLvl = 0)
     {
-        int endurance = _playerStats.stats.Endurance;
+        int endurance = _playerStats.stats.Attributes[2].Level;
         int addHP = _playerStats.stats.GetAddHP();
         timerRegenHP = _playerStats.stats.GetTimeRegenHP();
         _playerStats.AddHP(addHP);

@@ -5,7 +5,7 @@ using TMPro;
 using System.Collections;
 
 // скрипт назнает ник игрока и устанавливает подключение к комнате и лобби
-public class Dungeon : Photon.MonoBehaviour
+public class NetworkCreateGame : Photon.MonoBehaviour
 {
     public Text LogText;
     public InputField NickNameField;

@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using TMPro;
+
 
 public class ProfileSlot : MonoBehaviour
 {
@@ -9,10 +12,7 @@ public class ProfileSlot : MonoBehaviour
     public Text SlotID;
     public Text SlotName;
     public Text SlotLevel;
-    public Text SlotStrenght;
-    public Text SlotAgility;
-    public Text SlotVitality;
-    public Text SlotSpeed;
+    public List<TMP_Text> AttributesText = new List<TMP_Text>();
     public GameObject FreeSlot;
 
     private void Start()
@@ -23,11 +23,11 @@ public class ProfileSlot : MonoBehaviour
     {
         SlotID.text = NumSlot.ToString();
         SlotName.text = PlayerPrefs.GetString(NumSlot + "_slot_nickName");
+        for (int i = 0; i < BasePrefs.instance.AvaibleAttributes.Count; i++)
+        {
+            AttributesText[i].text = PlayerPrefs.GetInt(NumSlot + "_slot_" + i + "_attribute").ToString();
+        }
         SlotLevel.text = PlayerPrefs.GetInt(NumSlot + "_slot_level").ToString();
-        SlotStrenght.text = PlayerPrefs.GetInt(NumSlot + "_slot_strenght").ToString();
-        SlotAgility.text = PlayerPrefs.GetInt(NumSlot + "_slot_agility").ToString();
-        SlotVitality.text = PlayerPrefs.GetInt(NumSlot + "_slot_endurance").ToString();
-        SlotSpeed.text = PlayerPrefs.GetInt(NumSlot + "_slot_speed").ToString();
         if (PlayerPrefs.GetInt(NumSlot + "_slot_level") == 0) // если уровень игрока равен 0, то ставится свободный слот
         {
             FreeSlot.SetActive(true);

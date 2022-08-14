@@ -1,12 +1,13 @@
-using TMPro;
 using UnityEngine;
-
+using TMPro;
 public class AttributeButton : MonoBehaviour
 {
+    [SerializeField] private AttributeStat _attribute;
     [SerializeField] private TMP_Text _nameAttribute;
+    [SerializeField] private TMP_Text _descruption;
     [SerializeField] private TMP_Text _level;
-    [SerializeField] private int _numAttribute;
-    [SerializeField] private PlayerStats _selectedPlayerStats;
+    [SerializeField] private TMP_Text _maxLevel;
+    [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private Transform _buttonUp;
     public bool IsAskConfirm;
 
@@ -14,26 +15,32 @@ public class AttributeButton : MonoBehaviour
     {
         if (reportType == ReportType.Accept)
         {
-            SendUpAttribute();
+            UpAttribute();
         }
     }
-    private void SendUpAttribute()
+    private void UpAttribute()
     {
-        if (!_selectedPlayerStats.UpAttribute(_numAttribute)) { MsgBoxUI.Instance.ShowAttention("not enought attribute points"); }
+        if (!_playerStats.UpAttribute(_attribute.Attr.Id)) { MsgBoxUI.Instance.ShowAttention("not enought attribute points"); }
         CharacterUI.Instance.UpdateButtons();
+        GlobalSounds.Instance.SAttributeUp();
     }
-    public void UpAttribute()
+    public void ClickUpAttribute()
     {
         if (IsAskConfirm)
         { MsgBoxUI.Instance.Show(this.gameObject, "upgrade attribute", "do you really want to spend 1 attribute point to upgrade attribute?"); }
-        else SendUpAttribute();
+        else UpAttribute();
     }
-    public void SetText(PlayerStats playerStats, bool isAsk)
+    public void SetText(PlayerStats playerStats, AttributeStat attribute, bool isAsk)
     {
-        _selectedPlayerStats = playerStats;
+        _attribute = attribute;
+        _playerStats = playerStats;
         IsAskConfirm = isAsk;
-        if (_selectedPlayerStats.TryUpgradeAttrubute()) _buttonUp.gameObject.SetActive(true);
+        if (_attribute.IsAvaibleToLevelUp(_playerStats.GetPointStat)) _buttonUp.gameObject.SetActive(true);
         else { _buttonUp.gameObject.SetActive(false); }
-        _level.text = playerStats.GetLevelAttribute(_numAttribute).ToString();
+        _nameAttribute.text = _attribute.Attr.Name;
+        _level.text = _attribute.Level.ToString();
+        _descruption.text = _attribute.Attr.Description;
+        _maxLevel.text = _attribute.Attr.MaxLevel.ToString();
+
     }
 }

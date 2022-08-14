@@ -59,12 +59,12 @@ public class Storage : MonoBehaviour
     }
     private bool CheckReqirement(Item _item)
     {
-        if (_item.itemTupe == ItemTupe.Weapon && _item.neededAttr <= PlStats.stats.Strenght &&
+        if (_item.itemTupe == ItemTupe.Weapon && _item.neededAttr <= PlStats.stats.Attributes[0].Level &&
             _item.neededSkill <= PlStats.stats.Skills[6].Level && _item.neededLevel <= PlStats.stats.Level)
         { return true; }
         else if (_item.itemTupe == ItemTupe.Armor
             && _item.neededSkill <= PlStats.stats.Skills[5].Level &&
-            _item.neededAttr <= PlStats.stats.Strenght && _item.neededLevel <= PlStats.stats.Level)
+            _item.neededAttr <= PlStats.stats.Attributes[0].Level && _item.neededLevel <= PlStats.stats.Level)
         { return true; }
         else return false;
     }

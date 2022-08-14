@@ -17,7 +17,7 @@ public class CollectItems : Photon.MonoBehaviour
             if (!_isPlayerEnter)
             {
                 _isPlayerEnter = true;
-                if (_items.Count <= 0) return;
+                if (_items.Count == 0) return;
                 Inventory inventory = other.GetComponent<Inventory>();
                 foreach (Item item in _items)
                 {
@@ -26,6 +26,7 @@ public class CollectItems : Photon.MonoBehaviour
                         PlayerQuest.instance.UpdateProcessQuests(null, item);
                     }
                 }
+                if (other.gameObject.GetComponent<Sound>()) { other.gameObject.GetComponent<Sound>().StartSound(SoundType.TakeDrop); }
                 DestroyObject();
             }
         }
@@ -47,7 +48,6 @@ public class CollectItems : Photon.MonoBehaviour
         {
             _items.Add(item);
         }
-
     }
 
     [PunRPC]

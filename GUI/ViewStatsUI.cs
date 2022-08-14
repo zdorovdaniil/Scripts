@@ -47,7 +47,7 @@ public class ViewStatsUI : MonoBehaviour
 
     [SerializeField] private TMP_Text _curLvlText;
     [SerializeField] private TMP_Text _curExpText;
-    [SerializeField] private TMP_Text _needExpText;
+
     [Header("All Stats")]
     [SerializeField] private TMP_Text _allRoomText;
     [SerializeField] private TMP_Text _allKillsText;
@@ -67,10 +67,10 @@ public class ViewStatsUI : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.05f);
         {
             if (_dungeonStats == null) { _dungeonStats = DungeonStats.Instance; }
-            _strenghText.text = _playerStats.stats.Strenght.ToString();
-            _enduranceText.text = _playerStats.stats.Endurance.ToString();
-            _agilityText.text = _playerStats.stats.Agility.ToString();
-            _speedText.text = _playerStats.stats.Speed.ToString();
+            _strenghText.text = _playerStats.stats.Attributes[0].Level.ToString();
+            _enduranceText.text = _playerStats.stats.Attributes[1].Level.ToString();
+            _agilityText.text = _playerStats.stats.Attributes[2].Level.ToString();
+            _speedText.text = _playerStats.stats.Attributes[3].Level.ToString();
 
             _attackText.text = _playerStats.stats.attack.ToString();
             _attackEquipText.text = _playerStats.stats.attackWeapon.ToString();
@@ -78,15 +78,15 @@ public class ViewStatsUI : MonoBehaviour
             _attackSkillText.text = _playerStats.stats.attackSkill.ToString();
             _attackBuffText.text = _playerStats.stats.buffAttack.ToString();
 
-            _critChanceText.text = _playerStats.stats.critChance.ToString();
-            _critChanceEquipText.text = _playerStats.stats.critChanceEquip.ToString();
-            _critChanceSkillText.text = _playerStats.stats.critChanceEquip.ToString();
-            _critChanceBuffText.text = _playerStats.stats.buffCritChance.ToString();
+            _critChanceText.text = _playerStats.stats.critChance.ToString() + " %";
+            _critChanceEquipText.text = _playerStats.stats.critChanceEquip.ToString() + " %";
+            _critChanceSkillText.text = _playerStats.stats.critChanceSkill.ToString() + " %";
+            _critChanceBuffText.text = _playerStats.stats.buffCritChance.ToString() + " %";
 
-            _critValueText.text = _playerStats.stats.critValue.ToString();
-            _critValueEquipText.text = _playerStats.stats.critValueEquip.ToString();
-            _critValueSkillText.text = _playerStats.stats.critValueSkill.ToString();
-            _critValueBuffText.text = _playerStats.stats.buffCritValue.ToString();
+            _critValueText.text = _playerStats.stats.critValue.ToString() + " %";
+            _critValueEquipText.text = _playerStats.stats.critValueEquip.ToString() + " %";
+            _critValueSkillText.text = _playerStats.stats.critValueSkill.ToString() + " %";
+            _critValueBuffText.text = _playerStats.stats.buffCritValue.ToString() + " %";
 
             _defenceText.text = _playerStats.stats.armor.ToString();
             _defenceEquipText.text = _playerStats.stats.armorEquip.ToString();
@@ -99,8 +99,8 @@ public class ViewStatsUI : MonoBehaviour
             _moveSpeedBuffText.text = _playerStats.stats.buffSpeed.ToString();
 
             _healthText.text = _playerStats.stats.HP.ToString();
-            _regenValue.text = _playerStats.stats.GetAddHP().ToString();
-            _timeRegen.text = _playerStats.stats.GetTimeRegenHP().ToString();
+            _regenValue.text = _playerStats.stats.GetAddHP().ToString() + " HP";
+            _timeRegen.text = _playerStats.stats.GetTimeRegenHP().ToString() + " SEC";
 
             _blockText.text = _playerStats.stats.minusDMG.ToString() + " to " + _playerStats.stats.GetMaxBlockDamage().ToString();
             _damageText.text = _playerStats.stats.minDMG.ToString() + " to " + _playerStats.stats.maxDMG.ToString();
@@ -108,8 +108,9 @@ public class ViewStatsUI : MonoBehaviour
 
 
             _curLvlText.text = _playerStats.stats.Level.ToString();
-            _curExpText.text = _playerStats.curEXP.ToString();
-            _needExpText.text = PlayerLeveling.instance.GetHeedExp(_playerStats.stats.Level).ToString();
+            string curExp = _playerStats.curEXP.ToString();
+            string needExp = PlayerLeveling.instance.GetHeedExp(_playerStats.stats.Level).ToString();
+            _curExpText.text = curExp + " / " + needExp;
 
             _allRoomText.text = _dungeonStats.allPassRoom.ToString();
             _allKillsText.text = _dungeonStats.allKills.ToString();
