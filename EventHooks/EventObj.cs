@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class EventObj : Photon.MonoBehaviour
 {
-    [SerializeField] private BuffClass _buff; public BuffClass GetBuff => _buff;
     [SerializeField] private bool _forAllPlayers; public bool IsForAllPlayers => _forAllPlayers;
     [SerializeField] private bool _isActivated = false;
     [SerializeField] private UnityEvent onEventExe;
+    public PlayerStats LinkToPlayerStats;
 
     private void OnTriggerStay(Collider other)
     {
@@ -16,6 +14,7 @@ public class EventObj : Photon.MonoBehaviour
         {
             if (other.gameObject.GetPhotonView().isMine && !_isActivated)
             {
+                if (!LinkToPlayerStats) LinkToPlayerStats = other.GetComponent<PlayerStats>();
                 GUIControl guiControl = other.GetComponent<PlayerLinks>().GetGUIControl;
                 guiControl.UseButton.SetActive(true);
                 guiControl.UseButton.GetComponent<ButtonUse>().Activate(this);
@@ -35,14 +34,6 @@ public class EventObj : Photon.MonoBehaviour
     }
     public void SendToActivate(PlayerStats playerStats)
     {
-        if (IsForAllPlayers)
-        {
-            GameManager.Instance.SendAllBuff(_buff.BuffId);
-        }
-        else
-        {
-            playerStats.AddBuff(_buff.BuffId);
-        }
         if (!PhotonNetwork.offlineMode)
             photonView.RPC("Activate", PhotonTargets.All);
         else Activate();

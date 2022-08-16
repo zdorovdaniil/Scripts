@@ -28,8 +28,12 @@ public class ProcessCommand : MonoBehaviour
         if (craftSkill <= 0) return craftChance;
         else
         {
-            craftChance = Mathf.FloorToInt(100- (1+Mathf.Sqrt((craftDifficult * craftDifficult) / craftSkill)*10));
+            craftChance = Mathf.FloorToInt(100 - (1 + Mathf.Sqrt((craftDifficult * craftDifficult) / craftSkill) * 10));
         }
         return craftChance;
+    }
+    public static void SetParent(Transform changeObj, Transform parantObj)
+    {
+        changeObj.SetParent(parantObj);
     }
 }

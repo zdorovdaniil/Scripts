@@ -94,6 +94,7 @@ public class PlayerStats : Photon.MonoBehaviour
         }
         stats.Skills = BasePrefs.instance.AvaibleSkills;
         stats.recount();
+        HealPlayer();
     }
 
     // получение урона

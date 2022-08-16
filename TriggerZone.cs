@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class TriggerZone : MonoBehaviour
 {
     [SerializeField] private ZoneType _type = ZoneType.Default;
-    [SerializeField] private List<PlayerStats> _playersInZone = new List<PlayerStats>(2);
+    [SerializeField] private List<PlayerStats> _playersInZone = new List<PlayerStats>(2); public List<PlayerStats> GetPlayers => _playersInZone;
     [SerializeField] private List<GameObject> _objs = new List<GameObject>();
     [SerializeField] private bool _isActivateOneTime;
     [SerializeField] private Quest _quest;

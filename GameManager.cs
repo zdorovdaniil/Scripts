@@ -26,7 +26,6 @@ public class GameManager : Photon.MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        if (tempView != null) tempView.SetActive(false);
     }
     private void Start()
     {
