@@ -16,6 +16,7 @@ public class EnemyStats : Photon.MonoBehaviour
     // UI для отображения уровня, названия и здоровья
     [SerializeField] private EnemyUI _enemyUI;
     [SerializeField] Transform _mapPoint;
+    [SerializeField] private ParticlePlaces _particlePlaces;
     private EnemyController enemyController;
     private Sound _enemySounds;
     private HumanEffects _humanEffects;
@@ -54,6 +55,7 @@ public class EnemyStats : Photon.MonoBehaviour
             {
                 takeDamage = value;
             }
+            GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
             blockedDamage = Mathf.FloorToInt(value - takeDamage);
             string deathMessage = ".";
             if (takeDamage >= curHP) deathMessage = ", he is death.";
@@ -85,6 +87,7 @@ public class EnemyStats : Photon.MonoBehaviour
                         // Далее отправляю по сети массив newPos 
                         if (!PhotonNetwork.offlineMode) photonView.RPC("SendPosition", PhotonTargets.AllBuffered, (float[])newPos);
                         else SendPosition(newPos);
+
                     }
                 }
             }

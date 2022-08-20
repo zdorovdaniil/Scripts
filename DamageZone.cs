@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
 
-public enum TupeDamageZone
-{
-    Fire, Lava, Default, Arrow, Kill
-}
 public class DamageZone : MonoBehaviour
 {
     [SerializeField]
     TupeDamageZone m_TupeDamageZone = TupeDamageZone.Default;
     public TupeDamageZone tupeDamageZone { get { return m_TupeDamageZone; } set { m_TupeDamageZone = value; } }
-
+    [SerializeField] private List<BuffClass> _buffs = new List<BuffClass>();
     // Игрок которому принадлежит данная DamageZone, если не указан то принадлежит окр. миру или ИИ
     public PlayerStats playerStats;
     // ИИ которому принадлежит данная DamageZone
     public EnemyStats enemyStats;
     public UnityEvent Event;
+    private void OnCollisionEnter(Collision other)
+    {
+
+        if (other.gameObject.tag == "Player")
+        {
+            GlobalEffects.Instance.CreateParticle(other.transform, EffectType.BloodHit);
+            Debug.Log("BloodHit");
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Enemy")
@@ -38,12 +44,14 @@ public class DamageZone : MonoBehaviour
                     }
                 }
             }
+            Event.Invoke();
         }
         if (other.tag == "Player")
         {
             // получение PlayerStats от другово игрока, по которому пришлось попадание
             PlayerStats otherPlayerStats = other.gameObject.GetComponent<PlayerStats>();
-
+            foreach (BuffClass buff in _buffs)
+            { otherPlayerStats.AddBuff(buff.BuffId); }
             if (enemyStats != null) // если владелец damageZone ИИ
             {
                 if (!enemyStats.IsDeath) // если противник жив, то он наносит урон игроку
@@ -85,11 +93,18 @@ public class DamageZone : MonoBehaviour
                     otherPlayerStats.TakeDamage(damage, true, "Trap");
                 }
             }
+            Event.Invoke();
         }
 
         if (other.tag == "BreakAbleItem")
         {
             Destroy(other.gameObject);
+            Event.Invoke();
         }
     }
 }
+public enum TupeDamageZone
+{
+    Fire, Lava, Default, Arrow, Kill
+}
+

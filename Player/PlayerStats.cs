@@ -1,6 +1,5 @@
-﻿using stats; // Пространство имен stats из скрипта Stats
+﻿using stats;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerStats : Photon.MonoBehaviour
@@ -25,6 +24,7 @@ public class PlayerStats : Photon.MonoBehaviour
     private Inventory _inventory; public Inventory GetInventory => _inventory;
     private Vector3 _spawnPosition;
     private HumanEffects _playerEffects;
+    [SerializeField] private ParticlePlaces _particlePlaces;
     private RoomControl curRoom; public void SetCurRoom(RoomControl room) { curRoom = room; }
 
     private void Awake() { SetStats(); }
@@ -107,7 +107,7 @@ public class PlayerStats : Photon.MonoBehaviour
             float takeDamage;
             float blockedDamage;
             float maxBlockDamage = stats.GetMaxBlockDamage();
-
+            GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
             if (isAbsoluteHit == false)
             {
                 takeDamage = Mathf.Floor((_value - stats.minusDMG) - Random.Range(0, maxBlockDamage));
