@@ -32,8 +32,7 @@ public class DamageZone : MonoBehaviour
             {
                 float damagePlayer = playerStats.stats.Damage();
                 float kickStrenght = playerStats.stats.KickStrenght();
-                bool isDies = false;
-                isDies = otherEnemyStats.TakeDamage(damagePlayer, false, kickStrenght);
+                bool isDies = otherEnemyStats.TakeDamage(damagePlayer, false, kickStrenght);
                 if (isDies == true)
                 {
                     DungeonStats.Instance.DefeatEnemy();
@@ -102,6 +101,18 @@ public class DamageZone : MonoBehaviour
             Event.Invoke();
         }
     }
+}
+public class Damage
+{
+    private float _damageValue;
+    private float _kickStrenght;
+    private float _critChance;
+    private float _critValue; 
+    public void Damage(float damageValue,float kickStrenght,float critChance,float critValue)
+    {
+
+    }
+    public void GetDamage()
 }
 public enum TupeDamageZone
 {

@@ -13,3 +13,5 @@ public class InteriorObject : MonoBehaviour
         numVariantsInterior[i].SetActive(true);
     }
 }
+
+
