@@ -92,7 +92,7 @@ public class ProfileSlot : MonoBehaviour
         PlayerPrefs.DeleteKey(_slot + "_slot_wieldSword");
 
         // очистка данных инвентаря
-        for (int i = 0; i < 29; i++)
+        for (int i = 0; i < 32; i++)
         {
             PlayerPrefs.DeleteKey(_slot + "itemId_" + i);
         }
@@ -117,6 +117,10 @@ public class ProfileSlot : MonoBehaviour
                 PlayerPrefs.DeleteKey(_slot + "_questProcess_" + i);
                 PlayerPrefs.DeleteKey(_slot + "_questCompleted_" + i);
             }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            PlayerPrefs.SetInt(_slot + "_slot_" + i + "_attribute", 10);
         }
     }
 

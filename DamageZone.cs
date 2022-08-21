@@ -107,12 +107,16 @@ public class Damage
     private float _damageValue;
     private float _kickStrenght;
     private float _critChance;
-    private float _critValue; 
-    public void Damage(float damageValue,float kickStrenght,float critChance,float critValue)
+    private float _critValue;
+    public Damage(float damageValue, float kickStrenght, float critChance, float critValue)
     {
 
     }
-    public void GetDamage()
+    public object[] GetDamage()
+    {
+
+        return
+    }
 }
 public enum TupeDamageZone
 {

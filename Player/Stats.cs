@@ -171,7 +171,6 @@ namespace stats
         {
             foreach (Attribut attribute in BasePrefs.instance.AvaibleAttributes)
             {
-
                 AttributeStat attr = new AttributeStat(attribute);
                 attr.Load();
                 Attributes.Add(attr);

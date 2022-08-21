@@ -163,14 +163,18 @@ public class RoomControl : Photon.MonoBehaviour
                     if (_countSpawnedEnemyes < _countEnemy)
                     {
                         int num = Random.Range(0, SpawnEnemies.Length);
-                        GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[num].PrefabEnemy);
-                        if (_enemy != null)
+                        if (num != 0)
                         {
-                            EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
-                            _enemyStats.BelongRoom = this;
-                            _countSpawnedEnemyes += 1;
-                            _enemyesInRoom.Add(_enemyStats);
+                            GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[num].PrefabEnemy);
+                            if (_enemy != null)
+                            {
+                                EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
+                                _enemyStats.BelongRoom = this;
+                                _countSpawnedEnemyes += 1;
+                                _enemyesInRoom.Add(_enemyStats);
+                            }
                         }
+                        else break;
                     }
                 }
             }

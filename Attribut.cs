@@ -38,7 +38,12 @@ public class AttributeStat
     public void Load()
     {
         int id = PlayerPrefs.GetInt("activeSlot");
-        Level = PlayerPrefs.GetInt(id + "_slot_" + Attr.Id + "_attribute");
+        if (PlayerPrefs.HasKey(id + "_slot_" + Attr.Id + "_attribute"))
+        {
+            Level = PlayerPrefs.GetInt(id + "_slot_" + Attr.Id + "_attribute");
+        }
+        else { Level = 10; }
+
     }
     public bool IsAvaibleToLevelUp(int points)
     {

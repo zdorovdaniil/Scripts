@@ -81,12 +81,12 @@ public class PlayerStats : Photon.MonoBehaviour
             // создание нового экземпляра stats из загруженных данных
             stats = new Stats(_lvl, _exp);
             DungeonStats.Instance.LoadDungeonStats();
-            curHP = stats.HP;
             foreach (Skill skill in BasePrefs.instance.AvaibleSkills)
             {
                 skill.Load();
             }
             stats.SetPlayerAttributes();
+            curHP = stats.HP;
         }
         else
         {
@@ -144,14 +144,12 @@ public class PlayerStats : Photon.MonoBehaviour
     {
         Debug.Log("New Game");
         stats = new Stats(1, 800);
+        stats.SetPlayerAttributes();
         AddStandartPoints();
         curHP = 30;
         curEXP = 0;
         foreach (Skill skill in BasePrefs.instance.AvaibleSkills)
-        {
-            skill.Reset();
-        }
-        stats.SetPlayerAttributes();
+        { skill.Reset(); }
         PlayerPrefs.SetInt(_id + "_for_new_game", 1);
         PlayerPrefs.SetInt(_id + "_slot_dungeonLevel", 1);
         DungeonStats.Instance.ResetDungeonStats();

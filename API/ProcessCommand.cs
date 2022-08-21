@@ -34,7 +34,10 @@ public class ProcessCommand : MonoBehaviour
     }
     public static void SwithStatusInCollection(bool status, List<GameObject> listObjects)
     {
-        listObjects.SetActive(status);
+        foreach (GameObject obj in listObjects)
+        {
+            obj.SetActive(status);
+        }
     }
     public static void SetParent(Transform changeObj, Transform parantObj)
     {

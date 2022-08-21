@@ -4,51 +4,51 @@ using UnityEngine;
 
 public class InteriorSelecter : Photon.MonoBehaviour
 {
-    [Range(0,100)]
+    [Range(0, 100)]
     [SerializeField] private int _spawnChanceObjects;
-    [SerializeField] private List<InterierObject> _objects = new List<InteriorObject>();
-
+    [SerializeField] private List<InteriorObject> _objects = new List<InteriorObject>();
     private void Start()
     {
         if (PhotonNetwork.isMasterClient)
         {
-            bool[] data = GetMassBoolObjects(_spawnChanceObjects,_objects);
-            int[] variantData = GesMassVariantObjects(data);
+            bool[] data = GetMassBoolObjects(_spawnChanceObjects, _objects);
+            int[] variantData = GesMassVariantObjects(data, _objects);
             if (!PhotonNetwork.offlineMode)
             {
-                photonView.RPC("SetStatusObjects", PhotonTargets.All, (bool[])data,(int[])variantData);
+                photonView.RPC("SetStatusObjects", PhotonTargets.All, (bool[])data, (int[])variantData);
             }
-            else {SetStatusObjects(data,variantData);}
+            else { SetStatusObjects(data, variantData); }
         }
     }
-    private int[] GesMassVariantObjects(bool[] data)
+    private int[] GesMassVariantObjects(bool[] data, List<InteriorObject> objects)
     {
-        int[] numVariantsInterior = new int[];
+        int[] numVariantsInterior = new int[objects.Count];
         for (int i = 0; i < data.Length; i++)
         {
             if (data[i])
             {
                 int countVariants = objects[i].GetCountVariants;
-                int rdm = Random.Range(0,countVariants);
+                int rdm = Random.Range(0, countVariants);
                 numVariantsInterior[i] = rdm;
             }
-            else{
+            else
+            {
                 numVariantsInterior[i] = 0;
             }
         }
         return numVariantsInterior;
     }
-    private bool[] GetMassBoolObjects(int chance, List<InterierObject> objects)
+    private bool[] GetMassBoolObjects(int chance, List<InteriorObject> objects)
     {
-        bool[] data = new bool[];
-        for(int i = 0; i < objects.Count;i++)
+        bool[] data = new bool[objects.Count];
+        for (int i = 0; i < objects.Count; i++)
         {
-            int randomValue = Random.Range (0,100);
+            int randomValue = Random.Range(0, 100);
             if (randomValue < chance)
             {
                 data[i] = true;
             }
-            else 
+            else
             {
                 data[i] = false;
             }
@@ -57,9 +57,9 @@ public class InteriorSelecter : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void SetStatusObjects(bool[] data,int[] variantData)
+    public void SetStatusObjects(bool[] data, int[] variantData)
     {
-        for(int i = 0;i<data.Length;i++)
+        for (int i = 0; i < data.Length; i++)
         {
             _objects[i].gameObject.SetActive(data[i]);
             _objects[i].SetVariant(variantData[i]);
