@@ -158,7 +158,6 @@ public class RoomControl : Photon.MonoBehaviour
         {
             if (_spawnPointsForEnemy.Count != 0)
             {
-                Debug.Log("Спавн противников");
                 foreach (Transform point in _spawnPointsForEnemy)
                 {
                     if (_countSpawnedEnemyes < _countEnemy)
@@ -168,7 +167,7 @@ public class RoomControl : Photon.MonoBehaviour
                         if (_enemy != null)
                         {
                             EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
-                            _enemyStats.BelongRoom = this.gameObject.GetComponent<RoomControl>();
+                            _enemyStats.BelongRoom = this;
                             _countSpawnedEnemyes += 1;
                             _enemyesInRoom.Add(_enemyStats);
                         }
