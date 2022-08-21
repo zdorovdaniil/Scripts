@@ -5,22 +5,40 @@ using UnityEngine;
 public class InteriorSelecter : Photon.MonoBehaviour
 {
     [Range(0,100)]
-    [SerializeField] private int _spawnChanceObjects1;
-    [SerializeField] private List<Transform> _objects1;
-
-    [Range(0,100)]
-    [SerializeField] private int _spawnChanceObjects2;
-    [SerializeField] private List<Transform> _objects2;
+    [SerializeField] private int _spawnChanceObjects;
+    [SerializeField] private List<InterierObject> _objects = new List<InteriorObject>();
 
     private void Start()
     {
         if (PhotonNetwork.isMasterClient)
         {
-
+            bool[] data = GetMassBoolObjects(_spawnChanceObjects,_objects);
+            int[] variantData = GesMassVariantObjects(data);
+            if (!PhotonNetwork.offlineMode)
+            {
+                photonView.RPC("SetStatusObjects", PhotonTargets.All, (bool[])data,(int[])variantData);
+            }
+            else {SetStatusObjects(data,variantData);}
         }
-        
     }
-    private bool[] GetMassBoolObjects(int chance, List<Transform> objects)
+    private int[] GesMassVariantObjects(bool[] data)
+    {
+        int[] numVariantsInterior = new int[];
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (data[i])
+            {
+                int countVariants = objects[i].GetCountVariants;
+                int rdm = Random.Range(0,countVariants);
+                numVariantsInterior[i] = rdm;
+            }
+            else{
+                numVariantsInterior[i] = 0;
+            }
+        }
+        return numVariantsInterior;
+    }
+    private bool[] GetMassBoolObjects(int chance, List<InterierObject> objects)
     {
         bool[] data = new bool[];
         for(int i = 0; i < objects.Count;i++)
@@ -28,15 +46,24 @@ public class InteriorSelecter : Photon.MonoBehaviour
             int randomValue = Random.Range (0,100);
             if (randomValue < chance)
             {
-                data[i] = true;                
+                data[i] = true;
             }
-            else data[i] = false;
+            else 
+            {
+                data[i] = false;
+            }
         }
         return data;
     }
 
-    [PunRPC] public void SetStatusObjects(bool[] data)
+    [PunRPC]
+    public void SetStatusObjects(bool[] data,int[] variantData)
     {
-        
+        for(int i = 0;i<data.Length;i++)
+        {
+            _objects[i].gameObject.SetActive(data[i]);
+            _objects[i].SetVariant(variantData[i]);
+        }
+
     }
 }

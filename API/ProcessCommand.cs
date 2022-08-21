@@ -32,6 +32,10 @@ public class ProcessCommand : MonoBehaviour
         }
         return craftChance;
     }
+    public static void SwithStatusInCollection(bool status, List<GameObject> listObjects)
+    {
+        listObjects.SetActive(status);
+    }
     public static void SetParent(Transform changeObj, Transform parantObj)
     {
         changeObj.SetParent(parantObj);
