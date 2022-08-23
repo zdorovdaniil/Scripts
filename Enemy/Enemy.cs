@@ -17,7 +17,9 @@ public class Enemy : ScriptableObject
     [SerializeField] private int _speed; public int Speed(int level = 1) => CountAttribute(_speed, level);
     [SerializeField] private int _attackWeapon; public int AttackWeapon(int level = 1) => CountAttribute(_attackWeapon, level);
     [SerializeField] private int _armorEquip; public int ArmorClass(int level = 1) => CountAttribute(_armorEquip, level);
-    [SerializeField] private int _critChance; public int CritChance(int level = 1) => CountAttribute(_armorEquip, level);
+    [SerializeField] private int _critChance;
+    [SerializeField] private int _critValue;
+
 
 
     private int CountAttribute(int attrubute, int level)
@@ -28,14 +30,16 @@ public class Enemy : ScriptableObject
         }
         else return attrubute;
     }
-    private int CountCritChance(int value, int level)
+    public int[] GetCritForStats(int level)
     {
+        int[] mass = new int[] { 2, 100 };
         if (level > 1)
         {
-            // не доделанно
-            return 0;
+            for (int i = 0; i < mass.Length; i++)
+            { mass[i] = mass[i] * level; }
+            return mass;
         }
-        else return value;
+        else return mass;
     }
     // промежуток времени, через которое противник после получения урона может снова получить урон
     public float timeResetHit = 1f;

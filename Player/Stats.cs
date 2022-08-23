@@ -184,6 +184,11 @@ namespace stats
                 Attributes.Add(attr);
             }
         }
+        public void SetEnemyCrits(int[] critMassiv)
+        {
+            critChance = critMassiv[0];
+            critValue = critMassiv[1];
+        }
 
         //функция вызываемая при повышении уровня
         public void lvlUP()

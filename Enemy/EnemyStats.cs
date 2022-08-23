@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class EnemyStats : Photon.MonoBehaviour
 {
-    private Stats stats;
+    private Stats stats; public Stats GetStats => stats;
     public float curHP; // Количество жизней нынешние
     public bool IsDeath; // Отвечает за уничтожение
     private bool isTakeDamage; //для ограниечения получаемого урона в секунду
@@ -37,16 +37,24 @@ public class EnemyStats : Photon.MonoBehaviour
         _enemyUI.UpdateUI(this, stats);
         Heal();
     }
-    public bool TakeDamage(float value, bool isAbsoluteHit = false, float kickStrenght = 1f)
+    public bool TakeDamage(float value, bool isAbsoluteHit = false, float kickStrenght = 1f, float critValue = 0f, float critChance = 0f)
     {
         if (isTakeDamage == true)
         {
             isTakeDamage = false;
+            StartCoroutine(resetDamageGet());
+
+            bool isCrit = false;
             float takeDamage;
-            int blockedDamage;
             int maxBlockDamage = Mathf.FloorToInt(stats.armor / 5);
             int kickChance = 0;
-            StartCoroutine(resetDamageGet());
+            int random = Random.Range(0, 100);
+            if (random < critChance)
+            {
+                isAbsoluteHit = true;
+                critValue = critValue * (critValue / 100);
+                isCrit = true;
+            }
             if (isAbsoluteHit == false)
             {
                 takeDamage = Mathf.Floor((value - stats.minusDMG) - Random.Range(0, maxBlockDamage));
@@ -55,22 +63,25 @@ public class EnemyStats : Photon.MonoBehaviour
             {
                 takeDamage = value;
             }
-            GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
-            blockedDamage = Mathf.FloorToInt(value - takeDamage);
+            int blockedDamage = Mathf.FloorToInt(value - takeDamage);
             string deathMessage = ".";
             if (takeDamage >= curHP) deathMessage = ", he is death.";
-            LogUI.Instance.Loger("You hit " + enemyTupe.Name + " <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + " armor</color>" + deathMessage);
+            string HitString = "";
+            if (isCrit) HitString = "You Crit! "; else { HitString = "You hit "; }
+            Debug.Log("Crit % = " + critChance + " Crit Value = " + critValue);
+            LogUI.Instance.Loger(HitString + enemyTupe.Name + " <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + " armor</color>" + deathMessage);
             if (takeDamage >= 0)
             {
+                GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
                 if (_enemySounds != null) _enemySounds.StartSound(SoundType.Hit);
                 if (PhotonNetwork.offlineMode != true) { photonView.RPC("MinusDamage", PhotonTargets.All, (float)takeDamage); }
                 else MinusDamage(takeDamage);
                 if (enemyTupe.enemyType != EnemyFightingType.DistanceCrosser)
                 {
                     kickChance = Mathf.FloorToInt((100 - (1 + Mathf.Sqrt(stats.armor / takeDamage) + 10)));
-                    int random = Random.Range(0, 100);
+                    int randomKick = Random.Range(0, 100);
                     _enemySounds.StartSound(SoundType.Step);
-                    if (random < kickChance)
+                    if (randomKick < kickChance)
                     {
                         if (PhotonNetwork.offlineMode) enemyController.KickBack(kickStrenght);
                         else photonView.RPC("SendKickBack", PhotonTargets.All, (float)kickStrenght);
@@ -177,15 +188,12 @@ public class EnemyStats : Photon.MonoBehaviour
     private void SetAttributesToStats(int level)
     {
         int[] levels = new int[] { enemyTupe.Strenght(level), enemyTupe.Agility(level), enemyTupe.Endurance(level), enemyTupe.Speed(level) };
+        int[] crits = enemyTupe.GetCritForStats(level);
         stats.SetEnemyAttributes(levels);
+        stats.SetEnemyCrits(crits);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }
-    public Stats GetStats()
-    {
-        if (stats != null) return stats;
-        else return null;
-    }
     // обнуление возможности полуения урона
     private IEnumerator resetDamageGet()
     {

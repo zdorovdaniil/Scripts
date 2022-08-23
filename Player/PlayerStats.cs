@@ -96,18 +96,23 @@ public class PlayerStats : Photon.MonoBehaviour
         stats.recount();
         HealPlayer();
     }
-
     // получение урона
-    public void TakeDamage(float _value, bool isAbsoluteHit = false, string hitName = "")
+    public void TakeDamage(float _value, bool isAbsoluteHit = false, string hitName = "", float critValue = 0f, float critChance = 0f)
     {
         if (isTakeDamage == true && _isUnDeath == false)
         {
             isTakeDamage = false;
             StartCoroutine(resetDamageGet());
+            bool isCrit = false;
             float takeDamage;
-            float blockedDamage;
             float maxBlockDamage = stats.GetMaxBlockDamage();
-            GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
+            int random = Random.Range(0, 100);
+            if (random < critChance)
+            {
+                isAbsoluteHit = true;
+                critValue = critValue * (critValue / 100);
+                isCrit = true;
+            }
             if (isAbsoluteHit == false)
             {
                 takeDamage = Mathf.Floor((_value - stats.minusDMG) - Random.Range(0, maxBlockDamage));
@@ -116,13 +121,17 @@ public class PlayerStats : Photon.MonoBehaviour
             {
                 takeDamage = Mathf.Floor(_value);
             }
-            blockedDamage = Mathf.Floor(_value - takeDamage);
-            LogUI.Instance.Loger(hitName + " hit you <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + "</color> armor");
+            float blockedDamage = Mathf.Floor(_value - takeDamage);
             if (takeDamage >= 0)
             {
                 curHP -= takeDamage;
                 gameObject.GetComponent<Sound>().StartSound(SoundType.Hit);
+                GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
             }
+            string HitString = "";
+            if (isCrit) HitString = " crit you!"; else { HitString = "hit you"; }
+            Debug.Log("Crit % = " + critChance + " Crit Value = " + critValue);
+            LogUI.Instance.Loger(hitName + HitString + " <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + "</color> armor");
             UpdateHP();
         }
     }

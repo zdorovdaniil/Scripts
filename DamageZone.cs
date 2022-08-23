@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using stats;
 
 public class DamageZone : MonoBehaviour
 {
@@ -13,15 +14,6 @@ public class DamageZone : MonoBehaviour
     // ИИ которому принадлежит данная DamageZone
     public EnemyStats enemyStats;
     public UnityEvent Event;
-    private void OnCollisionEnter(Collision other)
-    {
-
-        if (other.gameObject.tag == "Player")
-        {
-            GlobalEffects.Instance.CreateParticle(other.transform, EffectType.BloodHit);
-            Debug.Log("BloodHit");
-        }
-    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Enemy")
@@ -32,7 +24,7 @@ public class DamageZone : MonoBehaviour
             {
                 float damagePlayer = playerStats.stats.Damage();
                 float kickStrenght = playerStats.stats.KickStrenght();
-                bool isDies = otherEnemyStats.TakeDamage(damagePlayer, false, kickStrenght);
+                bool isDies = otherEnemyStats.TakeDamage(damagePlayer, false, kickStrenght, playerStats.stats.critValue, playerStats.stats.critChance);
                 if (isDies == true)
                 {
                     DungeonStats.Instance.DefeatEnemy();
@@ -55,8 +47,8 @@ public class DamageZone : MonoBehaviour
             {
                 if (!enemyStats.IsDeath) // если противник жив, то он наносит урон игроку
                 {
-                    float damageEnemy = enemyStats.GetStats().Damage();
-                    otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name);
+                    float damageEnemy = enemyStats.GetStats.Damage();
+                    otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name, enemyStats.GetStats.critValue, enemyStats.GetStats.critChance);
                 }
             }
             else
@@ -77,7 +69,7 @@ public class DamageZone : MonoBehaviour
                 {
                     if (enemyStats != null)
                     {
-                        float damageEnemy = enemyStats.GetStats().Damage();
+                        float damageEnemy = enemyStats.GetStats.Damage();
                         otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name);
                     }
                     else
@@ -101,23 +93,22 @@ public class DamageZone : MonoBehaviour
             Event.Invoke();
         }
     }
-}
-public class Damage
-{
-    private float _damageValue;
-    private float _kickStrenght;
-    private float _critChance;
-    private float _critValue;
-    public Damage(float damageValue, float kickStrenght, float critChance, float critValue)
-    {
 
-    }
-    public object[] GetDamage()
-    {
-
-        return
-    }
 }
+/*
+public class Damage{
+    public Stats Stats;
+    public float InputDamage;
+    public float DamageValue;
+    public bool isCrit;
+
+
+    Damage(float inputDamage, bool isIgnoreArmor = false, Stats stats = null )
+    {
+        InputDamage = inputDamage;
+    }
+}*/
+
 public enum TupeDamageZone
 {
     Fire, Lava, Default, Arrow, Kill

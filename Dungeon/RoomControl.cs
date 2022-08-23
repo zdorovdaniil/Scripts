@@ -11,7 +11,8 @@ public class RoomControl : Photon.MonoBehaviour
     // места спавна противников
     [SerializeField] private List<Transform> _spawnPointsForEnemy = new List<Transform>();
     // противники которые могут появиться в _spawnPointsForEnemy
-    public Enemy[] SpawnEnemies;
+    [SerializeField] private Enemy[] _enemysForSpawn;
+    [SerializeField] private Vector2Int _rangeSpawnEnemyOf;
     // количество противников которые заспавняться в комнате
     [SerializeField] private int _countEnemy; public int GetCountEnemy => _countEnemy;
     private int _countSpawnedEnemyes;
@@ -36,6 +37,10 @@ public class RoomControl : Photon.MonoBehaviour
     // определяет, включены ли объекты после смерти противников
     [SerializeField] private bool _isActivedObject = false;
     public int CountDefeatEnemy;
+    private void Awake()
+    {
+        _countEnemy = Random.Range(_rangeSpawnEnemyOf.x, _rangeSpawnEnemyOf.y + 1);
+    }
     private void Start()
     {
         chunk = GetComponent<Chunk>();
@@ -158,6 +163,26 @@ public class RoomControl : Photon.MonoBehaviour
         {
             if (_spawnPointsForEnemy.Count != 0)
             {
+                for (int i = 0; i < _spawnPointsForEnemy.Count; i++)
+                {
+                    if (_countSpawnedEnemyes < _countEnemy)
+                    {
+                        int randomEnemy = Random.Range(0, _enemysForSpawn.Length);
+                        {
+                            GameObject _enemy = GameManager.SpawnEnemyIn(_spawnPointsForEnemy[i], _enemysForSpawn[randomEnemy].PrefabEnemy);
+                            if (_enemy != null)
+                            {
+                                EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
+                                _enemyStats.BelongRoom = this;
+                                _countSpawnedEnemyes += 1;
+                                _enemyesInRoom.Add(_enemyStats);
+                            }
+                        }
+                    }
+                }
+            }
+            /*if (_spawnPointsForEnemy.Count != 0)
+            {
                 foreach (Transform point in _spawnPointsForEnemy)
                 {
                     if (_countSpawnedEnemyes < _countEnemy)
@@ -177,7 +202,7 @@ public class RoomControl : Photon.MonoBehaviour
                         else break;
                     }
                 }
-            }
+            }*/
         }
     }
     public IEnumerator AddRoomToDungeonObjects()
