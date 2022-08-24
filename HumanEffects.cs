@@ -6,6 +6,7 @@ public class HumanEffects : MonoBehaviour
 {
     private BasePrefs _basePrefs;
     private List<GameObject> _buffEffects = new List<GameObject>();
+    [SerializeField] private ParticlePlaces _particlePlaeces;
     [SerializeField] private GameObject _weaponParticle;
     [SerializeField] private ParticleSystem _jercParticle;
 
@@ -21,33 +22,28 @@ public class HumanEffects : MonoBehaviour
         {
             obj.transform.Rotate(0, 0, zRoration);
         }
-        StartCoroutine(DestroyParticle(obj, 0.6f));
+        StartCoroutine(DestroyObjWithDelay(obj, 0.6f));
     }
-    public void PlayeJercEffect()
+    public void PlayJercEffect()
     {
         _jercParticle.Play();
     }
-    private IEnumerator DestroyParticle(GameObject obj, float time)
-    {
-        yield return new WaitForSecondsRealtime(time);
-        {
-            Destroy(obj);
-        }
-    }
     public void ActivateEffect(BuffClass buff)
     {
+        GameObject obj = null;
         if (buff.EffectOnUse)
         {
-            GameObject obj = Instantiate(buff.EffectOnUse, transform.position, Quaternion.identity);
-            obj.transform.SetParent(this.transform);
+            obj = Instantiate(buff.EffectOnUse, _particlePlaeces.BuffPlace.position, _particlePlaeces.BuffPlace.rotation);
+            obj.transform.SetParent(_particlePlaeces.BuffPlace);
             StartCoroutine(DestroyObjWithDelay(obj, buff.EffectLifetime));
         }
         if (buff.EffectOnUsing)
         {
-            GameObject obj = Instantiate(buff.EffectOnUsing, transform.position, Quaternion.identity);
-            obj.transform.SetParent(this.transform);
+            obj = Instantiate(buff.EffectOnUsing, _particlePlaeces.BuffPlace.position, _particlePlaeces.BuffPlace.rotation);
+            obj.transform.SetParent(_particlePlaeces.BuffPlace);
             StartCoroutine(DestroyObjWithDelay(obj, buff.Time));
         }
+        if (obj) _buffEffects.Add(obj);
     }
     public void DiactivateEffects()
     {

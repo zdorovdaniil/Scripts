@@ -60,7 +60,7 @@ public class PlayerController : Photon.MonoBehaviour
     public void SetJerk()
     {
         anim.SetTrigger("Roll");
-        _playerEffects.PlayeJercEffect();
+        _playerEffects.PlayJercEffect();
     }
 
     public void ChangeAlwaysSpeed(float value)
