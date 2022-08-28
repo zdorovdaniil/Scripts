@@ -138,9 +138,9 @@ public class GUIControl : MonoBehaviour
     {
         PlayerQuest.instance.SaveQuestsValue();
         PlayerStats LinkPlayerStats = Player.GetComponent<PlayerStats>();
-        // при выходе в главное меню, сохраняются характеристики игрока в игровой слот
-        LinkPlayerStats.SaveStatsToSlot(PlayerPrefs.GetInt("activeSlot"), LinkPlayerStats.stats);
         Inventory inv = Player.GetComponent<Inventory>();
+        inv.DeleteCollectionItems(_gameManager.GetRules.GetDeletingItems);
+        LinkPlayerStats.SaveStatsToSlot(PlayerPrefs.GetInt("activeSlot"), LinkPlayerStats.stats);
         inv.SaveItemsId();
     }
     public void LoadSceneMenu()

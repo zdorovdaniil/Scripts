@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Chunk : Photon.MonoBehaviour
 {
     [SerializeField] private Vector2Int _positionCoordinate; // позиция комнаты на карте Чанков
+    [SerializeField] private List<DestroyedObject> _destroyedObject = new List<DestroyedObject>();
     // Порталы
     [SerializeField] private List<NavMeshLink> _portals = new List<NavMeshLink>();
     [SerializeField] private List<GameObject> _doorBlock = new List<GameObject>();
@@ -41,6 +42,30 @@ public class Chunk : Photon.MonoBehaviour
     {
         SwitchDoorBlocks(false);
         if (!_isSupportBiggest) SetDafaultObjStatus();
+        SearchDestroyObject();
+    }
+    private void SearchDestroyObject()
+    {
+        int i = 0;
+        foreach (Transform child in this.transform)
+        {
+            if (child.gameObject.tag == "DestroyObject")
+            {
+                if (child.GetComponent<DestroyedObject>())
+                {
+                    i += 1;
+                    DestroyedObject obj = child.GetComponent<DestroyedObject>();
+                    _destroyedObject.Add(obj);
+                    obj.Chunk = this;
+                    obj.Id = i;
+                }
+            }
+        }
+    }
+    [PunRPC]
+    public void SendDamageDestroyObject(int id, float value)
+    {
+        _destroyedObject[id].TakeDamage(value);
     }
     private void SetDafaultObjStatus()
     {

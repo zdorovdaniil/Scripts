@@ -18,11 +18,13 @@ public class GameManager : Photon.MonoBehaviour
     public Transform SpawnPointOwner;
     public Transform SpawnPointClient;
     [SerializeField] private Transform _errorPoint;
+    [SerializeField] private DungeonRules _dungeonRules; public DungeonRules GetRules => _dungeonRules;
     public ChunkPlacer chunkPlacer;
     private float _timerDungeonGoing; public float GetTimeDungeonGoing => _timerDungeonGoing;
     [SerializeField] private GameObject _allMapCamera; // камера которая делает карту
     [Header("Cheats")]
     [SerializeField] private bool _disableFog; public bool IsDisabledFog => _disableFog;
+
     private void Awake()
     {
         Instance = this;
@@ -195,9 +197,11 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void SetDungeonLevel(int level)
     { _dungeonLevel = level; }
+
     [PunRPC]
     public void LeaveDungeon()
     {
+
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LoadLevel("Menu");
     }

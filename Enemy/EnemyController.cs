@@ -43,12 +43,12 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         startPos = this.gameObject.transform.position;
-        isDeath = false;
         anim = EnemySkin.GetComponent<Animator>();
         gameManager = FindObjectOfType<GameManager>();
         agent = GetComponent<NavMeshAgent>();
         agent.speed = speedMoving;
-        SetTargets();
+        if (!SetTargets()) isDeath = true;
+        else isDeath = false;
     }
     public void SetActionDoing(EnemyFightingType type)
     {
@@ -56,7 +56,7 @@ public class EnemyController : MonoBehaviour
             actionDoing = EnemyDoingDistance;
         else actionDoing = EnemyDoingMelee;
     }
-    private void SetTargets()
+    private bool SetTargets()
     {
         if (gameManager.GetPlayerIndex(0) != null)
         {
@@ -71,8 +71,10 @@ public class EnemyController : MonoBehaviour
         else
         {
             target_2 = null;
-            pl2 = null; 
+            pl2 = null;
+            return false;
         }
+        return true;
     }
     private float distanceToSpawn;
     private float distanceToPlayer1;
@@ -108,9 +110,10 @@ public class EnemyController : MonoBehaviour
             activePlStats = pl1;
         }
     }
+    private float timerTick;
     private void FixedUpdate()
     {
-        if (isDeath != true)
+        if (!isDeath)
         {
             if (isKecked != true)
             {
@@ -303,6 +306,7 @@ public class EnemyController : MonoBehaviour
         GameObject arrowObj = GameManager.SpawnArrowIn(transform, Arrow);
         if (arrowObj != null)
         {
+            arrowObj.gameObject.transform.position = new Vector3(arrowObj.transform.position.x, arrowObj.transform.position.y + 2.25f, arrowObj.transform.position.z);
             DamageZone damageZone = arrowObj.GetComponent<DamageZone>();
             EnemyStats enemyStats = GetComponent<EnemyStats>();
             damageZone.enemyStats = enemyStats;

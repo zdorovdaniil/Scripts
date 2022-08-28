@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
-using stats;
 
 public class DamageZone : MonoBehaviour
 {
@@ -91,6 +90,17 @@ public class DamageZone : MonoBehaviour
         {
             Destroy(other.gameObject);
             Event.Invoke();
+        }
+
+        if (other.tag == "DestroyObject")
+        {
+            if (other.GetComponent<DestroyedObject>())
+            {
+                float damage = 0;
+                if (enemyStats) { damage = enemyStats.GetStats.Damage(); }
+                else damage = playerStats.stats.Damage();
+                other.GetComponent<DestroyedObject>().TakeDamage(damage);
+            }
         }
     }
 

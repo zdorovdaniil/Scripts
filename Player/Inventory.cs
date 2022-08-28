@@ -325,6 +325,11 @@ public class Inventory : Photon.MonoBehaviour
         }
         if (deletingSlot != null) items.Remove(deletingSlot);
     }
+    public void DeleteCollectionItems(List<Item> items)
+    {
+        foreach (Item item in items)
+        { DeleteItemId(item.Id, 99); }
+    }
     // получение количества предметов в инвентаре с указанным id
     public int GetCountItemsWithId(int idItem)
     {
@@ -338,6 +343,7 @@ public class Inventory : Photon.MonoBehaviour
         }
         return count;
     }
+
     // использование предмета из инвентаря с последующим уничтожением
     public bool UseItem(int i)
     {

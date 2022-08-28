@@ -2,48 +2,51 @@
 
 public class BulletMove : Photon.MonoBehaviour
 {
-    public float TimeToDestruct = 1f;
+    [SerializeField] private float _timeToDestruct = 5f;
     public int StartSpeed = 2;
     [SerializeField] private ParticleSystem _flyTrail;
     [SerializeField] private AudioSource _hitSound;
-    public GameObject particleHit;
     private Rigidbody rb;
+    private bool _isMove = true;
 
     Vector3 PreviousStep;
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }
-    void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        Invoke("DestroyNow", TimeToDestruct);
+        Invoke("DestroyNow", _timeToDestruct);
 
         rb.velocity = transform.TransformDirection(Vector3.forward * StartSpeed);
         PreviousStep = gameObject.transform.position;
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Collider")
+        if (other.tag == "Collider" || other.tag == "Player")
         {
-            DestroyNow();
+            HitEffects();
+            HitToObject(other);
         }
     }
-    void FixedUpdate()
+    private void HitToObject(Collider other)
     {
-        if (PhotonNetwork.isMasterClient)
+        rb.Sleep();
+        _isMove = false;
+        this.gameObject.transform.SetParent(other.transform);
+        if (other.tag == "Player") Invoke("DestroyNow", 10f);
+        else Invoke("DestroyNow", 30f);
+    }
+    private void FixedUpdate()
+    {
+        if (PhotonNetwork.isMasterClient && _isMove)
         {
             Quaternion CurrentStep = gameObject.transform.rotation;
-
             transform.LookAt(PreviousStep, transform.up);
-            RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(PreviousStep, transform.TransformDirection(Vector3.back), out hit) && (hit.transform.gameObject != gameObject))
-            {
-                //Instantiate(particleHit, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
-            }
             gameObject.transform.rotation = CurrentStep;
             PreviousStep = gameObject.transform.position;
         }
     }
-    void DestroyNow()
+    private void HitEffects()
     {
         if (_flyTrail)
         {
@@ -54,8 +57,11 @@ public class BulletMove : Photon.MonoBehaviour
         {
             _hitSound.Play();
             _hitSound.transform.SetParent(null);
-            _hitSound.GetComponent<DestroyWithDelay>().StartTick();
         }
+    }
+    private void DestroyNow()
+    {
+        HitEffects();
         Destroy(this.gameObject);
     }
 }
