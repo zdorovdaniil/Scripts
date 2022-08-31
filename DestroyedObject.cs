@@ -8,21 +8,26 @@ public class DestroyedObject : MonoBehaviour
     [SerializeField] private SoundMaterials _soundOnDestroy;
     [SerializeField] private List<Transform> _destroyObjects = new List<Transform>();
     [SerializeField] private UnityEvent _onDestroyObject;
-    public Chunk Chunk;
-    public int Id;
+    [SerializeField] private InteriorSelecter _interiorSelecter;
+    [SerializeField] private int _id;
 
     public void TakeDamage(float value)
     {
-        if (Chunk)
+        if (_interiorSelecter && !PhotonNetwork.offlineMode)
         {
-            if (PhotonNetwork.offlineMode) Chunk.SendDamageDestroyObject(Id, value);
-            else Chunk.photonView.RPC("SendDamageDestroyObject", PhotonTargets.Others, (int)Id, (float)value);
+            _interiorSelecter.photonView.RPC("SendDamageDestroyObject", PhotonTargets.All, (int)_id, (float)value);
         }
         else
         {
             _objectHp = Mathf.FloorToInt(_objectHp - value);
         }
+        Debug.Log(_id + " _value_" + value);
         UpdateHP();
+    }
+    public void SetInterior(InteriorSelecter interiorSelecter, int id)
+    {
+        _interiorSelecter = interiorSelecter;
+        _id = id;
     }
     private void UpdateHP()
     {

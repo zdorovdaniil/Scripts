@@ -28,35 +28,22 @@ public class Item : ScriptableObject
     [Header("Buff And Improve")]
     public List<BuffClass> Buffs;
     public ImproveItem Improve = ImproveItem.Nothing;
-    [Header("Item Requirements")]
-    public int neededAttr = 0;
-    public int neededSkill = 0;
-    public int neededLevel = 0;
-
-    public string nameAttr;
-    public string nameSkill;
+    [SerializeField] private ItemRequirement _itemRequirement;
     [Header("Craft")]
     [SerializeField] private List<Item> _itemsForCraft = new List<Item>();
     public List<Item> GetItemsCraft => _itemsForCraft;
     [SerializeField] private int _craftDifficult; public int GetCraftDifficult => _craftDifficult;
 
-    public static bool CheckReqirement(Item _item, PlayerStats playerStats)
+    public bool CheckReqirement(PlayerStats playerStats)
     {
-        if (_item.itemTupe == ItemTupe.Weapon && _item.neededAttr <= playerStats.stats.Attributes[0].Level &&
-            _item.neededSkill <= playerStats.stats.Skills[6].Level && _item.neededLevel <= playerStats.stats.Level)
-        { return true; }
-        else if (_item.itemTupe == ItemTupe.Armor
-            && _item.neededSkill <= playerStats.stats.Skills[5].Level &&
-            _item.neededAttr <= playerStats.stats.Attributes[0].Level && _item.neededLevel <= playerStats.stats.Level)
-        { return true; }
-        else return false;
+        return _itemRequirement.CheckReqirement(playerStats);
     }
-    public static bool UsingItem(PlayerStats playerStats, InventorySlot slot, Inventory inv, ClothAdder clothAdder, PlayerUpdate playerUpdate)
+    public bool UsingItem(PlayerStats playerStats, InventorySlot slot, Inventory inv, PlayerUpdate playerUpdate)
     {
         bool SelectArmor(InventorySlot _slot, int numE, int numI)
         {
             if (inv.GetEquipSlot(numE) != null) { MsgBoxUI.Instance.ShowAttention("armor slot busy"); return false; }
-            else if (CheckReqirement(_slot.item, playerStats))
+            else
             {
                 inv.SetToEquipSlot(_slot, numE);
                 inv.DeleteItemId(_slot.item.Id, 1);
@@ -65,13 +52,12 @@ public class Item : ScriptableObject
                 GlobalSounds.Instance.SEquipArmor();
                 return true;
             }
-            else { MsgBoxUI.Instance.ShowAttention("the item does not match the characteristics of the player"); return false; }
         }
 
         if (slot.item.itemTupe == ItemTupe.Weapon)
         {
             if (inv.GetEquipSlot(0) != null) { MsgBoxUI.Instance.ShowInfo("weapon", "weapon not requiment player stats"); return false; }
-            else if (CheckReqirement(slot.item, playerStats))
+            else if (_itemRequirement.CheckReqirement(playerStats))
             {
                 inv.SetToEquipSlot(slot, 0);
                 inv.DeleteItemId(slot.item.Id, 1);
@@ -83,7 +69,7 @@ public class Item : ScriptableObject
         }
         else if (slot.item.itemTupe == ItemTupe.Armor)
         {
-            if (CheckReqirement(slot.item, playerStats))
+            if (_itemRequirement.CheckReqirement(playerStats))
             {
                 if (slot.item.armorTupe == ArmorTupe.Helmet) { if (SelectArmor(slot, 1, 25)) { return true; } else { return false; } }
                 if (slot.item.armorTupe == ArmorTupe.Tors) { if (SelectArmor(slot, 2, 26)) { return true; } else { return false; } }
@@ -92,7 +78,7 @@ public class Item : ScriptableObject
                 if (slot.item.armorTupe == ArmorTupe.Amulet) { if (SelectArmor(slot, 5, 29)) { return true; } else { return false; } }
                 if (slot.item.armorTupe == ArmorTupe.Ring) { if (SelectArmor(slot, 6, 30)) { return true; } else { return false; } }
             }
-            else return false;
+            else { MsgBoxUI.Instance.ShowAttention("not requiment player stats"); return false; }
         }
         else if (slot.item.itemTupe == ItemTupe.Poison || slot.item.itemTupe == ItemTupe.Usable || slot.item.itemTupe == ItemTupe.Food)
         {

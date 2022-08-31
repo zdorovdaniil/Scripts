@@ -44,7 +44,7 @@ public class PlayerUI : MonoBehaviour
     }
     public void UseSlot(InventorySlot slot)
     {
-        if (Item.UsingItem(_playerStats, slot, _inventory, _clothAdder, _playerUpdate))
+        if (slot.item.UsingItem(_playerStats, slot, _inventory, _playerUpdate))
         { Debug.Log("предмет использован"); }
         else Debug.Log("Предмет НЕ испольpован");
         FillPlayerUI();

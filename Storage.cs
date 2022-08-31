@@ -57,24 +57,13 @@ public class Storage : MonoBehaviour
     {
         instance = this;
     }
-    private bool CheckReqirement(Item _item)
-    {
-        if (_item.itemTupe == ItemTupe.Weapon && _item.neededAttr <= PlStats.stats.Attributes[0].Level &&
-            _item.neededSkill <= PlStats.stats.Skills[6].Level && _item.neededLevel <= PlStats.stats.Level)
-        { return true; }
-        else if (_item.itemTupe == ItemTupe.Armor
-            && _item.neededSkill <= PlStats.stats.Skills[5].Level &&
-            _item.neededAttr <= PlStats.stats.Attributes[0].Level && _item.neededLevel <= PlStats.stats.Level)
-        { return true; }
-        else return false;
-    }
 
     // перемещение экипировки в свободный слот для экипировки
     private void SelectArmor(InventorySlot _slot, int numE, int numI)
     {
         if (_inv.GetEquipSlot(numE) != null)
         { MsgBoxUI.Instance.ShowInfo("armor", "Slot busy"); return; }
-        else if (CheckReqirement(_slot.item) == true)
+        else if (_slot.item.CheckReqirement(PlStats))
         {
             _inv.SetToEquipSlot(_slot, numE);
             _inv.DeleteItemId(_slot.item.Id, 1);
@@ -87,7 +76,7 @@ public class Storage : MonoBehaviour
         {
             if (_inv.GetEquipSlot(0) != null)
             { MsgBoxUI.Instance.ShowInfo("equip", "Slot busy ar not requiment player stats"); return; }
-            else if (CheckReqirement(slot.item) == true)
+            else if (slot.item.CheckReqirement(PlStats))
             {
                 _inv.SetToEquipSlot(slot, 0);
                 _inv.DeleteItemId(slot.item.Id, 1);

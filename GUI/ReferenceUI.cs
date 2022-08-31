@@ -239,7 +239,7 @@ public class ReferenceUI : MonoBehaviour
             OnOffParentGameObject(true, _buffValue);
             _buffValue.text = item.BuffValue.ToString();
         }
-        else { OnOffParentGameObject(false, _buffValue); }*/
+        else { OnOffParentGameObject(false, _buffValue); }
         if (item.neededAttr > 0)
         {
             OnOffParentGameObject(true, _needAttr);
@@ -260,6 +260,8 @@ public class ReferenceUI : MonoBehaviour
             _needLevel.text = item.neededLevel.ToString();
         }
         else { OnOffParentGameObject(false, _needLevel); }
+        */
+
         CheckReferenceButtonType(buttonsType);
     }
     private void CloseDoingButtons()
