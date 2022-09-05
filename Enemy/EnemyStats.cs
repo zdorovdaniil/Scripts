@@ -49,10 +49,11 @@ public class EnemyStats : Photon.MonoBehaviour
             int maxBlockDamage = Mathf.FloorToInt(stats.armor / 5);
             int kickChance = 0;
             int random = Random.Range(0, 100);
+
             if (random < critChance)
             {
                 isAbsoluteHit = true;
-                critValue = critValue * (critValue / 100);
+                critValue = Mathf.Floor(critValue * (critValue / 100));
                 isCrit = true;
             }
             if (isAbsoluteHit == false)
@@ -83,22 +84,20 @@ public class EnemyStats : Photon.MonoBehaviour
                     _enemySounds.StartSound(SoundType.Step);
                     if (randomKick < kickChance)
                     {
-                        if (PhotonNetwork.offlineMode) enemyController.KickBack(kickStrenght);
-                        else photonView.RPC("SendKickBack", PhotonTargets.All, (float)kickStrenght);
+                        if (!PhotonNetwork.isMasterClient && !PhotonNetwork.offlineMode)
+                        { photonView.RPC("SendKickBack", PhotonTargets.All, (float)kickStrenght); }
+                        else enemyController.KickBack(kickStrenght);
                     }
                 }
                 else
                 {
                     if (!CheckIsDeath())
                     {
-
-                        Vector3 vector3 = BelongRoom.GetRandomTeleportPointRoom();
-                        float[] newPos = new float[3];
-                        newPos[0] = vector3.x; newPos[1] = vector3.y; newPos[2] = vector3.z;
-                        // Далее отправляю по сети массив newPos 
-                        if (!PhotonNetwork.offlineMode) photonView.RPC("SendPosition", PhotonTargets.AllBuffered, (float[])newPos);
-                        else SendPosition(newPos);
-
+                        if (PhotonNetwork.isMasterClient) { SetRandomPositionInRoom(); }
+                        else
+                        {
+                            photonView.RPC("GetRequestToSetPosition", PhotonTargets.Others);
+                        }
                     }
                 }
             }
@@ -110,6 +109,19 @@ public class EnemyStats : Photon.MonoBehaviour
         }
         UpdateHP();
         return false;
+    }
+
+    private void SetRandomPositionInRoom()
+    {
+        float[] newPos = BelongRoom.GetRandomTeleportPointRoom();
+        if (!PhotonNetwork.offlineMode)
+        { photonView.RPC("SendPosition", PhotonTargets.All, (float[])newPos); }
+        else SendPosition(newPos);
+    }
+    [PunRPC]
+    private void GetRequestToSetPosition()
+    {
+        SetRandomPositionInRoom();
     }
     [PunRPC]
     private void SendPosition(float[] newPos)

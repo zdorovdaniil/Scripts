@@ -34,13 +34,20 @@ public class LobbyRoom : Photon.MonoBehaviour
     private RoomInfo _selectedRoomInfo;
     public RoomInfo GetRoomInfo => _selectedRoomInfo;
 
+
+    private float _timer;
+    private void FixedUpdate()
+    {
+        _timer += Time.deltaTime;
+        if (_timer >= 1f) { _timer = 0; SetRoomsList(); }
+    }
     public void ClearFields()
     {
         _hostName.text = "";
         _secondPlayerName.text = "";
         _textNameRoom.text = "";
         _textNumPlayers.text = "";
-    } 
+    }
     [PunRPC]
     public void ClearSecondNickName()
     {
@@ -68,7 +75,7 @@ public class LobbyRoom : Photon.MonoBehaviour
     public void SetSingleplayerRoom()
     {
         int id = PlayerPrefs.GetInt("activeSlot");
-        _hostName.text = PlayerPrefs.GetString(id+"_slot_nickName");
+        _hostName.text = PlayerPrefs.GetString(id + "_slot_nickName");
         _numRoomsInDungeon.text = PlayerPrefs.GetInt("numRooms").ToString();
         _dungeonLevel.text = PlayerPrefs.GetInt(id + "_slot_dungeonLevel").ToString();
         _clientLine.gameObject.SetActive(false);
@@ -81,7 +88,7 @@ public class LobbyRoom : Photon.MonoBehaviour
         {
             SwitchClientObjects(false);
             _secondPlayerName.text = PhotonNetwork.playerName;
-            photonView.RPC("SetSecondPlayerName", PhotonTargets.All,(string)PhotonNetwork.playerName);
+            photonView.RPC("SetSecondPlayerName", PhotonTargets.All, (string)PhotonNetwork.playerName);
             _buttonCreateRoom.gameObject.SetActive(false);
             _hostLine.gameObject.SetActive(false);
             _clientLine.gameObject.SetActive(true);
@@ -93,7 +100,7 @@ public class LobbyRoom : Photon.MonoBehaviour
     public void SetSecondPlayerName(string name)
     {
         _secondPlayerName.text = name;
-        if (PhotonNetwork.isMasterClient) {_kickButton.gameObject.SetActive(true);} else {_kickButton.gameObject.SetActive(false);}
+        if (PhotonNetwork.isMasterClient) { _kickButton.gameObject.SetActive(true); } else { _kickButton.gameObject.SetActive(false); }
     }
     public void OpenRoomLobby()
     {
@@ -127,15 +134,15 @@ public class LobbyRoom : Photon.MonoBehaviour
     }
     private void SwitchClientObjects(bool status)
     {
-        foreach(Transform obj in _disableClientObjects)
-        {obj.gameObject.SetActive(status);}
+        foreach (Transform obj in _disableClientObjects)
+        { obj.gameObject.SetActive(status); }
     }
-    
+
     public void SetRoomInfoField(RoomInfo roomInfo)
     {
         _selectedRoomInfo = roomInfo;
         _textNameRoom.text = _selectedRoomInfo.Name;
-        _textNumPlayers.text = _selectedRoomInfo.PlayerCount.ToString()+ " / " + _selectedRoomInfo.MaxPlayers.ToString();
+        _textNumPlayers.text = _selectedRoomInfo.PlayerCount.ToString() + " / " + _selectedRoomInfo.MaxPlayers.ToString();
     }
     public void SetRoomsList()
     {

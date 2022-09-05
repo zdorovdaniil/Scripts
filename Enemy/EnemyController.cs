@@ -72,9 +72,10 @@ public class EnemyController : MonoBehaviour
         {
             target_2 = null;
             pl2 = null;
-            return false;
         }
-        return true;
+        if (!target_1 && !target_2)
+        { return false; }
+        else return true;
     }
     private float distanceToSpawn;
     private float distanceToPlayer1;
@@ -304,7 +305,7 @@ public class EnemyController : MonoBehaviour
     public void FlyArrow()
     {
         GameObject arrowObj = GameManager.SpawnArrowIn(transform, Arrow);
-        if (arrowObj != null)
+        if (arrowObj)
         {
             arrowObj.gameObject.transform.position = new Vector3(arrowObj.transform.position.x, arrowObj.transform.position.y + 2.25f, arrowObj.transform.position.z);
             DamageZone damageZone = arrowObj.GetComponent<DamageZone>();

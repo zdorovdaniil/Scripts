@@ -22,7 +22,7 @@ public class ChestUI : MonoBehaviour
         Instantiate(_prefReferenceGUI, _spawnReferenceGUI).GetComponent<ReferenceUI>().SetValueSlot(slot, buttonType);
     }
     public void ResetCurChest()
-    { _curChest = null; _buttonOpenChest.gameObject.SetActive(false); }
+    { _curChest = null; _buttonOpenChest.gameObject.SetActive(false); _chestUI.SetActive(false); }
     public void SetCurChest(Chest curChest)
     { _curChest = curChest; _buttonOpenChest.gameObject.SetActive(true); }
     public void SwitchChestUI(bool status)

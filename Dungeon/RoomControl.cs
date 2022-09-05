@@ -152,10 +152,13 @@ public class RoomControl : Photon.MonoBehaviour
             if (ListPlayers.Count >= 1) SwitchDoorsInChunk(true);
         }
     }
-    public Vector3 GetRandomTeleportPointRoom()
+    public float[] GetRandomTeleportPointRoom()
     {
         int num = Random.Range(0, _teleportPointRoom.Count);
-        return _teleportPointRoom[num].transform.position;
+        Vector3 vector3 = _teleportPointRoom[num].transform.position;
+        float[] newPos = new float[3];
+        newPos[0] = vector3.x; newPos[1] = vector3.y; newPos[2] = vector3.z;
+        return newPos;
     }
     public IEnumerator SpawnEnemy()
     {
@@ -170,7 +173,7 @@ public class RoomControl : Photon.MonoBehaviour
                         int randomEnemy = Random.Range(0, _enemysForSpawn.Length);
                         {
                             GameObject _enemy = GameManager.SpawnEnemyIn(_spawnPointsForEnemy[i], _enemysForSpawn[randomEnemy].PrefabEnemy);
-                            if (_enemy != null)
+                            if (_enemy)
                             {
                                 EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
                                 _enemyStats.BelongRoom = this;
@@ -181,28 +184,6 @@ public class RoomControl : Photon.MonoBehaviour
                     }
                 }
             }
-            /*if (_spawnPointsForEnemy.Count != 0)
-            {
-                foreach (Transform point in _spawnPointsForEnemy)
-                {
-                    if (_countSpawnedEnemyes < _countEnemy)
-                    {
-                        int num = Random.Range(0, SpawnEnemies.Length);
-                        if (num != 0)
-                        {
-                            GameObject _enemy = GameManager.SpawnEnemyIn(point, SpawnEnemies[num].PrefabEnemy);
-                            if (_enemy != null)
-                            {
-                                EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();
-                                _enemyStats.BelongRoom = this;
-                                _countSpawnedEnemyes += 1;
-                                _enemyesInRoom.Add(_enemyStats);
-                            }
-                        }
-                        else break;
-                    }
-                }
-            }*/
         }
     }
     public IEnumerator AddRoomToDungeonObjects()
@@ -231,6 +212,4 @@ public class RoomControl : Photon.MonoBehaviour
         if (!PhotonNetwork.offlineMode) chunk.photonView.RPC("SwitchDoorBlocks", PhotonTargets.All, (bool)status);
         else chunk.SwitchDoorBlocks(status);
     }
-
-
 }

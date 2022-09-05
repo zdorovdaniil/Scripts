@@ -130,6 +130,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
                 LobbyRoom.instance.ClearFields();
                 if (PhotonNetwork.room.PlayerCount >= 2 || Settings.Instance.GetIsAlwayesNetwork)
                 {
+                    PhotonNetwork.room.IsOpen = false;
                     photonView.RPC("SendLoadScene", PhotonTargets.All);
                 }
                 else { SinglePlayerStart(); }
@@ -168,9 +169,9 @@ public class NetworkCreateGame : Photon.MonoBehaviour
             PhotonNetwork.playerName = NickNameField.text;
             PlayerPrefs.SetString("NickName", NickNameField.text);
             if (roomInfo.PlayerCount < 2) { PhotonNetwork.JoinRoom(roomInfo.Name); }
-            else Debug.Log("Комната заполнена");
+            else MsgBoxUI.Instance.ShowAttention("Room is full or already started");
         }
-        else Debug.Log("Не выбрана комната");
+        else MsgBoxUI.Instance.ShowAttention("Select room from list");
     }
     // подключение к комнате успешно
     public void OnJoinedRoom()

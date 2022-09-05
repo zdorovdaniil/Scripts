@@ -75,5 +75,6 @@ public enum EffectType
     Hit,
     SwapHit,
     BloodHit,
+    None,
 
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ProcessCommand : MonoBehaviour
 {
@@ -42,5 +43,19 @@ public class ProcessCommand : MonoBehaviour
     public static void SetParent(Transform changeObj, Transform parantObj)
     {
         changeObj.SetParent(parantObj);
+    }
+    public static IEnumerator DestroyGameObjectDelay(GameObject gameObject, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        {
+            Destroy(gameObject);
+        }
+    }
+    public static IEnumerator DestroyGameObjectDelay(Action action, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        {
+            action.Invoke();
+        }
     }
 }

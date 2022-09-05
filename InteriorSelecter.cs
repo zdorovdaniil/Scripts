@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,7 +34,7 @@ public class InteriorSelecter : Photon.MonoBehaviour
     [PunRPC]
     public void SendDamageDestroyObject(int id, float value)
     {
-        _destroyedObject[id].TakeDamage(value);
+        _destroyedObject[id].MinusObjectHP(value);
     }
     private int[] GesMassVariantObjects(bool[] data, List<InteriorObject> objects)
     {
@@ -81,5 +80,9 @@ public class InteriorSelecter : Photon.MonoBehaviour
             _objects[i].gameObject.SetActive(data[i]);
             _objects[i].SetVariant(variantData[i]);
         }
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+
     }
 }

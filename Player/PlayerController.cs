@@ -11,7 +11,7 @@ public class PlayerController : Photon.MonoBehaviour
     [SerializeField] private GameObject WeaponZone; // damage зона оружия
 
     private Animator anim;
-    private HumanEffects _playerEffects;
+    [SerializeField] private HumanEffects _playerEffects;
     private CharacterController ch_control;
     [SerializeField] private AttackController att_control;
 
@@ -33,14 +33,13 @@ public class PlayerController : Photon.MonoBehaviour
     }
     public void SpawnParticle(int zRoration = 0)
     {
-        _playerEffects.SpawnSwordEffects(zRoration);
+        if (_playerEffects) _playerEffects.SpawnSwordEffects(zRoration);
     }
 
     void Start()
     {
         anim = GetComponent<Animator>();
         ch_control = GetComponent<CharacterController>();
-        _playerEffects = GetComponent<HumanEffects>();
     }
 
     public void FixedUpdate()
@@ -161,6 +160,7 @@ public class PlayerController : Photon.MonoBehaviour
     public void PlayerComboAttack()
     {
         anim.SetTrigger("Combo");
+        ChangeComboSpeed(2f);
     }
     private void GamingGravity()
     {
@@ -183,6 +183,15 @@ public class PlayerController : Photon.MonoBehaviour
             // принимаем данные
             isAttack = (bool)stream.ReceiveNext();
             WeaponZone.SetActive(isAttack);
+        }
+    }
+    private IEnumerator ChangeComboSpeed(float delay)
+    {
+        float returnSpeed = _curSpeedMove;
+        _curSpeedMove = 0f;
+        yield return new WaitForSecondsRealtime(delay);
+        {
+            _curSpeedMove = returnSpeed;
         }
     }
 }

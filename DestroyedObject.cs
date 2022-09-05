@@ -1,28 +1,41 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using System.Collections;
 
 public class DestroyedObject : MonoBehaviour
 {
     [SerializeField] private float _objectHp;
-    [SerializeField] private SoundMaterials _soundOnDestroy;
+    [SerializeField] private SoundMaterials _soundOnHit;
     [SerializeField] private List<Transform> _destroyObjects = new List<Transform>();
     [SerializeField] private UnityEvent _onDestroyObject;
     [SerializeField] private InteriorSelecter _interiorSelecter;
     [SerializeField] private int _id;
+    private bool _isTakeDamage = true;
 
+    public void MinusObjectHP(float value)
+    {
+        Debug.Log("Hit Destroy Object On = " + value + " Id = " + _id);
+        LogUI.Instance.Loger("Hit Destroy Object On = " + value + " Id = " + _id);
+        _objectHp -= value;
+        UpdateHP();
+    }
     public void TakeDamage(float value)
     {
-        if (_interiorSelecter && !PhotonNetwork.offlineMode)
+        if (_isTakeDamage)
         {
-            _interiorSelecter.photonView.RPC("SendDamageDestroyObject", PhotonTargets.All, (int)_id, (float)value);
+            _isTakeDamage = false;
+            StartCoroutine(ResetDamageGet());
+            if (_interiorSelecter && !PhotonNetwork.offlineMode)
+            {
+                _interiorSelecter.photonView.RPC("SendDamageDestroyObject", PhotonTargets.All, (int)_id, (float)value);
+            }
+            else
+            {
+                MinusObjectHP(value);
+            }
         }
-        else
-        {
-            _objectHp = Mathf.FloorToInt(_objectHp - value);
-        }
-        Debug.Log(_id + " _value_" + value);
-        UpdateHP();
+
     }
     public void SetInterior(InteriorSelecter interiorSelecter, int id)
     {
@@ -43,9 +56,16 @@ public class DestroyedObject : MonoBehaviour
         foreach (Transform trf in _destroyObjects) { if (trf) Destroy(trf.gameObject); }
         Destroy(this.gameObject);
     }
+    private IEnumerator ResetDamageGet()
+    {
+        yield return new WaitForSecondsRealtime(0.6f);
+        {
+            _isTakeDamage = true;
+        }
+    }
 }
 
 public enum SoundMaterials
 {
-    Wood, Stone, Metal,
+    None, Wood, Stone, Metal,
 }

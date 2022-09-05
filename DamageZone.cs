@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 public class DamageZone : MonoBehaviour
 {
-    [SerializeField]
-    TupeDamageZone m_TupeDamageZone = TupeDamageZone.Default;
+    [SerializeField] TupeDamageZone m_TupeDamageZone = TupeDamageZone.Default;
     public TupeDamageZone tupeDamageZone { get { return m_TupeDamageZone; } set { m_TupeDamageZone = value; } }
     [SerializeField] private List<BuffClass> _buffs = new List<BuffClass>();
     // Игрок которому принадлежит данная DamageZone, если не указан то принадлежит окр. миру или ИИ
     public PlayerStats playerStats;
     // ИИ которому принадлежит данная DamageZone
     public EnemyStats enemyStats;
-    public UnityEvent Event;
+    [SerializeField] private UnityEvent EventOnHitTag;
+    [SerializeField] private string tagValue;
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Enemy")
@@ -34,7 +34,6 @@ public class DamageZone : MonoBehaviour
                     }
                 }
             }
-            Event.Invoke();
         }
         if (other.tag == "Player")
         {
@@ -83,13 +82,11 @@ public class DamageZone : MonoBehaviour
                     otherPlayerStats.TakeDamage(damage, true, "Trap");
                 }
             }
-            Event.Invoke();
         }
 
         if (other.tag == "BreakAbleItem")
         {
             Destroy(other.gameObject);
-            Event.Invoke();
         }
 
         if (other.tag == "DestroyObject")
@@ -98,9 +95,14 @@ public class DamageZone : MonoBehaviour
             {
                 float damage = 0;
                 if (enemyStats) { damage = enemyStats.GetStats.Damage(); }
-                else damage = playerStats.stats.Damage();
+                else if (playerStats) { damage = playerStats.stats.Damage(); }
                 other.GetComponent<DestroyedObject>().TakeDamage(damage);
             }
+        }
+
+        if (other.tag == tagValue)
+        {
+            EventOnHitTag.Invoke();
         }
     }
 

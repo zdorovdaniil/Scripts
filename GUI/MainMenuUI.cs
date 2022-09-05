@@ -39,7 +39,13 @@ public class MainMenuUI : MonoBehaviour
         }
         SelectProfile.SetActive(true);
         CreateNewCharacter.SetActive(false);
+        if (!CheckHasSaving())
+        {
+            CloseAllPanels();
+            CreateNewCharacter.SetActive(true);
+        }
     }
+
     public void CloseAllPanels()
     {
         CreateNewCharacter.SetActive(false);
@@ -149,5 +155,15 @@ public class MainMenuUI : MonoBehaviour
     public void UpdateProfileSlots()
     {
         foreach (ProfileSlot slot in _profileSlots) { slot.OpenStatsToSlot(); }
+    }
+
+    private bool CheckHasSaving()
+    {
+        bool isHas = false;
+        for (int i = 0; i < _profileSlots.Count; i++)
+        {
+            if (PlayerPrefs.HasKey(i + "_slot_level")) isHas = true;
+        }
+        return isHas;
     }
 }
