@@ -8,7 +8,6 @@ public class Storage : MonoBehaviour
     [SerializeField] private List<InventorySlot> storage = new List<InventorySlot>();
     // id-шники загруженных предметов из сохранения
     [SerializeField] private int[] storageIDs = new int[40];
-    [SerializeField] private int _startStorageCapacity = 20;
     public int StorageCapacity; // вместимость хранилища
     [SerializeField] private ItemDatabase itemDatabase;
     [SerializeField] private SlotsUI _invSlots;

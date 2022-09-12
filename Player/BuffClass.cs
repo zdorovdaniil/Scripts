@@ -6,13 +6,33 @@ public class BuffClass : ScriptableObject
     public int BuffId;
     public Buff Buff;
     public float Duration;
-    public float Time;
     public int Value;
     public Sprite Icon;
     public GameObject EffectOnUse;
     public GameObject EffectOnUsing;
     public float EffectLifetime;
 }
+public class BuffStat
+{
+    public BuffClass BuffClass;
+    public float Time;
+    public BuffStat(BuffClass buffClass)
+    {
+        BuffClass = buffClass;
+        Time = buffClass.Duration;
+    }
+    public void FullTime()
+    {
+        Time = BuffClass.Duration;
+    }
+    public bool DoingBuff()
+    {
+        Time = Time - 0.25f;
+        if (Time <= 0) return false;
+        else return true;
+    }
+}
+
 public enum Buff
 {
     Nothing,
@@ -29,4 +49,5 @@ public enum Buff
     MaxAttack,
     CritChance,
     CritValue,
+    MaxBlock,
 }

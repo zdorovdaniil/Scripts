@@ -19,8 +19,7 @@ public class PlayerUpdate : MonoBehaviour
     [SerializeField] private Transform _containBuffFields;
     // Buttons
     [SerializeField] private JerkButton _jerkButton;
-    [SerializeField] private List<BuffClass> _buffObjParticles = new List<BuffClass>();
-
+    [SerializeField] private JerkButton _flyingSlashButton;
     private float needEXP = 1000;
 
     private void Start()
@@ -29,7 +28,6 @@ public class PlayerUpdate : MonoBehaviour
         _sliderHP.minValue = 0;
         _playerLeveling = PlayerLeveling.instance;
     }
-
     private void UpdateHPSlider()
     {
         float nowHP = _playerStats.curHP;
@@ -54,6 +52,7 @@ public class PlayerUpdate : MonoBehaviour
             UpdateHPSlider();
             UpdateBuffFields();
             _jerkButton.UpdateButton(_playerStats.stats.Skills[1].Level);
+            _flyingSlashButton.UpdateButton(1); // переделать
             if (_playerLeveling) needEXP = _playerLeveling.GetHeedExp(_playerStats.stats.Level);
         }
     }
@@ -62,8 +61,20 @@ public class PlayerUpdate : MonoBehaviour
         if (_playerStats.stats.ActiveBuffes.Count > 0)
         {
             ProcessCommand.ClearChildObj(_containBuffFields);
-            foreach (BuffClass buffClass in _playerStats.stats.ActiveBuffes)
+            foreach (BuffStat buffStat in _playerStats.stats.ActiveBuffes)
             {
+                if (buffStat.DoingBuff())
+                {
+                    Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffStat);
+                }
+                else
+                {
+                    _playerStats.stats.ResetBuff(buffStat);
+                    _playerStats.ChangeSpeed();
+                    _playerStats.UpdateArmor();
+                    break;
+                }
+                /*
                 buffClass.Time -= 0.25f;
                 Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffClass);
 
@@ -71,8 +82,10 @@ public class PlayerUpdate : MonoBehaviour
                 {
                     _playerStats.stats.ResetBuff(buffClass);
                     _playerStats.ChangeSpeed();
+                    _playerStats.UpdateArmor();
                     break;
                 }
+                */
             }
         }
         else

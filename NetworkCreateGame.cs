@@ -68,6 +68,25 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         SetRegionCode(PlayerPrefs.GetInt("region"));
         PhotonNetwork.ConnectToRegion(_regionCode, PhotonNetwork.gameVersion);
         _enterPlayerName.gameObject.SetActive(false);
+        ServerStatusUI.Instance.SetNewStatus("connecting . . .", Color.white);
+        StopCoroutine(CheckConnectToServer());
+        StartCoroutine(CheckConnectToServer());
+    }
+    private IEnumerator CheckConnectToServer()
+    {
+        bool isConnectFirsTime = false;
+        yield return new WaitForSecondsRealtime(2f);
+        {
+            if (!_isConnectedMasterServer) isConnectFirsTime = true;
+        }
+        yield return new WaitForSecondsRealtime(1.5f);
+        {
+            if (!_isConnectedMasterServer && isConnectFirsTime)
+            {
+                MsgBoxUI.Instance.ShowAttention("Unable connect to the server. You may not be connected to the Internet or the server is not avaible. Online game will not be avaible.");
+                ServerStatusUI.Instance.SetNewStatus("offline!", Color.blue);
+            }
+        }
     }
     // подключение к мастер серверу успешно
     public virtual void OnConnectedToMaster()
@@ -76,21 +95,24 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         _isConnectedMasterServer = true;
         PhotonNetwork.JoinLobby();
     }
+
     // подключение к лобби успешно
     public virtual void OnJoinedLobby()
     {
-        LobbyRoom.instance.SetRoomsList();
+        LobbyRoomUI.instance.SetRoomsList();
         _isConnectedToLobby = true;
+        ServerStatusUI.Instance.SetNewStatus("connected!", Color.green);
     }
     public void DisconnecteFromServer()
     {
         _isConnectedMasterServer = false;
         _isConnectedToLobby = false;
-        PhotonNetwork.Disconnect();
+        if (PhotonNetwork.connected) PhotonNetwork.Disconnect();
+        ServerStatusUI.Instance.SetNewStatus("disconnected!", Color.red);
     }
     public void ClickCreateOwnRoom()
     {
-        LobbyRoom.instance.ClearFields();
+        LobbyRoomUI.instance.ClearFields();
         if (_isConnectedMasterServer && _isConnectedToLobby)
         {
             string roomName = NickNameField.text.ToLower();
@@ -99,26 +121,30 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         }
         else
         {
-            LobbyRoom.instance.SetSingleplayerRoom();
+            LobbyRoomUI.instance.SetSingleplayerRoom();
         }
 
     }
     public void ClickKickOutFromRoom()
     {
         photonView.RPC("DisconnectFromRoom", PhotonTargets.Others);
-        LobbyRoom.instance.ClearSecondNickName();
+        LobbyRoomUI.instance.ClearSecondNickName();
     }
     public void ClickDisconnectFromRoom()
     {
-        if (PhotonNetwork.isMasterClient)
+        if (!PhotonNetwork.connected)
+        {
+            LobbyRoomUI.instance.OpenlostRoomsLobby();
+        }
+        else if (PhotonNetwork.isMasterClient)
         { photonView.RPC("DisconnectFromRoom", PhotonTargets.All); }
-        else { LobbyRoom.instance.photonView.RPC("ClearSecondNickName", PhotonTargets.Others); DisconnectFromRoom(); }
+        else { LobbyRoomUI.instance.photonView.RPC("ClearSecondNickName", PhotonTargets.Others); DisconnectFromRoom(); }
     }
     [PunRPC]
     public void DisconnectFromRoom()
     {
         PhotonNetwork.LeaveRoom();
-        LobbyRoom.instance.OpenlostRoomsLobby();
+        LobbyRoomUI.instance.OpenlostRoomsLobby();
     }
     public void ClickCreateRoom()
     {
@@ -127,7 +153,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         {
             if (PhotonNetwork.room != null)
             {
-                LobbyRoom.instance.ClearFields();
+                LobbyRoomUI.instance.ClearFields();
                 if (PhotonNetwork.room.PlayerCount >= 2 || Settings.Instance.GetIsAlwayesNetwork)
                 {
                     PhotonNetwork.room.IsOpen = false;
@@ -162,8 +188,8 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     }
     public void JoinToRoom()
     {
-        LobbyRoom.instance.ClearFields();
-        RoomInfo roomInfo = GetComponent<LobbyRoom>().GetRoomInfo;
+        LobbyRoomUI.instance.ClearFields();
+        RoomInfo roomInfo = LobbyRoomUI.instance.GetRoomInfo;
         if (roomInfo != null)
         {
             PhotonNetwork.playerName = NickNameField.text;
@@ -176,8 +202,9 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     // подключение к комнате успешно
     public void OnJoinedRoom()
     {
-        if (PhotonNetwork.isMasterClient) { LobbyRoom.instance.StartCreateRoom(); }
-        else LobbyRoom.instance.SetRoomInfo();
+        if (PhotonNetwork.isMasterClient) { LobbyRoomUI.instance.StartCreateRoom(); }
+        else LobbyRoomUI.instance.SetRoomInfo();
+        ServerStatusUI.Instance.SetNewStatus("in room!", Color.white);
     }
     public IEnumerator ConnectToServerWithDelay()
     {

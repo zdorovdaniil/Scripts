@@ -3,9 +3,9 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class LobbyRoom : Photon.MonoBehaviour
+public class LobbyRoomUI : Photon.MonoBehaviour
 {
-    public static LobbyRoom instance;
+    public static LobbyRoomUI instance;
 
     [SerializeField] private Transform _roomListTrf;
     [SerializeField] private GameObject _roomButtonPrefab;
@@ -80,6 +80,7 @@ public class LobbyRoom : Photon.MonoBehaviour
         _dungeonLevel.text = PlayerPrefs.GetInt(id + "_slot_dungeonLevel").ToString();
         _clientLine.gameObject.SetActive(false);
         _kickButton.gameObject.SetActive(false);
+        OpenRoomLobby();
     }
     public void SetRoomInfo()
     {
@@ -104,14 +105,14 @@ public class LobbyRoom : Photon.MonoBehaviour
     }
     public void OpenRoomLobby()
     {
-        _lostRoomsLobby.gameObject.SetActive(false);
         _roomLobby.gameObject.SetActive(true);
+        _lostRoomsLobby.gameObject.SetActive(false);
     }
     public void OpenlostRoomsLobby()
     {
         ClearFields();
-        _lostRoomsLobby.gameObject.SetActive(true);
         _roomLobby.gameObject.SetActive(false);
+        _lostRoomsLobby.gameObject.SetActive(true);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

@@ -9,10 +9,24 @@ public class HumanEffects : MonoBehaviour
     [SerializeField] private ParticlePlaces _particlePlaeces;
     [SerializeField] private GameObject _weaponParticle;
     [SerializeField] private ParticleSystem _jercParticle;
+    [SerializeField] private GameObject _flyingSlash;
 
     private void Start()
     {
         _basePrefs = BasePrefs.instance;
+    }
+    public void SpawnFlyingSword()
+    {
+        StartCoroutine(Delay());
+        IEnumerator Delay()
+        {
+            yield return new WaitForSecondsRealtime(0.25f);
+            {
+                DamageZone damageZone = GlobalEffects.Instance.CreateParticle(this.transform, EffectType.FlyingSlash, 2.5f).GetComponent<DamageZone>();
+                damageZone.playerStats = GetComponent<PlayerStats>();
+            }
+        }
+
     }
     public void SpawnSwordEffects(int zRoration = 0)
     {
@@ -41,7 +55,7 @@ public class HumanEffects : MonoBehaviour
         {
             obj = Instantiate(buff.EffectOnUsing, _particlePlaeces.BuffPlace.position, _particlePlaeces.BuffPlace.rotation);
             obj.transform.SetParent(_particlePlaeces.BuffPlace);
-            StartCoroutine(DestroyObjWithDelay(obj, buff.Time));
+            StartCoroutine(DestroyObjWithDelay(obj, buff.Duration));
         }
         if (obj) _buffEffects.Add(obj);
     }

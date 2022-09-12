@@ -39,7 +39,7 @@ public class EventObj : Photon.MonoBehaviour
         }
         else
         {
-            playerStats.AddBuff(_buff.BuffId);
+            playerStats.AddBuffPlayer(_buff.BuffId);
         }
         if (!PhotonNetwork.offlineMode)
             photonView.RPC("Activate", PhotonTargets.All);

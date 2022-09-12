@@ -10,6 +10,7 @@ public class SpawnParticle : MonoBehaviour
 
     public void SpawnEffect()
     {
+        if (!_transform) _transform = this.transform;
         if (_chanceSpawn == 100) GlobalEffects.Instance.CreateParticle(_transform, _effectType, _yChangeCoord, _zRoration);
         else
         {

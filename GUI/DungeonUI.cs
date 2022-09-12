@@ -79,8 +79,8 @@ public class DungeonUI : MonoBehaviour
             _tabPlayers.gameObject.SetActive(true);
             PlayerStats playerStats1 = _gameManager.GetPlayerIndex(0);
             PlayerStats playerStats2 = _gameManager.GetPlayerIndex(1);
-            _1playerNameTMP.text = playerStats1.NickName;
-            if (playerStats2 != null) _2playerNameTMP.text = playerStats2.NickName;
+            _1playerNameTMP.text = playerStats1.GetNickName;
+            if (playerStats2 != null) _2playerNameTMP.text = playerStats2.GetNickName;
         }
         else
         {

@@ -7,11 +7,11 @@ public class BuffField : MonoBehaviour
     [SerializeField] private Image _icon;
     [SerializeField] private TMP_Text _time;
     [SerializeField] private TMP_Text _value;
-    public void SetFields(BuffClass buffClass)
+    public void SetFields(BuffStat buffStat)
     {
-        _icon.sprite = buffClass.Icon;
-        int time = Mathf.FloorToInt(buffClass.Time);
+        _icon.sprite = buffStat.BuffClass.Icon;
+        int time = Mathf.FloorToInt(buffStat.Time);
         _time.text = time.ToString();
-        _value.text = buffClass.Value.ToString();
+        _value.text = buffStat.BuffClass.Value.ToString();
     }
 }

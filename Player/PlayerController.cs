@@ -56,6 +56,10 @@ public class PlayerController : Photon.MonoBehaviour
         SwitchDamageZone(); // обновление DamageZone данного игрока
 
     }
+    public void SetFlyingSlash()
+    {
+        _playerEffects.SpawnFlyingSword();
+    }
     public void SetJerk()
     {
         anim.SetTrigger("Roll");

@@ -5,12 +5,15 @@ public class BulletMove : Photon.MonoBehaviour
 {
     [SerializeField] private float _timeToDestruct = 5f;
     public int StartSpeed = 2;
+    [SerializeField] private bool _destroyOnTrigger = true;
+    [SerializeField] private bool _includeToObjectOnTrigger = true;
     [SerializeField] private EffectType _effectOnHit = EffectType.None;
     [SerializeField] private ParticleSystem _flyTrail;
     [SerializeField] private AudioSource _hitSound;
     private Rigidbody rb;
     private bool _isMove = true;
     [SerializeField] private UnityEvent EventOnHitTag;
+    [SerializeField] private bool _isActivingOneTime = true;
     private bool _isActivatedEventOnHit = false;
 
     Vector3 PreviousStep;
@@ -30,11 +33,14 @@ public class BulletMove : Photon.MonoBehaviour
             if (!_isActivatedEventOnHit)
             {
                 EventOnHitTag.Invoke();
-                _isActivatedEventOnHit = true;
+                if (_isActivingOneTime) _isActivatedEventOnHit = true;
                 HitEffects();
                 HitToObject(other);
-                DestroyDamageZone();
-                this.enabled = false;
+                if (_destroyOnTrigger)
+                {
+                    DestroyDamageZone();
+                    this.enabled = false;
+                }
             }
         }
     }
@@ -47,7 +53,7 @@ public class BulletMove : Photon.MonoBehaviour
     {
         rb.Sleep();
         _isMove = false;
-        this.gameObject.transform.SetParent(other.transform);
+        if (_includeToObjectOnTrigger) this.gameObject.transform.SetParent(other.transform);
         float timeToDestroy = 10f;
         if (other.tag != "Player") timeToDestroy = 30f;
         ProcessCommand.DestroyGameObjectDelay(this.gameObject, timeToDestroy);

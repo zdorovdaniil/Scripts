@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using stats;
 public class EnemyUI : MonoBehaviour
 {
-    [SerializeField] private bool _isFreezeRotation = true;
     public TextMeshPro lvlUI;
     public TextMeshPro NameEnemyUI;
     public TextMeshPro HealthEnemyUI;
@@ -26,6 +23,6 @@ public class EnemyUI : MonoBehaviour
     {
         lvlUI.SetText("lvl - " + stats.Level.ToString());
         NameEnemyUI.SetText(enemyStats.enemyTupe.Name);
-        HealthEnemyUI.SetText(enemyStats.curHP.ToString() + " / " + stats.HP);
+        HealthEnemyUI.SetText((Mathf.Floor(enemyStats.curHP * 100.00f) * 0.01f).ToString() + " / " + stats.HP);
     }
 }

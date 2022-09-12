@@ -12,97 +12,101 @@ public class DamageZone : MonoBehaviour
     // ИИ которому принадлежит данная DamageZone
     public EnemyStats enemyStats;
     [SerializeField] private UnityEvent EventOnHitTag;
-    [SerializeField] private string tagValue;
+    private bool _isActive = true; public void SwitchActive(bool status) => _isActive = status;
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Enemy")
+        if (_isActive)
         {
-            EnemyStats otherEnemyStats = other.gameObject.GetComponent<EnemyStats>();
-            // если damageZone от игрока попадает по ИИ то ему наносится урон
-            if (otherEnemyStats != enemyStats && playerStats != null)
+            if (other.tag == "Enemy")
             {
-                float damagePlayer = playerStats.stats.Damage();
-                float kickStrenght = playerStats.stats.KickStrenght();
-                bool isDies = otherEnemyStats.TakeDamage(damagePlayer, false, kickStrenght, playerStats.stats.critValue, playerStats.stats.critChance);
-                if (isDies == true)
+                EnemyStats otherEnemyStats = other.gameObject.GetComponent<EnemyStats>();
+                // если damageZone от игрока попадает по ИИ то ему наносится урон
+                if (otherEnemyStats != enemyStats && playerStats != null)
                 {
-                    DungeonStats.Instance.DefeatEnemy();
-                    PlayerQuest.instance.UpdateProcessQuests(otherEnemyStats, null, "kill_enemy");
-                    if (otherEnemyStats.enemyTupe.IsBoss)
+                    float damagePlayer = playerStats.stats.Damage();
+                    float kickStrenght = playerStats.stats.KickStrenght();
+                    bool isDies = otherEnemyStats.TakeDamage(damagePlayer, false, kickStrenght, playerStats.stats.critValue, playerStats.stats.critChance);
+                    if (isDies == true)
                     {
-                        PlayerQuest.instance.UpdateProcessQuests(null, null, "kill_boss");
+                        DungeonStats.Instance.DefeatEnemy();
+                        PlayerQuest.instance.UpdateProcessQuests(otherEnemyStats, null, "kill_enemy");
+                        if (otherEnemyStats.enemyTupe.IsBoss)
+                        {
+                            PlayerQuest.instance.UpdateProcessQuests(null, null, "kill_boss");
+                        }
                     }
+                    EventOnHitTag.Invoke();
                 }
             }
-        }
-        if (other.tag == "Player")
-        {
-            // получение PlayerStats от другово игрока, по которому пришлось попадание
-            PlayerStats otherPlayerStats = other.gameObject.GetComponent<PlayerStats>();
-            foreach (BuffClass buff in _buffs)
-            { otherPlayerStats.AddBuff(buff.BuffId); }
-            if (enemyStats != null) // если владелец damageZone ИИ
+            if (other.tag == "Player")
             {
-                if (!enemyStats.IsDeath) // если противник жив, то он наносит урон игроку
+                // получение PlayerStats от другово игрока, по которому пришлось попадание
+                PlayerStats otherPlayerStats = other.gameObject.GetComponent<PlayerStats>();
+                foreach (BuffClass buff in _buffs)
+                { otherPlayerStats.AddBuffPlayer(buff.BuffId); }
+                if (enemyStats != null) // если владелец damageZone ИИ
                 {
-                    float damageEnemy = enemyStats.GetStats.Damage();
-                    otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name, enemyStats.GetStats.critValue, enemyStats.GetStats.critChance);
-                }
-            }
-            else
-            {
-                if (tupeDamageZone == TupeDamageZone.Default)
-                    return;
-                if (tupeDamageZone == TupeDamageZone.Fire)
-                {
-                    int damage = Random.Range(1, 3);
-                    otherPlayerStats.TakeDamage(damage, true, "Fire");
-                }
-                if (tupeDamageZone == TupeDamageZone.Lava)
-                {
-                    int damage = Random.Range(5, 10);
-                    otherPlayerStats.TakeDamage(damage, true, "Lava");
-                }
-                if (tupeDamageZone == TupeDamageZone.Arrow)
-                {
-                    if (enemyStats != null)
+                    if (!enemyStats.IsDeath) // если противник жив, то он наносит урон игроку
                     {
                         float damageEnemy = enemyStats.GetStats.Damage();
-                        otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name);
+                        otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name, enemyStats.GetStats.critValue, enemyStats.GetStats.critChance);
                     }
-                    else
+                    EventOnHitTag.Invoke();
+                }
+                else
+                {
+                    if (tupeDamageZone == TupeDamageZone.Default)
+                        return;
+                    if (tupeDamageZone == TupeDamageZone.Fire)
+                    {
+                        int damage = Random.Range(1, 3);
+                        otherPlayerStats.TakeDamage(damage, true, "Fire");
+                    }
+                    if (tupeDamageZone == TupeDamageZone.Lava)
                     {
                         int damage = Random.Range(5, 10);
-                        otherPlayerStats.TakeDamage(damage, false, "Arrow");
+                        otherPlayerStats.TakeDamage(damage, true, "Lava");
                     }
-                }
-                if (tupeDamageZone == TupeDamageZone.Kill)
-                {
-                    int damage = 500;
-                    otherPlayerStats.TakeDamage(damage, true, "Trap");
+                    if (tupeDamageZone == TupeDamageZone.Arrow)
+                    {
+                        if (enemyStats != null)
+                        {
+                            float damageEnemy = enemyStats.GetStats.Damage();
+                            otherPlayerStats.TakeDamage(damageEnemy, false, enemyStats.enemyTupe.Name);
+                        }
+                        else
+                        {
+                            int damage = Random.Range(5, 10);
+                            otherPlayerStats.TakeDamage(damage, false, "Arrow");
+                        }
+                    }
+                    if (tupeDamageZone == TupeDamageZone.Kill)
+                    {
+                        int damage = 500;
+                        otherPlayerStats.TakeDamage(damage, true, "Trap");
+                    }
+                    EventOnHitTag.Invoke();
                 }
             }
-        }
 
-        if (other.tag == "BreakAbleItem")
-        {
-            Destroy(other.gameObject);
-        }
-
-        if (other.tag == "DestroyObject")
-        {
-            if (other.GetComponent<DestroyedObject>())
+            if (other.tag == "BreakAbleItem")
             {
-                float damage = 0;
-                if (enemyStats) { damage = enemyStats.GetStats.Damage(); }
-                else if (playerStats) { damage = playerStats.stats.Damage(); }
-                other.GetComponent<DestroyedObject>().TakeDamage(damage);
+                Destroy(other.gameObject);
+                EventOnHitTag.Invoke();
             }
-        }
 
-        if (other.tag == tagValue)
-        {
-            EventOnHitTag.Invoke();
+            if (other.tag == "DestroyObject")
+            {
+                if (other.GetComponent<DestroyedObject>())
+                {
+                    float damage = 0;
+                    if (enemyStats) { damage = enemyStats.GetStats.Damage(); }
+                    else if (playerStats) { damage = playerStats.stats.Damage(); }
+                    other.GetComponent<DestroyedObject>().TakeDamage(damage);
+                    EventOnHitTag.Invoke();
+                }
+            }
         }
     }
 

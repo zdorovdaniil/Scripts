@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class PlayerStats : Photon.MonoBehaviour
 {
-    [SerializeField] private bool _isUnDeath;
     public Stats stats;
-    public string NickName;
-    public int IdStats; // присваивается случайно при каждой игре
+    [SerializeField] private string _nickName; public void SetNickName(string text) => _nickName = text; public string GetNickName => _nickName;
     public bool IsDeath;
     private int PointStat; public int GetPointStat => PointStat;
     private int PointSkill; public int GetPointSkill => PointSkill; public void MinusPointSkill(int value = 1) { PointSkill -= value; }
@@ -32,10 +30,9 @@ public class PlayerStats : Photon.MonoBehaviour
     {
         _playerEffects = GetComponent<HumanEffects>();
         _inventory = GetComponent<Inventory>();
-        IdStats = Random.Range(1, 1000);
         isTakeDamage = true;
         ChangeSpeed();
-        _spawnPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        _spawnPosition = transform.position;
     }
 
     // обновление сетевых переменных
@@ -97,50 +94,51 @@ public class PlayerStats : Photon.MonoBehaviour
         HealPlayer();
     }
     // получение урона
-    public void TakeDamage(float _value, bool isAbsoluteHit = false, string hitName = "", float critValue = 0f, float critChance = 0f)
+    public void TakeDamage(float value, bool isAbsoluteHit = false, string hitName = "", float critValue = 0f, float critChance = 0f)
     {
-        if (isTakeDamage == true && _isUnDeath == false)
+        if (isTakeDamage == true)
         {
             isTakeDamage = false;
-            StartCoroutine(resetDamageGet());
+            StartCoroutine(ResetDamageGet());
             bool isCrit = false;
             float takeDamage;
             float maxBlockDamage = stats.GetMaxBlockDamage();
             int random = Random.Range(0, 100);
+
             if (random < critChance)
             {
                 isAbsoluteHit = true;
-                critValue = critValue * (critValue / 100);
+                takeDamage = Mathf.Floor((value * (critValue / 100)) * 100.00f) * 0.01f;
                 isCrit = true;
             }
-            if (isAbsoluteHit == false)
+            else if (isAbsoluteHit == false)
             {
-                takeDamage = Mathf.Floor((_value - stats.minusDMG) - Random.Range(0, maxBlockDamage));
+                takeDamage = Mathf.Floor((value - stats.minusDMG) - Random.Range(0, maxBlockDamage));
             }
             else
             {
-                takeDamage = Mathf.Floor(_value);
+                takeDamage = Mathf.Floor(value);
             }
-            float blockedDamage = Mathf.Floor(_value - takeDamage);
             if (takeDamage >= 0)
             {
                 curHP -= takeDamage;
                 gameObject.GetComponent<Sound>().StartSound(SoundType.Hit);
                 GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
             }
+
+            float blockedDamage = Mathf.Floor(value - takeDamage);
             string HitString = "";
             if (isCrit) HitString = " crit you!"; else { HitString = "hit you"; }
             Debug.Log("Crit % = " + critChance + " Crit Value = " + critValue);
             LogUI.Instance.Loger(hitName + HitString + " <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + "</color> armor");
             UpdateHP();
         }
-    }
-    // обнуление возможности полуения урона
-    private IEnumerator resetDamageGet()
-    {
-        yield return new WaitForSecondsRealtime(0.2f);
+        IEnumerator ResetDamageGet()
         {
-            isTakeDamage = true;
+            yield return new WaitForSecondsRealtime(0.2f);
+            {
+                isTakeDamage = true;
+            }
         }
     }
     // задание параметров при новой игре
@@ -228,7 +226,7 @@ public class PlayerStats : Photon.MonoBehaviour
         }
     }
     [PunRPC]
-    public void AddBuff(int id)
+    public void AddBuffPlayer(int id)
     {
         BuffDatabase buffDatabase = BasePrefs.instance.GetBuffDatabase;
         BuffClass buff = buffDatabase.GetBuff(id);

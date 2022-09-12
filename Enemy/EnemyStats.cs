@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using stats; // Пространство имен stats из скрипта Stats
 
 using UnityEngine;
@@ -37,6 +36,50 @@ public class EnemyStats : Photon.MonoBehaviour
         _enemyUI.UpdateUI(this, stats);
         Heal();
     }
+    // временно
+    private float time;
+    private void FixedUpdate()
+    {
+        time += Time.deltaTime;
+        if (time >= 0.25f)
+        {
+            time = 0;
+            UpdateBuffFields();
+        }
+    }
+    private void UpdateBuffFields()
+    {
+        if (stats.ActiveBuffes.Count > 0)
+        {
+            foreach (BuffStat buffStat in stats.ActiveBuffes)
+            {
+                if (buffStat.DoingBuff())
+                {
+                    Debug.Log(buffStat.BuffClass.BuffId + " " + buffStat.Time + "-" + buffStat.BuffClass.Duration);
+                }
+                else
+                {
+                    stats.ResetBuff(buffStat);
+                    break;
+                }
+            }
+        }
+    }
+
+    [PunRPC]
+    public void AddBuffEnemy(int id)
+    {
+        BuffDatabase buffDatabase = BasePrefs.instance.GetBuffDatabase;
+        BuffClass buff = buffDatabase.GetBuff(id);
+        Debug.Log(buff.BuffId.ToString() + " " + buff.name);
+        if (buff != null)
+        {
+            stats.AddBuff(buff);
+            _humanEffects.ActivateEffect(buff);
+        }
+        else Debug.Log("Null Buff");
+        Debug.Log("Add buff: " + id.ToString() + "with id: " + buff.BuffId);
+    }
     public bool TakeDamage(float value, bool isAbsoluteHit = false, float kickStrenght = 1f, float critValue = 0f, float critChance = 0f)
     {
         if (isTakeDamage == true)
@@ -53,16 +96,16 @@ public class EnemyStats : Photon.MonoBehaviour
             if (random < critChance)
             {
                 isAbsoluteHit = true;
-                critValue = Mathf.Floor(critValue * (critValue / 100));
+                takeDamage = Mathf.Floor((value * (critValue / 100)) * 100.00f) * 0.01f;
                 isCrit = true;
             }
-            if (isAbsoluteHit == false)
+            else if (isAbsoluteHit == false)
             {
-                takeDamage = Mathf.Floor((value - stats.minusDMG) - Random.Range(0, maxBlockDamage));
+                takeDamage = Mathf.Floor(((value - stats.minusDMG) - Random.Range(0, maxBlockDamage)) * 100.00f) * 0.01f;
             }
             else
             {
-                takeDamage = value;
+                takeDamage = Mathf.Floor(value * 100.00f) * 0.01f;
             }
             int blockedDamage = Mathf.FloorToInt(value - takeDamage);
             string deathMessage = ".";

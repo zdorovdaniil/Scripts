@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class GlobalEffects : MonoBehaviour
 {
@@ -12,26 +14,29 @@ public class GlobalEffects : MonoBehaviour
     [SerializeField] private GameObject _hitParticle;
     [SerializeField] private GameObject _swapHit;
     [SerializeField] private GameObject _bloodHit;
+    [SerializeField] private GameObject _flyingSlash;
     private Transform _garbage;
     private void Start()
     {
         _garbage = GameManager.Instance.tempView.transform;
 
     }
-    public void CreateParticle(Transform transform, EffectType effect, float yChangeCoord = 0, int zRoration = 0)
+    public GameObject CreateParticle(Transform transform, EffectType effect, float yChangeCoord = 0, int zRoration = 0, float delay = 0)
     {
         switch (effect)
         {
-            case EffectType.MiddlePuff: Create(_middlePuff); break;
-            case EffectType.TeleportTrail: Create(_particleTrail); break;
-            case EffectType.Teleport: Create(_teleportParticle); break;
-            case EffectType.WebShot: Create(_webShot); break;
-            case EffectType.SwordSplash: Rotate(_swordSplash); break;
-            case EffectType.Hit: Place(_hitParticle); break;
-            case EffectType.SwapHit: Create(_swapHit); break;
-            case EffectType.BloodHit: Create(_bloodHit); break;
+            case EffectType.MiddlePuff: return Create(_middlePuff);
+            case EffectType.TeleportTrail: return Create(_particleTrail);
+            case EffectType.Teleport: return Create(_teleportParticle);
+            case EffectType.WebShot: return Create(_webShot);
+            case EffectType.SwordSplash: return Rotate(_swordSplash);
+            case EffectType.Hit: return Place(_hitParticle);
+            case EffectType.SwapHit: return Create(_swapHit);
+            case EffectType.BloodHit: return Create(_bloodHit);
+            case EffectType.FlyingSlash: return Create(_flyingSlash);
         }
-        void Create(GameObject objParticle)
+        return null;
+        GameObject Create(GameObject objParticle)
         {
             GameObject particle = Instantiate(objParticle, transform);
             if (yChangeCoord != 0)
@@ -41,8 +46,9 @@ public class GlobalEffects : MonoBehaviour
                 particle.transform.position = newCoord;
             }
             particle.transform.SetParent(_garbage);
+            return particle;
         }
-        void Place(GameObject objParticle)
+        GameObject Place(GameObject objParticle)
         {
             GameObject particle = Instantiate(objParticle, transform);
             if (yChangeCoord != 0)
@@ -51,8 +57,9 @@ public class GlobalEffects : MonoBehaviour
                 newCoord.y = newCoord.y + yChangeCoord;
                 particle.transform.position = newCoord;
             }
+            return particle;
         }
-        void Rotate(GameObject objParticle)
+        GameObject Rotate(GameObject objParticle)
         {
             GameObject particle = Instantiate(objParticle, transform);
             if (zRoration != 0)
@@ -60,6 +67,7 @@ public class GlobalEffects : MonoBehaviour
                 particle.transform.Rotate(0, 0, zRoration);
             }
             particle.transform.SetParent(_garbage);
+            return particle;
         }
 
     }
@@ -67,6 +75,7 @@ public class GlobalEffects : MonoBehaviour
 }
 public enum EffectType
 {
+    None,
     MiddlePuff,
     TeleportTrail,
     Teleport,
@@ -75,6 +84,7 @@ public enum EffectType
     Hit,
     SwapHit,
     BloodHit,
-    None,
+    FlyingSlash,
+
 
 }

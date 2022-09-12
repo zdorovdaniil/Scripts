@@ -57,6 +57,10 @@ public class AttackController : MonoBehaviour, IDragHandler, IPointerDownHandler
         if (Input.GetKeyUp(KeyCode.E)) UpPressAttack();
         //
     }
+    public void ClickButton()
+    {
+        DownPressAttack(); UpPressAttack();
+    }
     // нажатие джостика
     public virtual void OnPointerDown(PointerEventData ped)
     {

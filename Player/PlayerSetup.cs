@@ -38,7 +38,7 @@ public class PlayerSetup : Photon.MonoBehaviour
         {
             _playerType = PlayerType.Guest;
             _nickNameText.SetText(photonView.owner.NickName);
-            _playerStats.NickName = photonView.owner.NickName;
+            _playerStats.SetNickName(photonView.owner.NickName);
         }
         else
         {
@@ -46,6 +46,7 @@ public class PlayerSetup : Photon.MonoBehaviour
             _hpText.gameObject.SetActive(false);
         }
         if (PhotonNetwork.isMasterClient) StartCoroutine(SendClothIdWithDelay());
+        if (_playerType == PlayerType.Host) { };
     }
     private IEnumerator SendClothIdWithDelay()
     {

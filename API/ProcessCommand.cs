@@ -51,6 +51,13 @@ public class ProcessCommand : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    public static IEnumerator DoActionDelay(Action action, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        {
+            action.Invoke();
+        }
+    }
     public static IEnumerator DestroyGameObjectDelay(Action action, float delay)
     {
         yield return new WaitForSecondsRealtime(delay);

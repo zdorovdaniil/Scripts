@@ -16,7 +16,7 @@ public class ButtonRoom : MonoBehaviour
     }
     public void ClickOnButton()
     {
-        LobbyRoom.instance.SetRoomInfoField(_roomInfo);
+        LobbyRoomUI.instance.SetRoomInfoField(_roomInfo);
     }
 
 }

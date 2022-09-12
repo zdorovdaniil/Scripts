@@ -30,7 +30,6 @@ namespace stats
         public float moveSpeedAttr; // скорость перемещения от аттрибутов
         public float moveSpeed; // Скорость движения персонажа
 
-
         // Параметры зависят от бафа игрока
         public int buffCritChance;
         public int buffCritValue;
@@ -39,9 +38,11 @@ namespace stats
         public int buffMinusDMG;
         public int buffSpeed;
         public int buffKickStrenght;
+        public int buffMaxBlock;
+
         public List<AttributeStat> Attributes = new List<AttributeStat>(); // список аттрибутов
         public List<Skill> Skills = new List<Skill>(); // список навыков 
-        public List<BuffClass> ActiveBuffes = new List<BuffClass>(); // список активных баффов
+        public List<BuffStat> ActiveBuffes = new List<BuffStat>(); // список активных баффов
 
 
         public void SetAttackWeapon(int value)
@@ -74,7 +75,7 @@ namespace stats
         }
         public float GetMaxBlockDamage()
         {
-            return Mathf.Floor((armor / 5) * 100.00f) * 0.01f;
+            return Mathf.Floor(((armor / 5) + buffMaxBlock) * 100.00f) * 0.01f;
         }
         public float GetTimeRegenHP()
         {
@@ -109,6 +110,18 @@ namespace stats
         }
         public void AddBuff(BuffClass buffClass)
         {
+            BuffStat buffStats = new BuffStat(buffClass);
+            if (ActiveBuffes.Contains(buffStats))
+            {
+                buffStats.FullTime();
+            }
+            else
+            {
+                ActiveBuffes.Add(buffStats);
+                SetValueBuff(buffClass.Buff, buffClass.Value);
+                Debug.Log(buffClass.Value + " / " + buffStats.Time);
+            }
+            /*
             if (ActiveBuffes.Contains(buffClass))
             {
                 buffClass.Time = buffClass.Duration;
@@ -120,11 +133,12 @@ namespace stats
                 SetValueBuff(buffClass.Buff, buffClass.Value);
                 Debug.Log(buffClass.Value + " / " + buffClass.Time);
             }
+            */
         }
-        public void ResetBuff(BuffClass buffClass)
+        public void ResetBuff(BuffStat buffStat)
         {
-            ActiveBuffes.Remove(buffClass);
-            SetValueBuff(buffClass.Buff, -buffClass.Value);
+            ActiveBuffes.Remove(buffStat);
+            SetValueBuff(buffStat.BuffClass.Buff, -buffStat.BuffClass.Value);
         }
         private void SetValueBuff(Buff buff, int value)
         {
@@ -136,17 +150,16 @@ namespace stats
                 case Buff.MoveSpeed: { buffSpeed += value; } break;
                 case Buff.CritChance: { buffCritChance += value; } break;
                 case Buff.CritValue: { buffCritValue += value; } break;
+                case Buff.KickStrenght: { buffKickStrenght += value; } break;
+                case Buff.MaxBlock: { buffMaxBlock += value; } break;
             }
             recount();
         }
         public void ResetAllBuff()
         {
+            foreach (BuffStat buffStat in ActiveBuffes)
+            { ResetBuff(buffStat); }
             ActiveBuffes.Clear();
-            buffAttack = 0;
-            buffDefence = 0;
-            buffMinusDMG = 0;
-            buffSpeed = 0;
-            buffKickStrenght = 0;
             recount();
         }
         // значение защиты от атрибутов

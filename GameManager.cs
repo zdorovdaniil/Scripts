@@ -50,7 +50,7 @@ public class GameManager : Photon.MonoBehaviour
             foreach (PlayerStats player in PhotonPlayers)
             { player.photonView.RPC("AddBuff", PhotonTargets.All, (int)id); }
         }
-        else { PhotonPlayers[0].AddBuff(id); }
+        else { PhotonPlayers[0].AddBuffPlayer(id); }
 
     }
     public bool CheckDungeonLevel()
