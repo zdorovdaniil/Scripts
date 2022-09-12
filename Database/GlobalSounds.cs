@@ -1,5 +1,10 @@
 using UnityEngine;
-
+using System.Collections.Generic;
+using System.Collections;
+public enum SoundMaterials
+{
+    None, Wood, Stone, Metal, DestroyStandartMat
+}
 public class GlobalSounds : MonoBehaviour
 {
     static public GlobalSounds Instance; private void Awake() { Instance = this; }
@@ -22,4 +27,23 @@ public class GlobalSounds : MonoBehaviour
     [SerializeField] private AudioSource _sAttributeUp; public void SAttributeUp() { _sAttributeUp.Play(); }
     [SerializeField] private AudioSource _sOpenChest; public void SOpenChest() { _sOpenChest.Play(); }
     [SerializeField] private AudioSource _sCloseChest; public void SCloseChest() { _sCloseChest.Play(); }
+    [SerializeField] private GameObject _Wood;
+    [SerializeField] private GameObject _Stone;
+    [SerializeField] private GameObject _Metal;
+    [SerializeField] private GameObject _DestroyStandartMat;
+    [SerializeField] private GameObject _OpenChest; public void POpenChest(Transform trf) { Instantiate(_OpenChest, trf); }
+    [SerializeField] private GameObject _CloseChest; public void PCloseChest(Transform trf) { Instantiate(_CloseChest, trf); }
+
+    public void CreateSoundMaterial(Transform trf, SoundMaterials material)
+    {
+        GameObject newObject = null;
+        switch (material)
+        {
+            case SoundMaterials.Wood: newObject = Instantiate(_Wood, trf); break;
+            case SoundMaterials.Stone: newObject = Instantiate(_Stone, trf); break;
+            case SoundMaterials.Metal: newObject = Instantiate(_Metal, trf); break;
+            case SoundMaterials.DestroyStandartMat: newObject = Instantiate(_DestroyStandartMat, trf); break;
+        }
+        newObject.transform.SetParent(null);
+    }
 }
