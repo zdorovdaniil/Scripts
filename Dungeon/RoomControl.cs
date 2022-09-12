@@ -194,7 +194,7 @@ public class RoomControl : Photon.MonoBehaviour
         yield return new WaitForSecondsRealtime(delay);
         {
             if (!PhotonNetwork.offlineMode) enemyStats.photonView.RPC("AddBuffEnemy", PhotonTargets.All, (int)_buffForEnemyes[0].BuffId);
-            else { enemyStats.GetStats.AddBuff(_buffForEnemyes[0]); }
+            else { enemyStats.AddBuffEnemy(_buffForEnemyes[0].BuffId); }
         }
     }
 

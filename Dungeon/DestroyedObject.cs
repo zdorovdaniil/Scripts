@@ -35,7 +35,7 @@ public class DestroyedObject : MonoBehaviour
                 MinusObjectHP(value);
             }
         }
-        GlobalSounds.CreateSoundMaterial(this.transform, _soundOnHit);
+        GlobalSounds.Instance.CreateSoundMaterial(this.transform, _soundOnHit);
     }
     public void SetInterior(InteriorSelecter interiorSelecter, int id)
     {
@@ -52,7 +52,7 @@ public class DestroyedObject : MonoBehaviour
     private void DestroyObject()
     {
         _onDestroyObject.Invoke();
-        GlobalSounds.CreateSoundMaterial(this.transform, SoundMaterials.DestroyStandartMat);
+        GlobalSounds.Instance.CreateDestroySound(this.transform, _soundOnHit);
         foreach (Transform trf in _destroyObjects) { if (trf) Destroy(trf.gameObject); }
         Destroy(this.gameObject);
     }
