@@ -74,18 +74,6 @@ public class PlayerUpdate : MonoBehaviour
                     _playerStats.UpdateArmor();
                     break;
                 }
-                /*
-                buffClass.Time -= 0.25f;
-                Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffClass);
-
-                if (buffClass.Time <= 0.25f)
-                {
-                    _playerStats.stats.ResetBuff(buffClass);
-                    _playerStats.ChangeSpeed();
-                    _playerStats.UpdateArmor();
-                    break;
-                }
-                */
             }
         }
         else

@@ -110,30 +110,27 @@ namespace stats
         }
         public void AddBuff(BuffClass buffClass)
         {
-            BuffStat buffStats = new BuffStat(buffClass);
-            if (ActiveBuffes.Contains(buffStats))
+            if (!IsContainsInActiveBuffs())
             {
-                buffStats.FullTime();
-            }
-            else
-            {
+                BuffStat buffStats = new BuffStat(buffClass);
                 ActiveBuffes.Add(buffStats);
                 SetValueBuff(buffClass.Buff, buffClass.Value);
                 Debug.Log(buffClass.Value + " / " + buffStats.Time);
             }
-            /*
-            if (ActiveBuffes.Contains(buffClass))
+            bool IsContainsInActiveBuffs()
             {
-                buffClass.Time = buffClass.Duration;
+                bool isContain = false;
+                foreach (BuffStat buffStat in ActiveBuffes)
+                {
+                    if (buffClass.BuffId == buffStat.BuffClass.BuffId)
+                    {
+                        buffStat.FullTime();
+                        isContain = true;
+                        break;
+                    }
+                }
+                return isContain;
             }
-            else
-            {
-                ActiveBuffes.Add(buffClass);
-                buffClass.Time = buffClass.Duration;
-                SetValueBuff(buffClass.Buff, buffClass.Value);
-                Debug.Log(buffClass.Value + " / " + buffClass.Time);
-            }
-            */
         }
         public void ResetBuff(BuffStat buffStat)
         {

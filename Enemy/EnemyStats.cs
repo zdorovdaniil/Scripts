@@ -37,35 +37,6 @@ public class EnemyStats : Photon.MonoBehaviour
         Heal();
     }
     // временно
-    private float time;
-    private void FixedUpdate()
-    {
-        time += Time.deltaTime;
-        if (time >= 0.25f)
-        {
-            time = 0;
-            UpdateBuffFields();
-        }
-    }
-    private void UpdateBuffFields()
-    {
-        if (stats.ActiveBuffes.Count > 0)
-        {
-            foreach (BuffStat buffStat in stats.ActiveBuffes)
-            {
-                if (buffStat.DoingBuff())
-                {
-                    Debug.Log(buffStat.BuffClass.BuffId + " " + buffStat.Time + "-" + buffStat.BuffClass.Duration);
-                }
-                else
-                {
-                    stats.ResetBuff(buffStat);
-                    break;
-                }
-            }
-        }
-    }
-
     [PunRPC]
     public void AddBuffEnemy(int id)
     {
@@ -227,6 +198,7 @@ public class EnemyStats : Photon.MonoBehaviour
             IsDeath = true;
             if (BelongRoom != null) BelongRoom.DefeatEnemyInRoom();
             if (_mapPoint != null) _mapPoint.gameObject.SetActive(false);
+            GetComponent<EnemyUpdate>().enabled = false;
             Destroy(_enemyUI.gameObject);
             _enemySounds.StartSound(SoundType.Death);
             enemyController.Death();
