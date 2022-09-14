@@ -6,8 +6,12 @@ using TMPro;
 public class ReferenceUI : MonoBehaviour
 {
     [SerializeField] private ReferenceButtonType _buttonsType;
-    [SerializeField] private GameObject _itemInfoPanel;// панель информации о предмете
+    [SerializeField] private Transform _fightingList;
+    [SerializeField] private Transform _itemRequirement;
+    [SerializeField] private Transform _itemBuff;
+    [SerializeField] private Transform _itemContainer;
     [SerializeField] private InventorySlot _slot;
+    [SerializeField] private BuffField _prefBuffField;
     private PlayerStats _playerStats;
     [Header("Buttons")]
 
@@ -32,12 +36,9 @@ public class ReferenceUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _level;
     [SerializeField] private TextMeshProUGUI _attack;
     [SerializeField] private TextMeshProUGUI _armor;
-    [SerializeField] private TextMeshProUGUI _buffValue;
-    [SerializeField] private TextMeshProUGUI _needAttr;
-    [SerializeField] private TextMeshProUGUI _nameAttr;
-    [SerializeField] private TextMeshProUGUI _needSkill;
-    [SerializeField] private TextMeshProUGUI _nameSkill;
-    [SerializeField] private TextMeshProUGUI _needLevel;
+    [SerializeField] private TextMeshProUGUI _critChance;
+    [SerializeField] private TextMeshProUGUI _critValue;
+
     [SerializeField] private TextMeshProUGUI _features;
 
 
@@ -212,9 +213,7 @@ public class ReferenceUI : MonoBehaviour
 
         if (buttonsType == ReferenceButtonType.Buy)
         {
-            //if (_playerStats.stats.GetBuyModif() != 0) 
             _itemCost.text = (item.cost * _playerStats.stats.GetBuyModif()).ToString();
-            // else _itemCost.text = (item.cost * 2).ToString();
         }
         else if (buttonsType == ReferenceButtonType.Sell) _itemCost.text = (item.cost * _playerStats.stats.GetSaleModif()).ToString();
         else _itemCost.text = item.cost.ToString();
@@ -222,48 +221,40 @@ public class ReferenceUI : MonoBehaviour
         _itemType.text = _tupe.ToString().ToLower();
         _level.text = item.Level.ToString();
         _features.text = item.Features;
-        if (item.Attack > 0)
+        if (IsFighting())
         {
-            OnOffParentGameObject(true, _attack);
-            _attack.text = item.Attack.ToString();
+            _fightingList.gameObject.SetActive(true);
+            _attack.text = _slot.item.Attack.ToString();
+            _armor.text = _slot.item.Armor.ToString();
+            _critChance.text = _slot.item.CritChance.ToString();
+            _critValue.text = _slot.item.CritValue.ToString();
         }
-        else { OnOffParentGameObject(false, _attack); }
-        if (item.Armor > 0)
+        else { _fightingList.gameObject.SetActive(false); }
+        if (IsHasBuffs())
         {
-            OnOffParentGameObject(true, _armor);
-            _armor.text = item.Armor.ToString();
+            _itemBuff.gameObject.SetActive(true);
+            ProcessCommand.ClearChildObj(_itemContainer);
+            foreach (BuffClass buffClass in item.Buffs)
+            {
+                BuffStat buffStat = new BuffStat(buffClass);
+                Instantiate(_prefBuffField, _itemContainer).GetComponent<BuffField>().SetFields(buffStat); ;
+            }
         }
-        else { OnOffParentGameObject(false, _armor); }
-        /*if (item.BuffValue > 0)
-        {
-            OnOffParentGameObject(true, _buffValue);
-            _buffValue.text = item.BuffValue.ToString();
-        }
-        else { OnOffParentGameObject(false, _buffValue); }
-        if (item.neededAttr > 0)
-        {
-            OnOffParentGameObject(true, _needAttr);
-            _needAttr.text = item.neededAttr.ToString();
-            _nameAttr.text = item.nameAttr.ToString();
-        }
-        else { OnOffParentGameObject(false, _needAttr); }
-        if (item.neededSkill > 0)
-        {
-            OnOffParentGameObject(true, _needSkill);
-            _needSkill.text = item.neededSkill.ToString();
-            _nameSkill.text = item.nameSkill.ToString();
-        }
-        else { OnOffParentGameObject(false, _needSkill); }
-        if (item.neededLevel > 0)
-        {
-            OnOffParentGameObject(true, _needLevel);
-            _needLevel.text = item.neededLevel.ToString();
-        }
-        else { OnOffParentGameObject(false, _needLevel); }
-        */
+        else { _itemBuff.gameObject.SetActive(false); }
 
         CheckReferenceButtonType(buttonsType);
+        bool IsFighting()
+        {
+            if (slot.item.Armor > 0 || slot.item.Attack > 0 || slot.item.CritChance > 0 || slot.item.CritValue > 0)
+            { return true; }
+            else { return false; }
+        }
+        bool IsHasBuffs()
+        {
+            if (item.Buffs.Count > 0) { return true; } else { return false; }
+        }
     }
+
     private void CloseDoingButtons()
     {
         _buttonsEquip.gameObject.SetActive(false);
@@ -277,7 +268,6 @@ public class ReferenceUI : MonoBehaviour
         _buttonsMoveFromChest.gameObject.SetActive(false);
         _buttonsDelete.gameObject.SetActive(false);
     }
-
 }
 
 public enum ReferenceButtonType
