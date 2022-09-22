@@ -8,7 +8,7 @@ public class EnemyStats : Photon.MonoBehaviour
     private Stats stats; public Stats GetStats => stats;
     public float curHP; // Количество жизней нынешние
     public bool IsDeath; // Отвечает за уничтожение
-    private bool isTakeDamage; //для ограниечения получаемого урона в секунду
+    private bool isTakeDamage = true; //для ограниечения получаемого урона в секунду
     // от выбранного типа противника зависят его статы
     [SerializeField] public Enemy enemyTupe;
     public RoomControl BelongRoom; // принадлежит комнате
@@ -24,17 +24,29 @@ public class EnemyStats : Photon.MonoBehaviour
         int level = GameManager.Instance.GetDungeonLevel;
         stats = new Stats(level, 0);
         SetAttributesToStats(level);
-        curHP = stats.HP;
-        enemyController = gameObject.GetComponent<EnemyController>();
-        _enemySounds = GetComponent<Sound>();
-        _humanEffects = GetComponent<HumanEffects>();
+        RequireStartComponents();
         stats.attackWeapon = enemyTupe.AttackWeapon(level);
         stats.armorEquip = enemyTupe.ArmorClass(level);
         stats.recount();
         enemyController.SetActionDoing(enemyTupe.enemyType);
-        isTakeDamage = true;
         _enemyUI.UpdateUI(this, stats);
+        AddStartBuff();
         Heal();
+    }
+    private void RequireStartComponents()
+    {
+        enemyController = gameObject.GetComponent<EnemyController>();
+        _enemySounds = GetComponent<Sound>();
+        _humanEffects = GetComponent<HumanEffects>();
+    }
+    private void AddStartBuff()
+    {
+        BuffClass buffClass = enemyTupe.IsStartBuff(stats.Level);
+        if (buffClass)
+        {
+            if (!PhotonNetwork.offlineMode) photonView.RPC("AddBuffEnemy", PhotonTargets.All, (int)buffClass.BuffId);
+            else { AddBuffEnemy(buffClass.BuffId); }
+        }
     }
     // временно
     [PunRPC]
@@ -69,6 +81,7 @@ public class EnemyStats : Photon.MonoBehaviour
                 isAbsoluteHit = true;
                 takeDamage = Mathf.Floor((value * (critValue / 100)) * 100.00f) * 0.01f;
                 isCrit = true;
+                GlobalSounds.Instance.PCrit(transform);
             }
             else if (isAbsoluteHit == false)
             {

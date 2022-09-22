@@ -31,7 +31,7 @@ public class LootDrop : MonoBehaviour
 
             for (int i = 0; i < countWillSpawn; i++)
             {
-                Item item = enemy ? enemy.GetRandomItemInLoot() : GetRandomItemInLootDrop();
+                Item item = enemy ? enemy.GetRandomItemInLoot : GetRandomItemInLootDrop();
                 collectItems.AddItem(item);
                 countSpawnItems += 1;
             }

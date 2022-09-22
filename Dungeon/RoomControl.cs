@@ -8,7 +8,6 @@ public class RoomControl : Photon.MonoBehaviour
 {
     [SerializeField] private RoomType _roomType; public RoomType GetRoomType => _roomType;
     [SerializeField] private List<Transform> _teleportPointRoom;
-    [SerializeField] private List<BuffClass> _buffForEnemyes = new List<BuffClass>();
     // места спавна противников
     [SerializeField] private List<Transform> _spawnPointsForEnemy = new List<Transform>();
     // противники которые могут появиться в _spawnPointsForEnemy
@@ -180,8 +179,6 @@ public class RoomControl : Photon.MonoBehaviour
                                 _enemyStats.BelongRoom = this;
                                 _countSpawnedEnemyes += 1;
                                 _enemyesInRoom.Add(_enemyStats);
-                                StartCoroutine(AddBuffDelay(_enemyStats, 1f));
-
                             }
                         }
                     }
@@ -189,16 +186,6 @@ public class RoomControl : Photon.MonoBehaviour
             }
         }
     }
-    public IEnumerator AddBuffDelay(EnemyStats enemyStats, float delay)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        {
-            if (!PhotonNetwork.offlineMode) enemyStats.photonView.RPC("AddBuffEnemy", PhotonTargets.All, (int)_buffForEnemyes[0].BuffId);
-            else { enemyStats.AddBuffEnemy(_buffForEnemyes[0].BuffId); }
-        }
-    }
-
-
     public IEnumerator AddRoomToDungeonObjects()
     {
         yield return new WaitForSecondsRealtime(0.05f);

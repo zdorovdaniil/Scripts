@@ -11,6 +11,7 @@ public class BuffClass : ScriptableObject
     public GameObject EffectOnUse;
     public GameObject EffectOnUsing;
     public float EffectLifetime;
+    [Multiline(2)] public string Description;
 }
 public class BuffStat
 {

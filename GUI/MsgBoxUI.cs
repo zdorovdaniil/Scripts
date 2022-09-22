@@ -26,6 +26,7 @@ public class MsgBoxUI : MonoBehaviour
         _description.text = description;
         _report = ReportType.Nothing;
         _reportStatus = reportStatus;
+        GlobalSounds.Instance.SOpenWindow();
     }
     public void ShowAttention(string description)
     {
@@ -34,6 +35,7 @@ public class MsgBoxUI : MonoBehaviour
         _description.text = description;
         CloseButtons();
         _buttonOkey.gameObject.SetActive(true);
+        GlobalSounds.Instance.SAttention();
     }
     public void ShowInfo(string title, string description)
     {
@@ -43,10 +45,12 @@ public class MsgBoxUI : MonoBehaviour
         StartCoroutine(ActiveBox());
         CloseButtons();
         _buttonOkey.gameObject.SetActive(true);
+        GlobalSounds.Instance.SOpenWindow();
     }
     public void Okey()
     {
         _box.gameObject.SetActive(false);
+        GlobalSounds.Instance.SCloseWindow();
     }
     public void Accept()
     {
@@ -68,6 +72,7 @@ public class MsgBoxUI : MonoBehaviour
 
         }
         _box.gameObject.SetActive(false);
+        GlobalSounds.Instance.SCloseWindow();
     }
     public void Cancel()
     {
@@ -76,6 +81,7 @@ public class MsgBoxUI : MonoBehaviour
             _report = ReportType.Cancel;
         }
         _box.gameObject.SetActive(false);
+        GlobalSounds.Instance.SCloseWindow();
     }
     private void CloseButtons()
     {
@@ -85,7 +91,7 @@ public class MsgBoxUI : MonoBehaviour
     }
     public IEnumerator ActiveBox()
     {
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(0.1f);
         {
             _box.gameObject.SetActive(true);
         }

@@ -68,10 +68,11 @@ public class ShopingUI : MonoBehaviour
                 PropertyUI.instance.SetCoins(Mathf.FloorToInt(moneyNow));
                 _inv.SaveItemsId();
                 _invSlotsUI.FullSlots(_inv.GetItems);
+                GlobalSounds.Instance.SBuySell();
             }
-            else Debug.Log("Инвентарь заполнен");
+            else { MsgBoxUI.Instance.ShowAttention("Inventory full"); }
         }
-        else Debug.Log("Недостаточно денег");
+        else { MsgBoxUI.Instance.ShowAttention("Not enought money"); }
         PropertyUI.instance.UpdateProperty();
     }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)

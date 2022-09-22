@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "ItemRequirement", menuName = "Project/ItemRequirement", order = 8)]
 [System.Serializable]
@@ -10,6 +11,24 @@ public class ItemRequirement : ScriptableObject
     [SerializeField] private int[] _levelPerSkills;
     [SerializeField] private int _needPlayerLevel;
     [SerializeField] private int _needDungeonLevel;
+
+    public List<RequirementField> GetRequirementFields()
+    {
+        List<RequirementField> fields = new List<RequirementField>();
+        for (int i = 0; i < _attributes.Length; i++)
+        {
+            RequirementField field = new RequirementField(_attributes[i].Name, _levelPerAttribute[i].ToString());
+            fields.Add(field);
+        }
+        for (int i = 0; i < _skills.Length; i++)
+        {
+            RequirementField field = new RequirementField(_skills[i].Name, _levelPerSkills[i].ToString(), _skills[i].Icon);
+            fields.Add(field);
+        }
+        if (_needDungeonLevel != 0) { RequirementField dunLevel = new RequirementField("Dungeon level", _needDungeonLevel.ToString()); fields.Add(dunLevel); }
+        if (_needPlayerLevel != 0) { RequirementField plLevel = new RequirementField("Player level", _needPlayerLevel.ToString()); fields.Add(plLevel); }
+        return fields;
+    }
 
     public bool CheckReqirement(PlayerStats playerStats)
     {
@@ -45,5 +64,16 @@ public class ItemRequirement : ScriptableObject
         { return true; }
         else { return false; }
     }
-
+}
+public class RequirementField
+{
+    public string Name;
+    public string Value;
+    public Sprite Sprite;
+    public Skill Skill;
+    public Attribut Attribut;
+    public RequirementField(string name, string value, Sprite sprite = null)
+    {
+        Name = name; Value = value; Sprite = sprite;
+    }
 }

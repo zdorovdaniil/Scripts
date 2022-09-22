@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 
 public enum PerkType { None, Jerc, FlyingSlash }
-public class JerkButton : MonoBehaviour
+public class PercButton : MonoBehaviour
 {
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private PlayerStats _playerStats;
@@ -36,7 +36,7 @@ public class JerkButton : MonoBehaviour
         switch (_perkType)
         {
             case PerkType.Jerc: return Mathf.Floor(8f - (0.5f * _playerStats.stats.Skills[1].Level));
-            case PerkType.FlyingSlash: return _playerStats.stats.Skills[6].Level; // переделать
+            case PerkType.FlyingSlash: return Mathf.Floor(25f - (_playerStats.stats.Skills[6].Level * 0.5f)); // переделать
         }
         return 0;
     }

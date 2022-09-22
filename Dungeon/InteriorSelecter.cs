@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+// скрипт оставляет с указанным % интерьерные группы (InteriorObject _objects), в которых указаны какие-то вариации объектов
+// и уже в объектах интерьерной группы оставляется 1 объект
 public class InteriorSelecter : Photon.MonoBehaviour
 {
     [Range(0, 100)]

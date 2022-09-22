@@ -28,7 +28,7 @@ public class Item : ScriptableObject
     [Header("Buff And Improve")]
     public List<BuffClass> Buffs;
     public ImproveItem Improve = ImproveItem.Nothing;
-    [SerializeField] private ItemRequirement _itemRequirement;
+    [SerializeField] private ItemRequirement _itemRequirement; public ItemRequirement GetItemRequirement => _itemRequirement;
     [Header("Craft")]
     [SerializeField] private List<Item> _itemsForCraft = new List<Item>();
     public List<Item> GetItemsCraft => _itemsForCraft;
@@ -37,6 +37,21 @@ public class Item : ScriptableObject
     public bool CheckReqirement(PlayerStats playerStats)
     {
         return _itemRequirement.CheckReqirement(playerStats);
+    }
+    private void SoundOnEquip(Item item)
+    {
+        if (item.itemTupe == ItemTupe.Weapon) { GlobalSounds.Instance.SEquipWeapon(); }
+        else if (item.itemTupe == ItemTupe.Armor)
+        {
+            if (item.armorTupe == ArmorTupe.Amulet) { GlobalSounds.Instance.SEquipAmulet(); }
+            else if (item.armorTupe == ArmorTupe.Ring) { GlobalSounds.Instance.SEquipRing(); }
+            else { GlobalSounds.Instance.SEquipArmor(); }
+        }
+        else if (item.itemTupe == ItemTupe.Poison) { GlobalSounds.Instance.SUsePoison(); }
+        else if (item.itemTupe == ItemTupe.Food) { GlobalSounds.Instance.SUseFood(); }
+
+
+
     }
     public bool UsingItem(PlayerStats playerStats, InventorySlot slot, Inventory inv, PlayerUpdate playerUpdate)
     {
@@ -53,7 +68,6 @@ public class Item : ScriptableObject
                 return true;
             }
         }
-
         if (slot.item.itemTupe == ItemTupe.Weapon)
         {
             if (inv.GetEquipSlot(0) != null) { MsgBoxUI.Instance.ShowInfo("weapon", "weapon not requiment player stats"); return false; }

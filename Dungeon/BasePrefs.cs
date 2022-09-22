@@ -6,6 +6,7 @@ public class BasePrefs : MonoBehaviour
     public static BasePrefs instance; void Awake() { instance = this; }
     public List<Skill> AvaibleSkills = new List<Skill>();
     public List<Attribut> AvaibleAttributes = new List<Attribut>();
+    [SerializeField] private ItemRequirement _emptyRequirement; public ItemRequirement GetEmptyRequirement => _emptyRequirement;
 
     // Получение доступа к базе данных предметов
     [SerializeField] private ItemDatabase _itemDatabase; public ItemDatabase GetItemDatabase => _itemDatabase;

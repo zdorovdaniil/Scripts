@@ -26,10 +26,7 @@ public class EnemyUpdate : MonoBehaviour
         {
             foreach (BuffStat buffStat in _enemyStats.GetStats.ActiveBuffes)
             {
-                if (buffStat.DoingBuff())
-                {
-                    Debug.Log(buffStat.BuffClass.BuffId + " " + buffStat.Time + "-" + buffStat.BuffClass.Duration);
-                }
+                if (buffStat.DoingBuff()) { }
                 else
                 {
                     _enemyStats.GetStats.ResetBuff(buffStat);

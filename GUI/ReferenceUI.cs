@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Collections.Generic;
 
 public class ReferenceUI : MonoBehaviour
 {
     [SerializeField] private ReferenceButtonType _buttonsType;
     [SerializeField] private Transform _fightingList;
+    [Header("Requirement")]
     [SerializeField] private Transform _itemRequirement;
+    [SerializeField] private Transform _requirementContainer;
+    [SerializeField] private BuffField _prefRequirementField;
+    [Header("Buff")]
     [SerializeField] private Transform _itemBuff;
     [SerializeField] private Transform _itemContainer;
-    [SerializeField] private InventorySlot _slot;
     [SerializeField] private BuffField _prefBuffField;
     private PlayerStats _playerStats;
     [Header("Buttons")]
@@ -27,6 +30,7 @@ public class ReferenceUI : MonoBehaviour
     [SerializeField] private Transform _buttonsDelete;
 
     [Header("Item Information")]
+    [SerializeField] private InventorySlot _slot;
     [SerializeField] private TextMeshProUGUI _numSlot;
     [SerializeField] private TextMeshProUGUI _nameItem;
     [SerializeField] private TextMeshProUGUI _amountItemsInSlot;
@@ -38,7 +42,6 @@ public class ReferenceUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _armor;
     [SerializeField] private TextMeshProUGUI _critChance;
     [SerializeField] private TextMeshProUGUI _critValue;
-
     [SerializeField] private TextMeshProUGUI _features;
 
 
@@ -69,7 +72,6 @@ public class ReferenceUI : MonoBehaviour
     public void ClickBuyOne()
     {
         ShopingUI.instance.BuyItem(_slot.item);
-        GlobalSounds.Instance.SBuySell();
     }
     public void ClickSellOne()
     {
@@ -137,7 +139,7 @@ public class ReferenceUI : MonoBehaviour
     public void ClickEquipSlotInStorage()
     {
         Storage.instance.Equip(_slot);
-        GlobalSounds.Instance.SEquipArmor();
+
         Destroy(this.gameObject);
     }
     public void ClickUseSlotInInventory()
@@ -145,6 +147,7 @@ public class ReferenceUI : MonoBehaviour
         PlayerUI.Instance.UseSlot(_slot);
         Destroy(this.gameObject);
     }
+
     public void DestroyReferenceUI()
     {
         Destroy(this.gameObject);
@@ -237,10 +240,24 @@ public class ReferenceUI : MonoBehaviour
             foreach (BuffClass buffClass in item.Buffs)
             {
                 BuffStat buffStat = new BuffStat(buffClass);
-                Instantiate(_prefBuffField, _itemContainer).GetComponent<BuffField>().SetFields(buffStat); ;
+                Instantiate(_prefBuffField, _itemContainer).GetComponent<BuffField>().SetBuffInfoField(buffStat); ;
             }
         }
         else { _itemBuff.gameObject.SetActive(false); }
+        if (slot.item.GetItemRequirement != BasePrefs.instance.GetEmptyRequirement)
+        {
+            ProcessCommand.ClearChildObj(_requirementContainer);
+            _itemRequirement.gameObject.SetActive(true);
+            List<RequirementField> fields = slot.item.GetItemRequirement.GetRequirementFields();
+            foreach (RequirementField field in fields)
+            {
+                Instantiate(_prefRequirementField, _requirementContainer).GetComponent<BuffField>().SetFieldRequirement(field);
+            }
+        }
+        else
+        {
+            _itemRequirement.gameObject.SetActive(false);
+        }
 
         CheckReferenceButtonType(buttonsType);
         bool IsFighting()

@@ -18,8 +18,8 @@ public class PlayerUpdate : MonoBehaviour
     [SerializeField] private GameObject _buffField;
     [SerializeField] private Transform _containBuffFields;
     // Buttons
-    [SerializeField] private JerkButton _jerkButton;
-    [SerializeField] private JerkButton _flyingSlashButton;
+    [SerializeField] private PercButton _jerkButton;
+    [SerializeField] private PercButton _flyingSlashButton;
     private float needEXP = 1000;
 
     private void Start()
@@ -65,7 +65,7 @@ public class PlayerUpdate : MonoBehaviour
             {
                 if (buffStat.DoingBuff())
                 {
-                    Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffStat);
+                    Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFieldsBuff(buffStat);
                 }
                 else
                 {

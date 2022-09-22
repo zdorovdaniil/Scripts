@@ -110,6 +110,7 @@ public class PlayerStats : Photon.MonoBehaviour
                 isAbsoluteHit = true;
                 takeDamage = Mathf.Floor((value * (critValue / 100)) * 100.00f) * 0.01f;
                 isCrit = true;
+                GlobalSounds.Instance.PCrit(transform);
             }
             else if (isAbsoluteHit == false)
             {
@@ -128,7 +129,7 @@ public class PlayerStats : Photon.MonoBehaviour
 
             float blockedDamage = Mathf.Floor(value - takeDamage);
             string HitString = "";
-            if (isCrit) HitString = " crit you!"; else { HitString = "hit you"; }
+            if (isCrit) HitString = " crit you!"; else { HitString = " hit you"; }
             Debug.Log("Crit % = " + critChance + " Crit Value = " + critValue);
             LogUI.Instance.Loger(hitName + HitString + " <color=red>" + takeDamage + " dmg</color>, <color=teal>" + blockedDamage + "</color> armor");
             UpdateHP();
@@ -238,6 +239,7 @@ public class PlayerStats : Photon.MonoBehaviour
         else Debug.Log("Null Buff");
         Debug.Log("Add buff: " + id.ToString() + "with id: " + buff.BuffId);
         ChangeSpeed();
+        GlobalSounds.Instance.PGetBuff(this.transform);
     }
 
     // понижение атрибута

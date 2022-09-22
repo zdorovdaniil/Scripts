@@ -9,18 +9,32 @@ public class Enemy : ScriptableObject
     public EnemyFightingType enemyType { get { return m_EnemyType; } set { m_EnemyType = value; } }
     public Sprite Icon;
     public string Name;
-
-
+    [Multiline(2)] public string Features;
+    [Header("Stats")]
+    [SerializeField] private float _multiplierPerLvl = 0.2f;
+    [SerializeField] private int _coinsDrop; public int CoinsDrop(int level = 1) => CountMyltiplier(_coinsDrop, level);
+    [SerializeField] private int _expGet; public int ExpGet(int level = 1) => CountMyltiplier(_expGet, level);
     [SerializeField] private int _strenght; public int Strenght(int level = 1) => CountAttribute(_strenght, level);
     [SerializeField] private int _agility; public int Agility(int level = 1) => CountAttribute(_agility, level);
     [SerializeField] private int _endurance; public int Endurance(int level = 1) => CountAttribute(_endurance, level);
     [SerializeField] private int _speed; public int Speed(int level = 1) => CountAttribute(_speed, level);
     [SerializeField] private int _attackWeapon; public int AttackWeapon(int level = 1) => CountAttribute(_attackWeapon, level);
     [SerializeField] private int _armorEquip; public int ArmorClass(int level = 1) => CountAttribute(_armorEquip, level);
-    [SerializeField] private int _critChance;
-    [SerializeField] private int _critValue;
-
-
+    [SerializeField] private int _critChance = 2;
+    [SerializeField] private int _critValue = 100;
+    [SerializeField] private int _buffChance = 2;
+    [Header("Fight")]
+    // промежуток времени, через которое противник после получения урона может снова получить урон
+    public float timeResetHit = 1f;
+    // множитель к характеристикам, опыту за уничтожение за уровень
+    [Header("Others")]
+    public GameObject PrefabEnemy;
+    public bool IsBoss;
+    [SerializeField] private List<Item> RandomObjectsDrop = new List<Item>();
+    public Item GetRandomItemInLoot => RandomObjectsDrop[Random.Range(0, RandomObjectsDrop.Count - 1)];
+    [SerializeField] private List<Item> AlwaysObjectsDrop = new List<Item>(); public List<Item> GetAlwaysLoot => AlwaysObjectsDrop;
+    [SerializeField] private List<BuffClass> RandomBuffAvaibles = new List<BuffClass>();
+    public BuffClass GetRandomBuff => RandomBuffAvaibles[Random.Range(0, RandomBuffAvaibles.Count - 1)];
 
     private int CountAttribute(int attrubute, int level)
     {
@@ -30,34 +44,36 @@ public class Enemy : ScriptableObject
         }
         else return attrubute;
     }
+    private int CountMyltiplier(int inputValue, int level)
+    {
+        return Mathf.FloorToInt(inputValue * _multiplierPerLvl * 100f);
+    }
     public int[] GetCritForStats(int level)
     {
-        int[] mass = new int[] { 2, 100 };
+        int[] mass = new int[] { _critChance, _critValue };
         if (level > 1)
         {
             for (int i = 0; i < mass.Length; i++)
-            { mass[i] = mass[i] * level; }
+            { mass[i] = CountAttribute(mass[i], level); }
             return mass;
         }
         else return mass;
     }
-    // промежуток времени, через которое противник после получения урона может снова получить урон
-    public float timeResetHit = 1f;
-    // множитель к характеристикам за уровень
-    [SerializeField] private float _multiplierPerLvl = 0.2f;
-
-    [Multiline(2)] public string Features;
-    public GameObject PrefabEnemy;
-    public bool IsBoss;
-
-    [SerializeField] private List<Item> RandomObjectsDrop = new List<Item>();
-    public List<Item> GetRandomLoot => RandomObjectsDrop;
-    public Item GetRandomItemInLoot() { int num = Random.Range(0, RandomObjectsDrop.Count - 1); return RandomObjectsDrop[num]; }
-    [SerializeField] private List<Item> AlwaysObjectsDrop = new List<Item>();
-    public List<Item> GetAlwaysLoot => AlwaysObjectsDrop;
-    [SerializeField] private int CoinsDrop;
-    public int GetCoinsDrop => CoinsDrop;
-
+    private int BaseMyltiplier(int inputValue, int level)
+    {
+        return Mathf.FloorToInt(inputValue * level);
+    }
+    public BuffClass IsStartBuff(int level)
+    {
+        int coeff = BaseMyltiplier(_buffChance, level);
+        int random = ProcessCommand.RandomValue;
+        Debug.Log(Name + "Buff chance: " + coeff.ToString() + " - " + random.ToString());
+        if (coeff > random)
+        {
+            return GetRandomBuff;
+        }
+        else return null;
+    }
 }
 public enum EnemyFightingType
 {

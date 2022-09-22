@@ -32,7 +32,7 @@ public class EnemyUI : MonoBehaviour
         ProcessCommand.ClearChildObj(_containBuffFields);
         foreach (BuffStat buffStat in buffStats)
         {
-            Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFields(buffStat);
+            Instantiate(_buffField, _containBuffFields).GetComponent<BuffField>().SetFieldsBuff(buffStat);
         }
     }
 }

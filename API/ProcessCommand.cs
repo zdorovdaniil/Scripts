@@ -5,6 +5,7 @@ using System;
 
 public class ProcessCommand : MonoBehaviour
 {
+    public static int RandomValue => UnityEngine.Random.Range(0, 100);
     public static string ToTime(float timeInt)
     {
         int minutes = Mathf.RoundToInt(timeInt / 60);
