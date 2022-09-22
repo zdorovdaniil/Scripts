@@ -12,7 +12,7 @@ public class QuestButton : MonoBehaviour
     [SerializeField] private TMP_Text _reward;
     [SerializeField] private Transform _buttonGainReward;
     [SerializeField] private Image _background;
-    public void SetUp(Quest quest,PlayerQuest playerQuest)
+    public void SetUp(Quest quest, PlayerQuest playerQuest)
     {
         _buttonGainReward.gameObject.SetActive(false);
         _playerQuest = playerQuest;
@@ -32,6 +32,7 @@ public class QuestButton : MonoBehaviour
         _quest.isComplete = true;
         LogUI.Instance.Loger("Quest: " + _quest.Name + " is complete");
         QuestUI.instance.FillListsOfQuest(_playerQuest);
+        GlobalSounds.Instance.SGetRewardQuest();
     }
 }
 

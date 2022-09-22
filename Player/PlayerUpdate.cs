@@ -45,14 +45,19 @@ public class PlayerUpdate : MonoBehaviour
     private void FixedUpdate()
     {
         RegeneHP();
+        UpdateUI();
+    }
+    private void UpdateUI()
+    {
         _timerUpdateUI += Time.deltaTime;
         if (_timerUpdateUI >= 0.25f)
         {
             _timerUpdateUI = 0;
             UpdateHPSlider();
             UpdateBuffFields();
+            CheckHeartBeat();
             _jerkButton.UpdateButton(_playerStats.stats.Skills[1].Level);
-            _flyingSlashButton.UpdateButton(1); // переделать
+            _flyingSlashButton.UpdateButton(_playerStats.stats.Skills[6].Level);
             if (_playerLeveling) needEXP = _playerLeveling.GetHeedExp(_playerStats.stats.Level);
         }
     }
@@ -80,7 +85,6 @@ public class PlayerUpdate : MonoBehaviour
         {
             ProcessCommand.ClearChildObj(_containBuffFields);
         }
-
     }
     private void RegeneHP()
     {
@@ -96,6 +100,38 @@ public class PlayerUpdate : MonoBehaviour
             _timerRegenHP = 0f;
             PoisonRegenHP();
         }
+    }
+    private float _timeToHeartBeat = 0f;
+    private void CheckHeartBeat()
+    {
+        _timeToHeartBeat += 0.25f;
+        if (_playerStats.curHP <= _playerStats.stats.HP * 0.5f)
+        {
+            if (_playerStats.curHP <= _playerStats.stats.HP * 0.25f)
+            {
+                if (_playerStats.curHP <= _playerStats.stats.HP * 0.1f)
+                {
+                    // выполняется при 1/10 части ХП
+                    if (_timeToHeartBeat <= 0.25f) ExeSoundHeartBeat(); else { return; }
+                }
+                else
+                {
+                    // выполняется при 1/4 части ХП
+                    if (_timeToHeartBeat <= 0.75f) ExeSoundHeartBeat(); else { return; }
+                }
+            }
+            else
+            {
+                if (_timeToHeartBeat <= 2f) ExeSoundHeartBeat(); else { return; }
+                // выполняется при 1/2 части ХП
+            }
+        }
+        else { return; }
+    }
+    private void ExeSoundHeartBeat()
+    {
+        _timeToHeartBeat = 0;
+        GlobalSounds.Instance.SHeartBeat();
     }
 
     public void UseHealPoison(Item item)
@@ -114,12 +150,10 @@ public class PlayerUpdate : MonoBehaviour
         if (numAddHPfromPoison <= 0) { usingPoison = null; }
         _playerStats.UpdateHP();
     }
-    private void DefaultRegenHP(int _regenLvl = 0)
+    private void DefaultRegenHP()
     {
-        int endurance = _playerStats.stats.Attributes[2].Level;
-        int addHP = _playerStats.stats.GetAddHP();
         timerRegenHP = _playerStats.stats.GetTimeRegenHP();
-        _playerStats.AddHP(addHP);
-        _playerStats.UpdateHP();
+        _playerStats.AddHP(_playerStats.stats.GetAddHP());
+        UpdateUI();
     }
 }

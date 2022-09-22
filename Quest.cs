@@ -42,6 +42,12 @@ public class Quest : ScriptableObject
     public Enemy EnemyType;
 
     public Item ItemQuest;
+    public void Reset()
+    {
+        progressStatus = 0;
+        isComplete = false;
+        IsCompletePermanent = false;
+    }
 
     public void CheckPermanentComplete()
     {
@@ -49,9 +55,7 @@ public class Quest : ScriptableObject
         {
             IsCompletePermanent = true;
             GlobalSounds.Instance.SCompleteQuest();
-
         }
-
     }
 }
 

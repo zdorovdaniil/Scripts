@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
 public enum SoundMaterials
 {
     None, Wood, Stone, Glass, DestroyWood, DestroyStone, DestroyGlass,
@@ -10,9 +8,11 @@ public class GlobalSounds : MonoBehaviour
     static public GlobalSounds Instance; private void Awake() { Instance = this; }
     [SerializeField] private AudioSource _sButtonClick; public void SButtonClick() { _sButtonClick.Play(); }
     [SerializeField] private AudioSource _sAwaibleLvlUp; public void SAwaibleLvlUp() { _sAwaibleLvlUp.Play(); }
+    [SerializeField] private AudioSource _sHeartBeat; public void SHeartBeat() { _sHeartBeat.Play(); }
     [SerializeField] private AudioSource _sLevelUp; public void SLevelUp() { _sLevelUp.Play(); }
     [SerializeField] private AudioSource _sCompleteQuest; public void SCompleteQuest() { _sCompleteQuest.Play(); }
     [SerializeField] private AudioSource _sGetQuest; public void SGetQuest() { _sGetQuest.Play(); }
+    [SerializeField] private AudioSource _sGetRewardQuest; public void SGetRewardQuest() { _sGetRewardQuest.Play(); }
     [SerializeField] private AudioSource _sCraftItem; public void SCraftItem() { _sCraftItem.Play(); }
     [SerializeField] private AudioSource _sCraftPoison; public void SCraftPoison() { _sCraftPoison.Play(); }
     [SerializeField] private AudioSource _sCraftFail; public void SCraftFail() { _sCraftFail.Play(); }

@@ -120,8 +120,7 @@ public class PlayerQuest : MonoBehaviour
     {
         foreach (Quest quest in _allQuests)
         {
-            quest.progressStatus = 0;
-            quest.isComplete = false;
+            quest.Reset();
         }
     }
     // загрузка результатов ТОЛЬКО основных квестов()

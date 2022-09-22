@@ -38,7 +38,7 @@ public class Item : ScriptableObject
     {
         return _itemRequirement.CheckReqirement(playerStats);
     }
-    private void SoundOnEquip(Item item)
+    private void SoundOnUsing(Item item)
     {
         if (item.itemTupe == ItemTupe.Weapon) { GlobalSounds.Instance.SEquipWeapon(); }
         else if (item.itemTupe == ItemTupe.Armor)
@@ -55,6 +55,7 @@ public class Item : ScriptableObject
     }
     public bool UsingItem(PlayerStats playerStats, InventorySlot slot, Inventory inv, PlayerUpdate playerUpdate)
     {
+        SoundOnUsing(slot.item);
         bool SelectArmor(InventorySlot _slot, int numE, int numI)
         {
             if (inv.GetEquipSlot(numE) != null) { MsgBoxUI.Instance.ShowAttention("armor slot busy"); return false; }

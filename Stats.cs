@@ -84,15 +84,15 @@ namespace stats
         public int GetAddHP()
         {
             int skillMedicene = Skills[2].Level;
-            if (skillMedicene >= 0 && skillMedicene < 7)
+            if (skillMedicene >= 0 && skillMedicene < 3)
             {
                 return 1;
             }
-            else if (skillMedicene >= 7 && skillMedicene < 14)
+            else if (skillMedicene >= 3 && skillMedicene < 5)
             {
                 return 2;
             }
-            else if (skillMedicene >= 14)
+            else if (skillMedicene >= 7)
             {
                 return 3;
             }
