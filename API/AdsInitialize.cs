@@ -26,6 +26,13 @@ public class AdsInitialize : MonoBehaviour, IUnityAdsInitializationListener
             }
         }));
 
+
+
+
+
+
+
+
     }
     public void OnInitializationComplete()
     {
