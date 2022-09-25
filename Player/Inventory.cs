@@ -26,7 +26,7 @@ public class Inventory : Photon.MonoBehaviour
     { }
     public void SendOthersInventoryCloth()
     {
-        if (!PhotonNetwork.offlineMode)
+        if (!PhotonNetwork.offlineMode && PhotonNetwork.connected)
         {
             int[] idCloth = new int[5];
             for (int i = 0; i < 5; i++)

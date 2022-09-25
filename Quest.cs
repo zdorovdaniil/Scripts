@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using stats; // Пространство имен stats из скрипта Stats
 using UnityEngine;
-[CreateAssetMenu]
 
+[CreateAssetMenu(fileName = "Quest", menuName = "Project/Quest", order = 5)]
 public class Quest : ScriptableObject
 {
     public int Id;
@@ -23,7 +22,7 @@ public class Quest : ScriptableObject
     [SerializeField] PriceType m_PriceType = PriceType.None;
     public PriceType priceType { get { return m_PriceType; } set { m_PriceType = value; } }
 
-    public int priceValue;
+    public int priceModificator;
 
     public List<Item> priceItems = new List<Item>();
 
@@ -48,14 +47,21 @@ public class Quest : ScriptableObject
         isComplete = false;
         IsCompletePermanent = false;
     }
-
     public void CheckPermanentComplete()
     {
-        if (neededProgress >= progressStatus)
+        if (progressStatus >= neededProgress)
         {
             IsCompletePermanent = true;
             GlobalSounds.Instance.SCompleteQuest();
         }
+    }
+    public void Save()
+    {
+        int temp = 0;
+        int id = PlayerPrefs.GetInt("activeSlot");
+        PlayerPrefs.SetFloat(id + "_questProcess_" + +Id, progressStatus);
+        if (isComplete == true) { temp = 1; }
+        PlayerPrefs.SetInt(id + "_questCompleted_" + +Id, temp);
     }
 }
 
@@ -71,27 +77,29 @@ public enum PriceType
 }
 public enum QuestType
 {
-    None,
-    // задания в подземелье ()
-    PassRooms, // Прохождение всех комнат в подземелье
-    CompleteDungeonOnTime, // пройти подземелье за время T
-    SeachAllSecretPlace, // отыскать все секретные места ****
-    OpenChests, // открыть столько-то N-число сундуков +
-    DefeatEnemyType, // одолеть число Т-число противников такого-то типа *
-    CollectItemFromDrop, // получить предмет указанный в квесте из дропа
-    WatchReclama, // просмотреть рекламу 
-    DefeatBoss, // одолеть босса
-    LevelUp, // повысить уровень
-    CompleteDungeonWithoutDeath, // пройти подземелье без смертей
+    None = 0,
+    // задания в подземелье 
+    PassRooms = 1, // Прохождение всех комнат в подземелье
+    SeachAllSecretPlace = 3, // отыскать все секретные места ****
+    OpenChests = 4, // открыть столько-то N-число сундуков 
+    DefeatEnemyType = 5, // одолеть число Т-число противников такого-то типа *
+    CollectItemFromDrop = 6, // получить предмет указанный в квесте из дропа
+    WatchReclama = 7, // просмотреть рекламу 
+    DefeatBoss = 8, // одолеть босса
+    LevelUp = 9, // повысить уровень
+    CompleteDungeon = 16,// дойти до конца подземелья
+    CompleteDungeonWithoutDeath = 10, // дойти до конца подземелья без смертей
+    CompleteDungeonOnTime = 2, // дойти до конца подземелья за время T
+
     //
 
     // основные задания (не пропадают)
-    GetLevel, // получить уровень N
-    GetDungeonLevel, // достичь N уровння подземелья
-    PassTotalRooms, // пройти за все время N комнат
-    KillTotalEnemy, // убить за все время N противников
+    GetLevel = 11, // получить уровень N
+    GetDungeonLevel = 12, // достичь N уровння подземелья
+    PassTotalRooms = 13, // пройти за все время N комнат
+    KillTotalEnemy = 14, // убить за все время N противников
+    HasItem = 15, // наличие предмета у персонажа
 
-    HasItem, // наличие предмета
 
 
 }

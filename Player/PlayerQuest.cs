@@ -6,23 +6,23 @@ public class PlayerQuest : MonoBehaviour
     [Header("List quests")]
     [SerializeField] private List<Quest> _listActiveQuests = new List<Quest>();
     public List<Quest> GetActiveQuests => _listActiveQuests;
-    [SerializeField] private List<Quest> _allQuests = new List<Quest>();
-    public List<Quest> GetAllQuests => _allQuests;
+
     [Header("Quest count")]
-    [SerializeField] private int _countDunQuest;
+
     private Inventory _inv;
+    private PlayerStats _plStats;
 
 
     private void Start()
     {
         instance = this;
         _inv = GetComponent<Inventory>();
+        _plStats = GetComponent<PlayerStats>();
     }
     public void InstainceQuests()
     {
-        ResetQuestsValue();
-        GenerateActiveQuests();
-        LoadQuestsValue();
+        _listActiveQuests = DungeonQuests.Instance.GenerateActiveQuests();
+        DungeonQuests.Instance.LoadQuestsValue();
     }
     public void AddActiveQuest(Quest quest)
     {
@@ -35,13 +35,10 @@ public class PlayerQuest : MonoBehaviour
         foreach (Quest quest in _listActiveQuests)
         {
             if (quest.IsCompletePermanent) continue;
-            PlayerStats plStats = GetComponent<PlayerStats>();
             switch (quest.questType)
             {
                 case QuestType.PassRooms:
                     quest.progressStatus = DungeonStats.Instance.passedRoom; break;
-                case QuestType.CompleteDungeonOnTime:
-                    quest.progressStatus = GameManager.Instance.GetTimeDungeonGoing; break;
                 case QuestType.OpenChests:
                     quest.progressStatus = DungeonStats.Instance.numOpenChest; break;
                 case QuestType.DefeatEnemyType:
@@ -79,7 +76,7 @@ public class PlayerQuest : MonoBehaviour
                     break;
                 case QuestType.GetLevel:
                     {
-                        quest.progressStatus = plStats.stats.Level;
+                        quest.progressStatus = _plStats.stats.Level;
                     }
                     break;
                 case QuestType.GetDungeonLevel:
@@ -109,96 +106,52 @@ public class PlayerQuest : MonoBehaviour
                         }
                     }
                     break;
+                case QuestType.CompleteDungeon:
+                    {
+                        if (param == "completeDungeon") quest.progressStatus += 1;
+                    }
+                    break;
+                case QuestType.CompleteDungeonWithoutDeath:
+                    {
+                        if (param == "completeDungeon" && DungeonStats.Instance.numDeath <= 0) quest.progressStatus += 1;
+                    }
+                    break;
+                case QuestType.CompleteDungeonOnTime:
+                    {
+                        if (param == "completeDungeon" && quest.neededProgress <= GameManager.Instance.GetTimeDungeonGoing) quest.progressStatus = quest.neededProgress;
+                    }
+                    break;
 
             }
             quest.CheckPermanentComplete();
+            quest.Save();
         }
+    }
 
-        SaveQuestsValue();
-    }
-    private void ResetQuestsValue()
-    {
-        foreach (Quest quest in _allQuests)
-        {
-            quest.Reset();
-        }
-    }
-    // загрузка результатов ТОЛЬКО основных квестов()
-    private void LoadQuestsValue()
-    {
-        int id = PlayerPrefs.GetInt("activeSlot");
-        foreach (Quest quest in _allQuests)
-        {
-            if (quest.isMainQuest)
-            {
-                float processValue = PlayerPrefs.GetFloat(id + "_questProcess_" + quest.Id);
-                quest.progressStatus = processValue;
-                int isComplete = PlayerPrefs.GetInt(id + "_questCompleted_" + quest.Id);
-                if (isComplete == 1) quest.isComplete = true;
-                else quest.isComplete = false;
-            }
-        }
-    }
-    public void SaveQuestsValue()
-    {
-        int id = PlayerPrefs.GetInt("activeSlot");
-        foreach (Quest quest in _allQuests)
-        {
-            PlayerPrefs.SetFloat(id + "_questProcess_" + +quest.Id, quest.progressStatus);
-            int temp = 0;
-            if (quest.isComplete == true)
-                temp = 1;
-            PlayerPrefs.SetInt(id + "_questCompleted_" + +quest.Id, temp);
-        }
-    }
-    private void GenerateActiveQuests()
-    {
-        // заполнение списка основных квестов
-        foreach (Quest quest in _allQuests)
-        {
-            if (quest.isMainQuest == true)
-                _listActiveQuests.Add(quest);
-        }
-        // заполнения списка квестов для текущего подземелья
-        List<Quest> listOnlyDunList = new List<Quest>();
-        foreach (Quest quest in _allQuests)
-        {
-            if (quest.isInOnlyDungeon == true)
-            {
-                listOnlyDunList.Add(quest);
-            }
-        }
-        // выбор заданного количества квестов для подземелья
-        for (int i = 0; i < _countDunQuest; i++)
-        {
-            int randomValue = Random.Range(0, listOnlyDunList.Count);
-            if (listOnlyDunList[randomValue] != null)
-            {
-                _listActiveQuests.Add(listOnlyDunList[randomValue]);
-                listOnlyDunList.RemoveAt(randomValue);
-            }
-        }
-    }
+
     public void GainRewardQuest(Quest quest)
     {
-        PlayerStats plStats = GetComponent<PlayerStats>();
-        if (quest.priceType == PriceType.Money)
+        for (int i = 0; i < quest.priceModificator; i++)
         {
-            //plStats.GainGold(quest.priceValue);
-        }
-        if (quest.priceType == PriceType.SkillUp)
-        {
-            plStats.stats.Skills[quest.numberSkillorAtt].LevelUp();
-        }
-        if (quest.priceType == PriceType.Item)
-        {
-            foreach (Item item in quest.priceItems)
-            { plStats.GetInventory.AddItems(item); }
-        }
-        if (quest.priceType == PriceType.AttributeUp)
-        {
-            plStats.UpAttribute(quest.numberSkillorAtt, false);
-        }
-    }
+            if (quest.priceType == PriceType.Money)
+            {
+                //_plStats.GainGold(quest.priceValue);
+            }
 
+            if (quest.priceType == PriceType.Item)
+            {
+                foreach (Item item in quest.priceItems)
+                { _plStats.GetInventory.AddItems(item); }
+            }
+            if (quest.priceType == PriceType.SkillUp)
+            {
+                _plStats.stats.Skills[quest.numberSkillorAtt].LevelUp();
+            }
+            if (quest.priceType == PriceType.AttributeUp)
+            {
+                _plStats.UpAttribute(quest.numberSkillorAtt, false);
+            }
+        }
+
+    }
 }

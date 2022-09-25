@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-[CreateAssetMenu]
+
+[CreateAssetMenu(fileName = "ItemDatabase", menuName = "Project/ItemDatabase", order = 4)]
 public class ItemDatabase : ScriptableObject
 {
     public List<Item> Items = new List<Item>();

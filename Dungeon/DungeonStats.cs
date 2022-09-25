@@ -17,12 +17,15 @@ public class DungeonStats : Photon.MonoBehaviour
     public int passedRoom; // количество пройденых комнат в подземелье
     public int curKills; // количество уничтоженных врагов в тукущем подземелье
     public int numOpenChest; // кол-во открытых сундуков
+    public int numDeath; /*Кол-во смертей в подземелье */ public void AddDeath() { numDeath += 1; allDeath += 1; }
+
     public List<RoomControl> interedRooms = new List<RoomControl>(); // список комнат, где были игроки
 
     // Собираемая за всю игру статистика
     public int allPassRoom; // количество пройденных комнат за всю игру
     public int allKills; // уничтожено врагов за всю игру
     public int allOpenChest; // всего открытых сундуков
+    public int allDeath; // кол-во смертей в подземелье
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }
 
@@ -58,6 +61,7 @@ public class DungeonStats : Photon.MonoBehaviour
         allKills = PlayerPrefs.GetInt(id + "_slot_allKills");
         allPassRoom = PlayerPrefs.GetInt(id + "_slot_allPassRoom");
         allOpenChest = PlayerPrefs.GetInt(id + "_slot_allOpenChest");
+        allDeath = PlayerPrefs.GetInt(id + "_slot_allDeath");
     }
     public void ResetDungeonStats()
     {
@@ -66,6 +70,7 @@ public class DungeonStats : Photon.MonoBehaviour
         PlayerPrefs.DeleteKey(id + "_slot_allKills");
         PlayerPrefs.DeleteKey(id + "_slot_allPassRoom");
         PlayerPrefs.DeleteKey(id + "_slot_allOpenChest");
+        PlayerPrefs.DeleteKey(id + "_slot_allDeath");
     }
     public void SaveDungeonStats()
     {
@@ -73,5 +78,6 @@ public class DungeonStats : Photon.MonoBehaviour
         PlayerPrefs.SetInt(id + "_slot_allKills", allKills);
         PlayerPrefs.SetInt(id + "_slot_allPassRoom", allPassRoom);
         PlayerPrefs.SetInt(id + "_slot_allOpenChest", allOpenChest);
+        PlayerPrefs.SetInt(id + "_slot_allDeath", allDeath);
     }
 }

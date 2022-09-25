@@ -8,7 +8,7 @@ public class GlobalSounds : MonoBehaviour
     static public GlobalSounds Instance; private void Awake() { Instance = this; }
     [SerializeField] private AudioSource _sButtonClick; public void SButtonClick() { _sButtonClick.Play(); }
     [SerializeField] private AudioSource _sAwaibleLvlUp; public void SAwaibleLvlUp() { _sAwaibleLvlUp.Play(); }
-    [SerializeField] private AudioSource _sHeartBeat; public void SHeartBeat() { _sHeartBeat.Play(); }
+    [SerializeField] private AudioSource _sHeartBeat; public void SHeartBeat() { Playing(_sHeartBeat, true, true); }
     [SerializeField] private AudioSource _sLevelUp; public void SLevelUp() { _sLevelUp.Play(); }
     [SerializeField] private AudioSource _sCompleteQuest; public void SCompleteQuest() { _sCompleteQuest.Play(); }
     [SerializeField] private AudioSource _sGetQuest; public void SGetQuest() { _sGetQuest.Play(); }
@@ -16,11 +16,11 @@ public class GlobalSounds : MonoBehaviour
     [SerializeField] private AudioSource _sCraftItem; public void SCraftItem() { _sCraftItem.Play(); }
     [SerializeField] private AudioSource _sCraftPoison; public void SCraftPoison() { _sCraftPoison.Play(); }
     [SerializeField] private AudioSource _sCraftFail; public void SCraftFail() { _sCraftFail.Play(); }
-    [SerializeField] private AudioSource _sOpenWindow; public void SOpenWindow() { _sOpenWindow.Play(); }
-    [SerializeField] private AudioSource _sCloseWindow; public void SCloseWindow() { _sCloseWindow.Play(); }
+    [SerializeField] private AudioSource _sOpenWindow; public void SOpenWindow() { Playing(_sOpenWindow, true); }
+    [SerializeField] private AudioSource _sCloseWindow; public void SCloseWindow() { Playing(_sCloseWindow, true); }
     [SerializeField] private AudioSource _sPlaceItem; public void SPlaceItem() { _sPlaceItem.Play(); }
     [SerializeField] private AudioSource _sTakeAll; public void STakeAll() { _sTakeAll.Play(); }
-    [SerializeField] private AudioSource _sClickItem; public void SClickItem() { _sClickItem.Play(); }
+    [SerializeField] private AudioSource _sClickItem; public void SClickItem() { Playing(_sClickItem, true); }
     [SerializeField] private AudioSource _sClickGlass; public void SClickGlass() { _sClickGlass.Play(); }
     [SerializeField] private AudioSource _sAttention; public void SAttention() { _sAttention.Play(); }
     [SerializeField] private AudioSource _sBuySell; public void SBuySell() { _sBuySell.Play(); }
@@ -47,6 +47,12 @@ public class GlobalSounds : MonoBehaviour
     [SerializeField] private GameObject _pOpenChest; public void POpenChest(Transform trf) { Instantiate(_pOpenChest, trf); }
     [SerializeField] private GameObject _pCloseChest; public void PCloseChest(Transform trf) { Instantiate(_pCloseChest, trf); }
 
+    private void Playing(AudioSource source, bool pitching = false, bool voluming = false)
+    {
+        if (pitching) source.pitch = Random.Range(0.7f, 1.1f);
+        if (voluming) source.volume = Random.Range(0.5f, 0.7f);
+        source.Play();
+    }
     public void CreateSoundMaterial(Transform trf, SoundMaterials material)
     {
         GameObject newObject = null;

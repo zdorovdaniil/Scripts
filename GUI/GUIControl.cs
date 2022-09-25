@@ -136,7 +136,7 @@ public class GUIControl : MonoBehaviour
 
     public void GameSave()
     {
-        PlayerQuest.instance.SaveQuestsValue();
+        DungeonQuests.Instance.SaveQuestsValue();
         PlayerStats LinkPlayerStats = Player.GetComponent<PlayerStats>();
         Inventory inv = Player.GetComponent<Inventory>();
         inv.DeleteCollectionItems(_gameManager.GetRules.GetDeletingItems);

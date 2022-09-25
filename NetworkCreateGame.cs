@@ -15,13 +15,13 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     [SerializeField] private bool _isConnectedToLobby;
     private int _curRegion;
     [SerializeField] private TMP_Dropdown _regionDropdown;
+    private CloudRegionCode _regionCode = 0;
     private void Start()
     {
+        if (PhotonNetwork.connected) { PhotonNetwork.Disconnect(); }
         SceneLoadingUI.Instance.CloseLoadingUI();
-        _isConnectedMasterServer = false;
         PhotonNetwork.gameVersion = "1";
     }
-
     public void CheckPlayerName(bool isAnyway = false)
     {
         int id = PlayerPrefs.GetInt("activeSlot");
@@ -34,7 +34,6 @@ public class NetworkCreateGame : Photon.MonoBehaviour
             TryToConnectMasterServer();
         }
     }
-    private CloudRegionCode _regionCode = 0;
     public void SetRegionDropdown()
     {
         _regionDropdown.value = PlayerPrefs.GetInt("region");

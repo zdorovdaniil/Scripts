@@ -12,18 +12,20 @@ public class PlayerStats : Photon.MonoBehaviour
     public float curHP; // Количество жизней персонаж нынешние
     public int curEXP; // Количество опыта
     private bool isTakeDamage; //для ограниечения получаемого урона в секунду
-    private int _ping; public int GetPing => _ping;
-    // Сетевые переменные
-    private bool server_IsDeath;
-    private float server_curHP;
-    private float server_HP;
-    private int server_Ping;
-    //
+
     private Inventory _inventory; public Inventory GetInventory => _inventory;
     private Vector3 _spawnPosition;
     private HumanEffects _playerEffects;
     [SerializeField] private ParticlePlaces _particlePlaces;
     private RoomControl curRoom; public void SetCurRoom(RoomControl room) { curRoom = room; }
+
+    // Сетевые переменные
+    private int _ping; public int GetPing => _ping;
+    private bool server_IsDeath;
+    private float server_curHP;
+    private float server_HP;
+    private int server_Ping;
+    //
 
     private void Awake() { SetStats(); }
     private void Start()
@@ -272,6 +274,7 @@ public class PlayerStats : Photon.MonoBehaviour
         stats.ResetAllBuff();
         if (_playerEffects) _playerEffects.DiactivateEffects();
         ChangeSpeed();
+        DungeonStats.Instance.AddDeath();
         gameObject.GetComponent<Sound>().StartSound(SoundType.Death);
         PlayerController plControl = GetComponent<PlayerController>();
         GUIControl gUIControl = GUIControl.Instance;

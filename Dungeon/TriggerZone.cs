@@ -49,9 +49,13 @@ public class TriggerZone : MonoBehaviour
         }
         if (_type == ZoneType.Exit)
         {
-            if (_playersInZone.Count >= 2 || PhotonNetwork.offlineMode)
+            if (_playersInZone.Count >= GameManager.Instance.GetCountPlayers || PhotonNetwork.offlineMode)
             {
                 GUIControl.Instance.ExitButton.SetActive(true);
+                foreach (PlayerStats playerSt in _playersInZone)
+                {
+                    playerSt.GetComponent<PlayerQuest>().UpdateProcessQuests(null, null, "completeDungeon");
+                }
             }
         }
         if (_type == ZoneType.DestroyWithDelay)

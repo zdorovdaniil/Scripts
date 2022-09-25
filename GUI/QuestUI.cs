@@ -10,7 +10,7 @@ public class QuestUI : MonoBehaviour
     [SerializeField] private Transform _activeQuests;
     [SerializeField] private Transform _complete;
 
-    private void Start() {instance = this;}
+    private void Start() { instance = this; }
     public void FillListsOfQuest(PlayerQuest plQuest)
     {
         for (int i = 0; i < _activeQuests.childCount; i++)
@@ -24,11 +24,9 @@ public class QuestUI : MonoBehaviour
 
         foreach (Quest quest in plQuest.GetActiveQuests)
         {
-            if (quest.isComplete == false)
+            if (!quest.isComplete)
                 Instantiate(_buttonQuestPrefab, _activeQuests).GetComponent<QuestButton>().SetUp(quest, _playerQuest);
             else Instantiate(_buttonQuestPrefab, _complete).GetComponent<QuestButton>().SetUp(quest, _playerQuest);
-
         }
-        //Debug.Log("Листы квестов заполнены");
     }
 }
