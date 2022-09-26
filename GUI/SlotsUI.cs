@@ -10,15 +10,16 @@ public class SlotsUI : MonoBehaviour
     [SerializeField] private Inventory _inv;
     [SerializeField] private FilterType _filterType;
 
+
     public void FullSlots(List<InventorySlot> invSlots)
     {
         ClearSlots();
         if (invSlots != null)
         {
-            foreach(InventorySlot slot in invSlots)
+            foreach (InventorySlot slot in invSlots)
             {
                 if (slot != null)
-                Instantiate(_prefabContainSlot, _objContain).GetComponent<ContainSlot>().UpdateSlotInfo(slot,_inv,_containerType);
+                    Instantiate(_prefabContainSlot, _objContain).GetComponent<ContainSlot>().UpdateSlotInfo(slot, _inv, _containerType);
             }
         }
         else return;
@@ -30,9 +31,9 @@ public class SlotsUI : MonoBehaviour
             Destroy(_objContain.GetChild(i).gameObject);
         }
     }
-    private List <InventorySlot> FilterInvList(FilterType filterType,List <InventorySlot> slots)
+    private List<InventorySlot> FilterInvList(FilterType filterType, List<InventorySlot> slots)
     {
-        List <InventorySlot> filteredSlots = new List<InventorySlot>();
+        List<InventorySlot> filteredSlots = new List<InventorySlot>();
         if (filterType == FilterType.Level)
         {
             // находим максимум из листа
@@ -40,9 +41,9 @@ public class SlotsUI : MonoBehaviour
             foreach (InventorySlot slot in slots)
             {
                 if (slot.item.Level >= max)
-                {max = slot.item.Level;}
+                { max = slot.item.Level; }
             }
-            for (int i =0;i<max+1;i++)
+            for (int i = 0; i < max + 1; i++)
             {
                 foreach (InventorySlot slot in slots)
                 {
@@ -56,27 +57,27 @@ public class SlotsUI : MonoBehaviour
     }
 
 }
-     public enum ContainerType 
-     {
-         None, 
-         Crafting, 
-         CraftingInfo,
-         Shop,
-         ShopInfo,
-         Storage,
-         StorageInfo,
-         Equip,
-         Inventory,
-         Leveling,
-         LevelingInfo,
-         Chest,
-         ChestInfo,
-         Info
-     }
-    public enum FilterType
-    {
-        None,
-        ItemType,
-        Level,
-        Cost,
-    }
+public enum ContainerType
+{
+    None,
+    Crafting,
+    CraftingInfo,
+    Shop,
+    ShopInfo,
+    Storage,
+    StorageInfo,
+    Equip,
+    Inventory,
+    Leveling,
+    LevelingInfo,
+    Chest,
+    ChestInfo,
+    Info
+}
+public enum FilterType
+{
+    None,
+    ItemType,
+    Level,
+    Cost,
+}

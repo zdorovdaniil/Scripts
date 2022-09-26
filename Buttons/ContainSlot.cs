@@ -43,6 +43,10 @@ public class ContainSlot : MonoBehaviour
         _amountItems.text = "";
         _containerType = ContainerType.None;
     }
+    /*private void SaveNumSlot()
+    {
+        PlayerPrefs.SetInt("selectedSlot",)
+    }*/
     public void ClickOnSlot()
     {
         if (_containerType == ContainerType.Crafting)
@@ -52,6 +56,7 @@ public class ContainSlot : MonoBehaviour
         if (_containerType == ContainerType.Shop)
         {
             ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Sell);
+
         }
         if (_containerType == ContainerType.ShopInfo)
         {

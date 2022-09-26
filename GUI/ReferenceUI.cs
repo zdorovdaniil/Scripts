@@ -47,21 +47,23 @@ public class ReferenceUI : MonoBehaviour
 
     public void ClickMoveToChest()
     {
+        GlobalSounds.Instance.SPlaceItem();
         int temp = _slot.amount;
         ChestUI.Instance.PlaceItemToChest(_slot);
         if (temp == 1)
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
-        GlobalSounds.Instance.SPlaceItem();
+
     }
     public void ClickMoveToInvFromChest()
     {
+        GlobalSounds.Instance.SPlaceItem();
         int temp = _slot.amount;
         ChestUI.Instance.PlaceItemToInventory(_slot);
         if (temp == 1)
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
-        GlobalSounds.Instance.SPlaceItem();
+
     }
     public void ClickSellAll()
     {
@@ -75,13 +77,13 @@ public class ReferenceUI : MonoBehaviour
     }
     public void ClickSellOne()
     {
+        GlobalSounds.Instance.SPlaceItem();
         int temp = _slot.amount;
         ShopingUI.instance.SellSlot(_slot.item, 1);
         SetValueSlot(_slot, _buttonsType);
         if (temp <= 1)
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
-        GlobalSounds.Instance.SBuySell();
     }
     // переключение видимости родительских объектов у TextMeshProUGUI
     private void OnOffParentGameObject(bool status, TextMeshProUGUI mesh)

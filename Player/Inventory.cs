@@ -236,6 +236,16 @@ public class Inventory : Photon.MonoBehaviour
         { return true; }
         else { return false; }
     }
+    public void DeleteSlot(InventorySlot slot)
+    {
+        if (items[slot.SlotNum].amount <= slot.amount)
+        { items.RemoveAt(slot); }
+        else
+        {
+            items[slot.SlotNum].amount = items[slot.SlotNum].amount - slot.amount;
+        }
+
+    }
     // удаляет предмет по индексу из инвентаря
     public void DeleteItem(int i)
     {
@@ -248,7 +258,7 @@ public class Inventory : Photon.MonoBehaviour
         }
     }
     // удаляется Equip[] слот с указание индекса 
-    public void DeleteEquip(int i, bool withItemsIDs = false)
+    public void DeleteEquip(int i)
     {
         equips[i] = null;
         itemIDs[i + 24] = -1;

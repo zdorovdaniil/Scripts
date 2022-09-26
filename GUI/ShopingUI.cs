@@ -77,10 +77,7 @@ public class ShopingUI : MonoBehaviour
     }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
     {
-        for (int i = 0; i < _spawnReferenceGUI.childCount; i++)
-        {
-            Destroy(_spawnReferenceGUI.GetChild(i).gameObject);
-        }
+        ProcessCommand.ClearChildObj(_spawnReferenceGUI);
         ReferenceUI reference = Instantiate(_prefReferenceGUI, _spawnReferenceGUI).GetComponent<ReferenceUI>();
         reference.SetPlayerStats(_playerStats);
         reference.SetValueSlot(slot, buttonType);
