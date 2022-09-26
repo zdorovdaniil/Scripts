@@ -44,7 +44,7 @@ public class ReferenceUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _critValue;
     [SerializeField] private TextMeshProUGUI _features;
 
-
+    // Chest 
     public void ClickMoveToChest()
     {
         GlobalSounds.Instance.SPlaceItem();
@@ -53,7 +53,6 @@ public class ReferenceUI : MonoBehaviour
         if (temp == 1)
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
-
     }
     public void ClickMoveToInvFromChest()
     {
@@ -63,8 +62,9 @@ public class ReferenceUI : MonoBehaviour
         if (temp == 1)
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
-
     }
+    //
+    //Shop
     public void ClickSellAll()
     {
         ShopingUI.instance.SellSlot(_slot.item, _slot.amount);
@@ -85,12 +85,14 @@ public class ReferenceUI : MonoBehaviour
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
     }
-    // переключение видимости родительских объектов у TextMeshProUGUI
-    private void OnOffParentGameObject(bool status, TextMeshProUGUI mesh)
+    //
+    // PlayerUI
+    public void ClickUseSlotInInventory()
     {
-        GameObject parent = mesh.transform.parent.gameObject;
-        parent.SetActive(status);
+        PlayerUI.Instance.UseSlot(_slot);
+        Destroy(this.gameObject);
     }
+
     public void ClickDeleteItem()
     {
         int temp = _slot.amount;
@@ -102,6 +104,8 @@ public class ReferenceUI : MonoBehaviour
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
     }
+    //
+    //Storage
     public void ClickMoveOutAll()
     {
         Storage.instance.MoveToStorageSlot(_slot.item, _slot.amount);
@@ -144,12 +148,6 @@ public class ReferenceUI : MonoBehaviour
 
         Destroy(this.gameObject);
     }
-    public void ClickUseSlotInInventory()
-    {
-        PlayerUI.Instance.UseSlot(_slot);
-        Destroy(this.gameObject);
-    }
-
     public void DestroyReferenceUI()
     {
         Destroy(this.gameObject);
@@ -157,6 +155,7 @@ public class ReferenceUI : MonoBehaviour
     }
     private void CheckSlotAmount(int amount)
     { if (amount <= 1) Destroy(this.gameObject); }
+
     private void CheckReferenceButtonType(ReferenceButtonType buttonsType)
     {
         CloseDoingButtons();

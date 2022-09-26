@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class Inventory : Photon.MonoBehaviour
 {
-    // Для обновления статистики
-    private PlayerStats Plstats;
-
-    [SerializeField] private InventorySlot[] equips = new InventorySlot[7];
-    [SerializeField] private List<InventorySlot> items = new List<InventorySlot>(24);
+    private PlayerStats Plstats; // Для обновления статистики
+    private InventorySlot[] equips = new InventorySlot[7];
+    private List<InventorySlot> items = new List<InventorySlot>(24);
     public List<InventorySlot> GetItems => items;
     [SerializeField] private int[] itemIDs = new int[31];
     private ItemDatabase _itemDatabase;
@@ -207,7 +205,7 @@ public class Inventory : Photon.MonoBehaviour
         if (items.Count >= 24) { Debug.Log("Inventory FUll"); return false; } // если слоты в инвентаре заполнены
         InventorySlot new_slot = new InventorySlot(item, amount);
         items.Add(new_slot);
-        new_slot.SlotNum = items.Count;
+        InventoryChange();
         return true;
     }
     // устанавливается Equip[] слот с указание индекса слота
@@ -236,26 +234,29 @@ public class Inventory : Photon.MonoBehaviour
         { return true; }
         else { return false; }
     }
-    public void DeleteSlot(InventorySlot slot)
+    private void InventoryChange()
     {
-        if (items[slot.SlotNum].amount <= slot.amount)
-        { items.RemoveAt(slot); }
+        for (int i = 0; i < items.Count; i++)
+        {
+            items[i].SetSlotNum(i + 1);
+        }
+    }
+    public void DeleteSlot(InventorySlot slot, int amount = 0)
+    {
+        if (amount == 0) { items.RemoveAt(slot.SlotNum - 1); }
         else
         {
-            items[slot.SlotNum].amount = items[slot.SlotNum].amount - slot.amount;
+            items[slot.SlotNum - 1].amount = items[slot.SlotNum - 1].amount - amount;
+            if (items[slot.SlotNum - 1].amount <= 0) { items.RemoveAt(slot.SlotNum - 1); }
         }
-
+        Debug.Log("num - " + (slot.SlotNum - 1).ToString() + " . kol - " + items[slot.SlotNum - 1].amount);
+        InventoryChange();
     }
     // удаляет предмет по индексу из инвентаря
     public void DeleteItem(int i)
     {
         if (items[i].item != null) { items.RemoveAt(i); }
         else Debug.Log("Empty Slot");
-        if (Plstats != null)
-        {
-            Plstats.CheckStatusEquip();
-            Plstats.UpdateArmor();
-        }
     }
     // удаляется Equip[] слот с указание индекса 
     public void DeleteEquip(int i)
@@ -277,7 +278,7 @@ public class Inventory : Photon.MonoBehaviour
             if (equips[i] != null)
             {
                 if (equips[i].item.Id == id)
-                { DeleteEquip(i, true); }
+                { DeleteEquip(i); }
             }
         }
         UpdateClothVisible();
@@ -383,6 +384,7 @@ public class InventorySlot
         SlotNum = slotNum;
 
     }
+    public void SetSlotNum(int value) => SlotNum = value;
     // получает лист с items, складывает одинаковые, и получается лист InvSlots
     public static List<InventorySlot> CreateListInvSlots(List<Item> items)
     {

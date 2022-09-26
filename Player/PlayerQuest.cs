@@ -4,14 +4,9 @@ public class PlayerQuest : MonoBehaviour
 {
     public static PlayerQuest instance;
     [Header("List quests")]
-    [SerializeField] private List<Quest> _listActiveQuests = new List<Quest>();
-    public List<Quest> GetActiveQuests => _listActiveQuests;
-
-    [Header("Quest count")]
-
+    [SerializeField] private List<Quest> _listActiveQuests = new List<Quest>(); public List<Quest> GetActiveQuests => _listActiveQuests;
     private Inventory _inv;
     private PlayerStats _plStats;
-
 
     private void Start()
     {

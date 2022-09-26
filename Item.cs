@@ -62,7 +62,7 @@ public class Item : ScriptableObject
             else
             {
                 inv.SetToEquipSlot(_slot, numE);
-                inv.DeleteItemId(_slot.item.Id, 1);
+                inv.DeleteSlot(_slot);
                 inv.UpdateClothVisible();
                 LogUI.Instance.Loger("Equip " + _slot.item.armorTupe);
                 GlobalSounds.Instance.SEquipArmor();
@@ -75,7 +75,7 @@ public class Item : ScriptableObject
             else if (_itemRequirement.CheckReqirement(playerStats))
             {
                 inv.SetToEquipSlot(slot, 0);
-                inv.DeleteItemId(slot.item.Id, 1);
+                inv.DeleteSlot(slot);
                 inv.UpdateClothVisible();
                 LogUI.Instance.Loger("Equip weapon");
                 return true;
@@ -97,7 +97,7 @@ public class Item : ScriptableObject
         }
         else if (slot.item.itemTupe == ItemTupe.Poison || slot.item.itemTupe == ItemTupe.Usable || slot.item.itemTupe == ItemTupe.Food)
         {
-            inv.DeleteItemId(slot.item.Id, 1);
+            inv.DeleteSlot(slot, 1);
             foreach (BuffClass buffClass in slot.item.Buffs)
             {
                 if (buffClass.Buff == Buff.Healing) { playerUpdate.UseHealPoison(slot.item); }
@@ -108,7 +108,7 @@ public class Item : ScriptableObject
         }
         else if (slot.item.itemTupe == ItemTupe.Improve)
         {
-            inv.DeleteItemId(slot.item.Id, 1);
+            inv.DeleteSlot(slot, 1);
             switch (slot.item.Improve)
             {
                 case ImproveItem.Strenght: playerStats.UpAttribute(0, false); break;

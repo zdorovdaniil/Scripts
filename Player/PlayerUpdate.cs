@@ -105,7 +105,7 @@ public class PlayerUpdate : MonoBehaviour
     private float _timeToHeartBeat = 0f;
     private void CheckHeartBeat()
     {
-        _hearthAnimation.Play();
+        //_hearthAnimation.Play();
         if (_playerStats.curHP <= _playerStats.stats.HP * 0.5f)
         {
             _timeToHeartBeat += 0.25f;
