@@ -87,7 +87,8 @@ public class CraftingUI : MonoBehaviour
             {
                 _inv.AddItems(SelectedSlot.item);
                 MsgBoxUI.Instance.ShowInfo("info", "item created successfully");
-                GlobalSounds.Instance.SCraftItem();
+                if (SelectedSlot.item.itemTupe == ItemTupe.Poison) GlobalSounds.Instance.SCraftPoison();
+                else { GlobalSounds.Instance.SCraftItem(); }
             }
             else
             {

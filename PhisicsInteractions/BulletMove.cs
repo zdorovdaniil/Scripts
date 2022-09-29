@@ -36,19 +36,21 @@ public class BulletMove : Photon.MonoBehaviour
                 if (_isActivingOneTime) _isActivatedEventOnHit = true;
                 HitEffects();
                 HitToObject(other);
-                if (_destroyOnTrigger)
+                /*if (_destroyOnTrigger)
                 {
-                    DestroyDamageZone();
+                    /*DestroyDamageZone();
                     this.enabled = false;
-                }
+                }*/
             }
         }
     }
+    /*
     private void DestroyDamageZone()
     {
         if (this.gameObject.GetComponent<DamageZone>())
         { Destroy(this.gameObject.GetComponent<DamageZone>()); }
     }
+    */
     private void HitToObject(Collider other)
     {
         rb.Sleep();

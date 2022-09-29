@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum RoomType
-{ Default, Big, Final, BeetweenRooms, End, MiniBoss, Start, Random }
+{ Default, Big, Final, BeetweenRooms, End, MiniBoss, Start, Ambush, }
 public class RoomControl : Photon.MonoBehaviour
 {
     [SerializeField] private RoomType _roomType; public RoomType GetRoomType => _roomType;

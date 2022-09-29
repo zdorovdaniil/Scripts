@@ -109,6 +109,10 @@ public class DamageZone : MonoBehaviour
             }
         }
     }
+    public void Diactive()
+    {
+
+    }
 
 }
 /*

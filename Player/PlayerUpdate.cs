@@ -14,7 +14,6 @@ public class PlayerUpdate : MonoBehaviour
     [SerializeField] private int numAddHPfromPoison = 0;
     [SerializeField] private TextMeshProUGUI _hpText;
     [SerializeField] private Slider _sliderHP;
-    [SerializeField] private Animation _hearthAnimation;
     [SerializeField] private Slider _sliderEXP;
     [SerializeField] private GameObject _buffField;
     [SerializeField] private Transform _containBuffFields;
@@ -105,27 +104,13 @@ public class PlayerUpdate : MonoBehaviour
     private float _timeToHeartBeat = 0f;
     private void CheckHeartBeat()
     {
-        //_hearthAnimation.Play();
         if (_playerStats.curHP <= _playerStats.stats.HP * 0.5f)
         {
             _timeToHeartBeat += 0.25f;
             if (_playerStats.curHP <= _playerStats.stats.HP * 0.25f)
             {
-                if (_playerStats.curHP <= _playerStats.stats.HP * 0.1f)
-                {
-                    // выполняется при 1/10 части ХП
-                    if (_timeToHeartBeat >= 0.5f) ExeSoundHeartBeat(); else { return; }
-                }
-                else
-                {
-                    // выполняется при 1/4 части ХП
-                    if (_timeToHeartBeat >= 1f) ExeSoundHeartBeat(); else { return; }
-                }
-            }
-            else
-            {
-                if (_timeToHeartBeat >= 1.5f) ExeSoundHeartBeat(); else { return; }
-                // выполняется при 1/2 части ХП
+                // выполняется при 1/4 части ХП
+                if (_timeToHeartBeat >= 0.5f) ExeSoundHeartBeat(); else { return; }
             }
         }
         else { return; }

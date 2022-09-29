@@ -8,24 +8,26 @@ public class DungeonConfigurator : ScriptableObject
     [SerializeField] private float _factorStandartRooms;
     [SerializeField] private float _factorBossRooms;
     [SerializeField] private float _factorBigRooms;
+    [SerializeField] private float _factorAmbushRoom;
     public int _countRooms = 0; public void SetCountRooms(int count) { _countRooms = count; }
     public float _percentEndRooms;
     public float _percentBeetweedRooms;
     public float _percentStandartRooms;
     public float _percentBossRooms;
     public float _percentBigRooms;
+    public float _percentAmbushRoom;
 
     public void DefinePercents()
     {
         if (_countRooms != 0)
         {
-            float total = _factorEndRooms + _factorBeetweedRooms + _factorStandartRooms + _factorBossRooms + _factorBigRooms;
+            float total = _factorEndRooms + _factorBeetweedRooms + _factorStandartRooms + _factorBossRooms + _factorBigRooms + _factorAmbushRoom;
             _percentEndRooms = (_factorEndRooms * 100) / total;
             _percentBeetweedRooms = (_factorBeetweedRooms * 100) / total;
             _percentStandartRooms = (_factorStandartRooms * 100) / total;
             _percentBossRooms = (_factorBossRooms * 100) / total;
             _percentBigRooms = (_factorBigRooms * 100) / total;
-
+            _percentAmbushRoom = (_factorAmbushRoom * 100) / total;
         }
     }
     public RoomType GetRoomType()
@@ -42,6 +44,8 @@ public class DungeonConfigurator : ScriptableObject
         if (randomValue < _percentBossRooms + sum) { return RoomType.MiniBoss; }
         else sum += _percentBossRooms;
         if (randomValue < _percentBigRooms + sum) { return RoomType.Big; }
+        else sum += _percentBigRooms;
+        if (randomValue < _percentAmbushRoom + sum) { return RoomType.Ambush; }
         else return RoomType.Default;
     }
 }
