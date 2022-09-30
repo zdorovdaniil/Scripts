@@ -31,12 +31,14 @@ public class ImproveUI : MonoBehaviour
         if (Improve.IsLvlUp())
         {
             MsgBoxUI.Instance.Show(this.gameObject, "improve", "do you really want to spend coins on ipgrades");
+            SetUI();
         }
         SetUI();
     }
     public void GetReport(ReportType report)
     {
         if (report == ReportType.Accept) LvlUp();
+        SetUI();
     }
     private void LvlUp()
     {

@@ -18,19 +18,25 @@ public class ShopingUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _buyModif;
     [SerializeField] private TextMeshProUGUI _sellModif;
     [SerializeField] private TextMeshProUGUI _tradeSkill;
+    private int _curShopType = 0;
     void Start() { instance = this; }
     public void FillShopSlotsUI()
     {
-        List<InventorySlot> shopCatalog = new List<InventorySlot>(InventorySlot.CreateListInvSlots(_defaultitemsInShop));
+        List<InventorySlot> shopCatalog = new List<InventorySlot>();
         foreach (ImproveUI improveUI in _improves)
         {
             improveUI.SetUI();
             if (improveUI.Improve.GetMaxLvl <= improveUI.Improve.GetCurLvl)
             {
+                foreach (Item item in _defaultitemsInShop)
+                {
+                    InventorySlot itemShop = new InventorySlot(item, 1);
+                    if (CheckItemToShopCatalog(itemShop)) shopCatalog.Add(itemShop); else { continue; }
+                }
                 foreach (Item item in improveUI.Improve.GetUnlockItems)
                 {
                     InventorySlot itemShop = new InventorySlot(item, 1);
-                    shopCatalog.Add(itemShop);
+                    if (CheckItemToShopCatalog(itemShop)) shopCatalog.Add(itemShop); else { continue; }
                 }
             }
             else continue;
@@ -41,14 +47,34 @@ public class ShopingUI : MonoBehaviour
         _sellModif.text = _playerStats.stats.GetSaleModif().ToString();
         _tradeSkill.text = _playerStats.stats.Skills[3].Level.ToString();
     }
-
-    public void SellSlot(Item item, int amount)
+    private bool CheckItemToShopCatalog(InventorySlot slot)
     {
-        _inv.DeleteItemId(item.Id, amount);
+        switch (_curShopType)
+        {
+            case 0: if (checkType(ItemTupe.Weapon) || checkType(ItemTupe.Armor)) { return true; } else { return false; }
+            case 1: if (checkType(ItemTupe.Poison)) { return true; } else { return false; }
+            case 2: if (checkType(ItemTupe.Food) || checkType(ItemTupe.Usable) || checkType(ItemTupe.Nothing)) { return true; } else { return false; }
+            case 3: if (checkType(ItemTupe.MonsterDrop)) { return true; } else { return false; }
+        }
+        bool checkType(ItemTupe type)
+        {
+            if (slot.item.itemTupe == type) { return true; } else return false;
+        }
+        return true;
+    }
+
+    public void SetShopType(int value)
+    {
+        _curShopType = value;
+        FillShopSlotsUI();
+    }
+    public void SellSlot(InventorySlot slot, int amount)
+    {
+        _inv.DeleteSlot(slot, amount);
         _inv.SaveItemsId();
         _invSlotsUI.FullSlots(_inv.GetItems);
         int moneyNow = PropertyUI.instance.GetCoins;
-        int sellCost = Mathf.FloorToInt(item.cost * _playerStats.stats.GetSaleModif());
+        int sellCost = Mathf.FloorToInt(slot.item.cost * _playerStats.stats.GetSaleModif());
         PropertyUI.instance.SetCoins(moneyNow + (sellCost * amount));
         PropertyUI.instance.UpdateProperty();
         Debug.Log("Sell: " + sellCost);

@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class Chunk : Photon.MonoBehaviour
 {
+    public RoomControl GetRoomControl => this.gameObject.GetComponent<RoomControl>();
     [SerializeField] private Vector2Int _positionCoordinate; // позиция комнаты на карте Чанков
     // Порталы
     [SerializeField] private List<NavMeshLink> _portals = new List<NavMeshLink>();
@@ -42,8 +43,6 @@ public class Chunk : Photon.MonoBehaviour
         SwitchDoorBlocks(false);
         if (!_isSupportBiggest) SetDafaultObjStatus();
     }
-
-
     private void SetDafaultObjStatus()
     {
         if (PhotonNetwork.isMasterClient)
@@ -87,21 +86,21 @@ public class Chunk : Photon.MonoBehaviour
         else photonView.RPC("SetFog", PhotonTargets.AllBuffered, (bool)false);
     }
     [PunRPC]
-    public void BlockDoors(bool isIgnorePassAcrossDoor = false)
+    public void BlockDoors(bool isIgnorePassAcrossDoor = false, bool isActivatePassAcrossDoor = true)
     {
         if (!isIgnorePassAcrossDoor)
         {
             foreach (DoorBlock door in DoorBlocks)
             {
-                if (!door.IsEnterPlayerInDoor) { door.SwitchDoor(true); }
-                else door.SwitchDoor(false);
+                if (!door.IsEnterPlayerInDoor) { door.SwitchDoor(true, isActivatePassAcrossDoor); }
+                else door.SwitchDoor(false, isActivatePassAcrossDoor);
             }
         }
         else
         {
             foreach (DoorBlock door in DoorBlocks)
             {
-                door.SwitchDoor(false);
+                door.SwitchDoor(false, isActivatePassAcrossDoor);
             }
         }
 
@@ -126,10 +125,12 @@ public class Chunk : Photon.MonoBehaviour
     {
         foreach (Chunk chunk in _nearConnectedRooms)
         {
+            bool isAvaibleToTeleportDoors = true;
+            if (chunk.GetRoomControl.GetRoomType == RoomType.Ambush) isAvaibleToTeleportDoors = false;
             if (!chunk.IsPlayerInter)
             {
-                if (PhotonNetwork.offlineMode) chunk.BlockDoors();
-                else chunk.photonView.RPC("BlockDoors", PhotonTargets.All, (bool)false);
+                if (PhotonNetwork.offlineMode) chunk.BlockDoors(false, isAvaibleToTeleportDoors);
+                else chunk.photonView.RPC("BlockDoors", PhotonTargets.All, (bool)false, (bool)isAvaibleToTeleportDoors);
             }
         }
     }

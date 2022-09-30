@@ -243,13 +243,13 @@ public class Inventory : Photon.MonoBehaviour
     }
     public void DeleteSlot(InventorySlot slot, int amount = 0)
     {
+        Debug.Log("num - " + (slot.SlotNum - 1).ToString() + " . kol - " + items[slot.SlotNum - 1].amount);
         if (amount == 0) { items.RemoveAt(slot.SlotNum - 1); }
         else
         {
             items[slot.SlotNum - 1].amount = items[slot.SlotNum - 1].amount - amount;
             if (items[slot.SlotNum - 1].amount <= 0) { items.RemoveAt(slot.SlotNum - 1); }
         }
-        Debug.Log("num - " + (slot.SlotNum - 1).ToString() + " . kol - " + items[slot.SlotNum - 1].amount);
         InventoryChange();
     }
     // удаляет предмет по индексу из инвентаря

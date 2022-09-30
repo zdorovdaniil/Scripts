@@ -65,21 +65,23 @@ public class ReferenceUI : MonoBehaviour
     }
     //
     //Shop
+    public void ClickBuyOne()
+    {
+        GlobalSounds.Instance.SBuySell();
+        ShopingUI.instance.BuyItem(_slot.item);
+    }
     public void ClickSellAll()
     {
-        ShopingUI.instance.SellSlot(_slot.item, _slot.amount);
+        ShopingUI.instance.SellSlot(_slot, _slot.amount);
         GlobalSounds.Instance.SBuySell();
         Destroy(this.gameObject);
     }
-    public void ClickBuyOne()
-    {
-        ShopingUI.instance.BuyItem(_slot.item);
-    }
+
     public void ClickSellOne()
     {
-        GlobalSounds.Instance.SPlaceItem();
+        GlobalSounds.Instance.SBuySell();
         int temp = _slot.amount;
-        ShopingUI.instance.SellSlot(_slot.item, 1);
+        ShopingUI.instance.SellSlot(_slot, 1);
         SetValueSlot(_slot, _buttonsType);
         if (temp <= 1)
         { Destroy(this.gameObject); }

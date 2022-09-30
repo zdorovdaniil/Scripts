@@ -51,7 +51,7 @@ public class PlayerUI : MonoBehaviour
     }
     public void DeleteSlot(InventorySlot slot)
     {
-        _inventory.DeleteItemId(slot.item.Id, 1);
+        _inventory.DeleteSlot(slot, 1);
         FillPlayerUI();
     }
     public void SwitchCharacterCamera(bool status)
