@@ -15,6 +15,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     [SerializeField] private bool _isConnectedToLobby;
     private int _curRegion;
     [SerializeField] private TMP_Dropdown _regionDropdown;
+    [SerializeField] private ServerStatusUI _serverStatsUI;
     private CloudRegionCode _regionCode = 0;
     private void Start()
     {
@@ -24,14 +25,17 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     }
     public void CheckPlayerName(bool isAnyway = false)
     {
-        int id = PlayerPrefs.GetInt("activeSlot");
-        if ((!PlayerPrefs.HasKey(id + "_slot_nickName") || isAnyway))
-        { _enterPlayerName.gameObject.SetActive(true); }
-        else
+        if (!_isConnectedMasterServer && !_isConnectedToLobby)
         {
-            _nickName = PlayerPrefs.GetString(id + "_slot_nickName");
-            NickNameField.text = _nickName;
-            TryToConnectMasterServer();
+            int id = PlayerPrefs.GetInt("activeSlot");
+            if ((!PlayerPrefs.HasKey(id + "_slot_nickName") || isAnyway))
+            { _enterPlayerName.gameObject.SetActive(true); }
+            else
+            {
+                _nickName = PlayerPrefs.GetString(id + "_slot_nickName");
+                NickNameField.text = _nickName;
+                TryToConnectMasterServer();
+            }
         }
     }
     public void SetRegionDropdown()
@@ -57,8 +61,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         _enterPlayerName.gameObject.SetActive(true);
         if (string.IsNullOrEmpty(NickNameField.text))
         {
-            Debug.Log("Текстовое поля имени пустое");
-            return;
+            MsgBoxUI.Instance.ShowAttention("Text field for name is empty"); return;
         }
         int id = PlayerPrefs.GetInt("activeSlot");
         _nickName = NickNameField.text;
@@ -67,7 +70,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         SetRegionCode(PlayerPrefs.GetInt("region"));
         PhotonNetwork.ConnectToRegion(_regionCode, PhotonNetwork.gameVersion);
         _enterPlayerName.gameObject.SetActive(false);
-        ServerStatusUI.Instance.SetNewStatus("connecting . . .", Color.white);
+        _serverStatsUI.SetNewStatus("connecting . . .", Color.white);
         StopCoroutine(CheckConnectToServer());
         StartCoroutine(CheckConnectToServer());
     }
@@ -83,7 +86,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
             if (!_isConnectedMasterServer && isConnectFirsTime)
             {
                 MsgBoxUI.Instance.ShowAttention("Unable connect to the server. You may not be connected to the Internet or the server is not avaible. Online game will not be avaible.");
-                ServerStatusUI.Instance.SetNewStatus("offline!", Color.blue);
+                _serverStatsUI.SetNewStatus("offline!", Color.blue);
             }
         }
     }
@@ -100,14 +103,14 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     {
         LobbyRoomUI.instance.SetRoomsList();
         _isConnectedToLobby = true;
-        ServerStatusUI.Instance.SetNewStatus("connected!", Color.green);
+        _serverStatsUI.SetNewStatus("connected!", Color.green);
     }
     public void DisconnecteFromServer()
     {
         _isConnectedMasterServer = false;
         _isConnectedToLobby = false;
         if (PhotonNetwork.connected) PhotonNetwork.Disconnect();
-        ServerStatusUI.Instance.SetNewStatus("disconnected!", Color.red);
+        _serverStatsUI.SetNewStatus("disconnected!", Color.red);
     }
     public void ClickCreateOwnRoom()
     {
@@ -203,7 +206,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     {
         if (PhotonNetwork.isMasterClient) { LobbyRoomUI.instance.StartCreateRoom(); }
         else LobbyRoomUI.instance.SetRoomInfo();
-        ServerStatusUI.Instance.SetNewStatus("in room!", Color.white);
+        _serverStatsUI.SetNewStatus("in room!", Color.white);
     }
     public IEnumerator ConnectToServerWithDelay()
     {

@@ -13,7 +13,9 @@ public class SkillButton : MonoBehaviour
     [SerializeField] private TMP_Text _descruption;
     [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private Transform _buttonUp;
-    public bool IsAskConfirm;
+    private CharacterUI _characterUI;
+    private bool _isAskConfirm;
+    private bool _isSavePlStats;
 
     public void GetReport(ReportType reportType)
     {
@@ -26,20 +28,25 @@ public class SkillButton : MonoBehaviour
     {
         _playerStats.MinusPointSkill(_skill.SpendToLeveling());
         _skill.LevelUp();
-        CharacterUI.Instance.UpdateButtons();
+        _playerStats.UpdateArmor();
+        _playerStats.CheckStatusEquip();
+        _characterUI.UpdateButtons();
         GlobalSounds.Instance.SSkillUp();
+        if (_isSavePlStats) _playerStats.SaveStatsToSlot(ProcessCommand.CurActiveSlot, _playerStats.stats);
     }
     public void ClickUpSkill()
     {
-        if (IsAskConfirm)
+        if (_isAskConfirm)
         { MsgBoxUI.Instance.Show(this.gameObject, "upgrade skill", "do you really want spend skill point to upgrade a skill?"); }
         else SkillLevelUp();
     }
-    public void SetText(PlayerStats playerStats, Skill skill, bool isAsk)
+    public void SetText(PlayerStats playerStats, Skill skill, bool isAsk, bool isSaving, CharacterUI characterUI)
     {
+        _characterUI = characterUI;
         _skill = skill;
         _playerStats = playerStats;
-        IsAskConfirm = isAsk;
+        _isAskConfirm = isAsk;
+        _isSavePlStats = isSaving;
         if (_skill.IsAvaibleToLevelUp(_playerStats.GetPointSkill)) _buttonUp.gameObject.SetActive(true);
         else { _buttonUp.gameObject.SetActive(false); }
         _nameSkill.text = skill.Name;

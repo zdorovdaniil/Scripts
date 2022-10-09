@@ -5,17 +5,17 @@ public class DungeonObjects : MonoBehaviour
 {
     public static DungeonObjects Instance; private void Awake() { Instance = this; }
     [SerializeField] private List<Chunk> _roomsDungeon = new List<Chunk>();
-    [SerializeField] private List<Chest> _chestsDungeon = new List<Chest>(); 
+    [SerializeField] private List<Chest> _chestsDungeon = new List<Chest>();
     [SerializeField] private List<Enemy> _enemyDungeon = new List<Enemy>();
 
     public int GetNumChestsInDungeon => _chestsDungeon.Count;
     private DungeonStats _dungeonStats;
 
-	private void Start()
-	{
+    private void Start()
+    {
         _dungeonStats = DungeonStats.Instance;
     }
-	public void AddChunk(Chunk chunk)
+    public void AddChunk(Chunk chunk)
     {
         _roomsDungeon.Add(chunk);
         _dungeonStats.numRoomsInDungeon = _roomsDungeon.Count;
@@ -30,6 +30,14 @@ public class DungeonObjects : MonoBehaviour
         foreach (Chunk chunk in _roomsDungeon)
         {
             chunk.gameObject.GetComponent<RoomControl>().UpdateParametrs();
+        }
+    }
+    public void UnlockAllAmbushRooms()
+    {
+        foreach (Chunk chunk in _roomsDungeon)
+        {
+            if (chunk.GetRoomControl.GetRoomType == RoomType.Ambush)
+                chunk.photonView.RPC("UnlockDoors", PhotonTargets.All);
         }
     }
     public void NetworkSendData()
@@ -63,5 +71,5 @@ public class DungeonObjects : MonoBehaviour
         }
     }
 
-        
+
 }

@@ -17,6 +17,8 @@ public class ProcessCommand : MonoBehaviour
         if (seconds <= 9) sec = "0" + seconds; else sec = seconds.ToString();
         return min + ":" + sec;
     }
+    public static int CurActiveSlot => PlayerPrefs.GetInt("activeSlot");
+    public static int GetDungeonLevel => PlayerPrefs.GetInt(CurActiveSlot + "_slot_dungeonLevel");
     public static void ClearChildObj(Transform obj)
     {
         for (int i = 0; i < obj.childCount; i++)

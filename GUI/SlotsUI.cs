@@ -26,10 +26,7 @@ public class SlotsUI : MonoBehaviour
     }
     public void ClearSlots()
     {
-        for (int i = 0; i < _objContain.childCount; i++)
-        {
-            Destroy(_objContain.GetChild(i).gameObject);
-        }
+        ProcessCommand.ClearChildObj(_objContain);
     }
     private List<InventorySlot> FilterInvList(FilterType filterType, List<InventorySlot> slots)
     {

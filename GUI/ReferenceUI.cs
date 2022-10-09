@@ -67,7 +67,6 @@ public class ReferenceUI : MonoBehaviour
     //Shop
     public void ClickBuyOne()
     {
-        GlobalSounds.Instance.SBuySell();
         ShopingUI.instance.BuyItem(_slot.item);
     }
     public void ClickSellAll()
@@ -110,14 +109,14 @@ public class ReferenceUI : MonoBehaviour
     //Storage
     public void ClickMoveOutAll()
     {
-        Storage.instance.MoveToStorageSlot(_slot.item, _slot.amount);
+        Storage.instance.MoveToStorageSlot(_slot, _slot.amount);
         GlobalSounds.Instance.SPlaceItem();
         Destroy(this.gameObject);
     }
     public void ClickMoveOutOne()
     {
         int temp = _slot.amount;
-        Storage.instance.MoveToStorageSlot(_slot.item, 1);
+        Storage.instance.MoveToStorageSlot(_slot, 1);
         if (temp <= 1)
         { Destroy(this.gameObject); }
         else { SetValueSlot(_slot, _buttonsType); }
@@ -138,9 +137,9 @@ public class ReferenceUI : MonoBehaviour
     }
     public void ClickRemoveEquip()
     {
-        if (PlayerUI.Instance != null)
-        { PlayerUI.Instance.RemoveEquipSlot(_slot.item); }
-        else { Storage.instance.RemoveEquipSlot(_slot.item); }
+        if (Storage.instance != null)
+        { Storage.instance.RemoveEquipSlot(_slot.item); }
+        else { PlayerUI.Instance.RemoveEquipSlot(_slot.item); }
         GlobalSounds.Instance.SPlaceItem();
         Destroy(this.gameObject);
     }

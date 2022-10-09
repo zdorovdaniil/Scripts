@@ -54,74 +54,79 @@ public class ViewStatsUI : MonoBehaviour
     [SerializeField] private TMP_Text _allOpenChestText;
     private DungeonStats _dungeonStats;
     private PlayerStats _playerStats;
+    private InfoPlayerStats _infoStats;
     private void Awake()
     {
         Instance = this;
     }
     public void UpdateUI()
     {
-        StartCoroutine(UpdateFields());
+        StartCoroutine(UpdateFields(0));
     }
-    private IEnumerator UpdateFields()
+    private IEnumerator UpdateFields(float time)
     {
-        yield return new WaitForSecondsRealtime(0.05f);
+        yield return new WaitForSecondsRealtime(time);
         {
+            Debug.Log("Delay:" + time);
             if (_dungeonStats == null) { _dungeonStats = DungeonStats.Instance; }
-            _strenghText.text = _playerStats.stats.Attributes[0].Level.ToString();
-            _enduranceText.text = _playerStats.stats.Attributes[1].Level.ToString();
-            _agilityText.text = _playerStats.stats.Attributes[2].Level.ToString();
-            _speedText.text = _playerStats.stats.Attributes[3].Level.ToString();
+            _strenghText.text = _infoStats._strenghText;
+            _enduranceText.text = _infoStats._enduranceText;
+            _agilityText.text = _infoStats._agilityText;
+            _speedText.text = _infoStats._speedText;
 
-            _attackText.text = _playerStats.stats.attack.ToString();
-            _attackEquipText.text = _playerStats.stats.attackWeapon.ToString();
-            _attackAttrText.text = _playerStats.stats.GetAttackAttr().ToString();
-            _attackSkillText.text = _playerStats.stats.attackSkill.ToString();
-            _attackBuffText.text = _playerStats.stats.buffAttack.ToString();
+            _attackText.text = _infoStats._attackText;
+            _attackEquipText.text = _infoStats._attackEquipText;
+            _attackAttrText.text = _infoStats._attackAttrText;
+            _attackSkillText.text = _infoStats._attackSkillText;
+            _attackBuffText.text = _infoStats._attackBuffText;
 
-            _critChanceText.text = _playerStats.stats.critChance.ToString() + " %";
-            _critChanceEquipText.text = _playerStats.stats.critChanceEquip.ToString() + " %";
-            _critChanceSkillText.text = _playerStats.stats.critChanceSkill.ToString() + " %";
-            _critChanceBuffText.text = _playerStats.stats.buffCritChance.ToString() + " %";
+            _critChanceText.text = _infoStats._critChanceText;
+            _critChanceEquipText.text = _infoStats._critChanceEquipText;
+            _critChanceSkillText.text = _infoStats._critChanceSkillText;
+            _critChanceBuffText.text = _infoStats._critChanceBuffText;
 
-            _critValueText.text = _playerStats.stats.critValue.ToString() + " %";
-            _critValueEquipText.text = _playerStats.stats.critValueEquip.ToString() + " %";
-            _critValueSkillText.text = _playerStats.stats.critValueSkill.ToString() + " %";
-            _critValueBuffText.text = _playerStats.stats.buffCritValue.ToString() + " %";
+            _critValueText.text = _infoStats._critValueText;
+            _critValueEquipText.text = _infoStats._critValueEquipText;
+            _critValueSkillText.text = _infoStats._critValueSkillText;
+            _critValueBuffText.text = _infoStats._critValueBuffText;
 
-            _defenceText.text = _playerStats.stats.armor.ToString();
-            _defenceEquipText.text = _playerStats.stats.armorEquip.ToString();
-            _defenceAttrText.text = _playerStats.stats.GetDefenceAttr().ToString();
-            _defenceSkillText.text = _playerStats.stats.armorSkill.ToString();
-            _defenceBuffText.text = _playerStats.stats.buffDefence.ToString();
+            _defenceText.text = _infoStats._defenceText;
+            _defenceEquipText.text = _infoStats._defenceEquipText;
+            _defenceAttrText.text = _infoStats._defenceAttrText;
+            _defenceSkillText.text = _infoStats._defenceSkillText;
+            _defenceBuffText.text = _infoStats._defenceBuffText;
 
-            _moveSpeedText.text = _playerStats.stats.moveSpeed.ToString();
-            _moveSpeedAttrText.text = _playerStats.stats.moveSpeedAttr.ToString();
-            _moveSpeedBuffText.text = _playerStats.stats.buffSpeed.ToString();
+            _moveSpeedText.text = _infoStats._moveSpeedText;
+            _moveSpeedAttrText.text = _infoStats._moveSpeedAttrText;
+            _moveSpeedBuffText.text = _infoStats._moveSpeedBuffText;
 
-            _healthText.text = _playerStats.stats.HP.ToString();
-            _regenValue.text = _playerStats.stats.GetAddHP().ToString() + " HP";
-            _timeRegen.text = _playerStats.stats.GetTimeRegenHP().ToString() + " SEC";
+            _healthText.text = _infoStats._healthText;
+            _regenValue.text = _infoStats._regenValue;
+            _timeRegen.text = _infoStats._timeRegen;
 
-            _blockText.text = _playerStats.stats.minusDMG.ToString() + " to " + _playerStats.stats.GetMaxBlockDamage().ToString();
-            _damageText.text = _playerStats.stats.minDMG.ToString() + " to " + _playerStats.stats.maxDMG.ToString();
-            _kickStrenght.text = _playerStats.stats.KickStrenght().ToString();
+            _blockText.text = _infoStats._blockText;
+            _damageText.text = _infoStats._damageText;
+            _kickStrenght.text = _infoStats._kickStrenght;
 
 
-            _curLvlText.text = _playerStats.stats.Level.ToString();
-            string curExp = _playerStats.curEXP.ToString();
-            string needExp = PlayerLeveling.instance.GetHeedExp(_playerStats.stats.Level).ToString();
-            _curExpText.text = curExp + " / " + needExp;
+            _curLvlText.text = _infoStats._curLvlText;
+            _curExpText.text = _infoStats._curExpText;
 
             _allRoomText.text = _dungeonStats.allPassRoom.ToString();
             _allKillsText.text = _dungeonStats.allKills.ToString();
             _allOpenChestText.text = _dungeonStats.allOpenChest.ToString();
         }
     }
+
     public void UpdateViewStatsUI(PlayerStats playerStats)
     {
-        _playerStats = playerStats;
-        _playerStats.stats.recount();
-        StartCoroutine(UpdateFields());
+        _infoStats = new InfoPlayerStats(playerStats);
+        playerStats.stats.recount();
+        playerStats.UpdateArmor();
+        playerStats.CheckStatusEquip();
+
+        StartCoroutine(UpdateFields(0.05f));
+        StartCoroutine(UpdateFields(0.1f));
 
     }
 

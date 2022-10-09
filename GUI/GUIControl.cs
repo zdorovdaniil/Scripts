@@ -140,7 +140,7 @@ public class GUIControl : MonoBehaviour
         PlayerStats LinkPlayerStats = Player.GetComponent<PlayerStats>();
         Inventory inv = Player.GetComponent<Inventory>();
         inv.DeleteCollectionItems(_gameManager.GetRules.GetDeletingItems);
-        LinkPlayerStats.SaveStatsToSlot(PlayerPrefs.GetInt("activeSlot"), LinkPlayerStats.stats);
+        LinkPlayerStats.SaveStatsToSlot(ProcessCommand.CurActiveSlot, LinkPlayerStats.stats);
         inv.SaveItemsId();
     }
     public void LoadSceneMenu()

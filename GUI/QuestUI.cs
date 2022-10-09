@@ -3,30 +3,31 @@
 public class QuestUI : MonoBehaviour
 {
     public static QuestUI instance;
-    public Quest SelectedQuest;
     [SerializeField] private PlayerQuest _playerQuest;
     [Header("GUI Quests")]
     [SerializeField] private GameObject _buttonQuestPrefab;
-    [SerializeField] private Transform _activeQuests;
-    [SerializeField] private Transform _complete;
+    [SerializeField] private RectTransform _activeQuests;
+    [SerializeField] private RectTransform _completeQuests;
 
     private void Start() { instance = this; }
     public void FillListsOfQuest(PlayerQuest plQuest)
     {
-        for (int i = 0; i < _activeQuests.childCount; i++)
-        {
-            Destroy(_activeQuests.GetChild(i).gameObject);
-        }
-        for (int i = 0; i < _complete.childCount; i++)
-        {
-            Destroy(_complete.GetChild(i).gameObject);
-        }
+        ProcessCommand.ClearChildObj(_activeQuests);
+        ProcessCommand.ClearChildObj(_completeQuests);
 
+        int countCompleteQuest = 1;
+        int countActiveQuest = 1;
         foreach (Quest quest in plQuest.GetActiveQuests)
         {
             if (!quest.isComplete)
-                Instantiate(_buttonQuestPrefab, _activeQuests).GetComponent<QuestButton>().SetUp(quest, _playerQuest);
-            else Instantiate(_buttonQuestPrefab, _complete).GetComponent<QuestButton>().SetUp(quest, _playerQuest);
+            { Instantiate(_buttonQuestPrefab, _activeQuests).GetComponent<QuestButton>().SetUp(quest, _playerQuest); countActiveQuest += 1; }
+            else
+            {
+                Instantiate(_buttonQuestPrefab, _completeQuests).GetComponent<QuestButton>().SetUp(quest, _playerQuest); countCompleteQuest += 1;
+            }
         }
+        _activeQuests.sizeDelta = new Vector2(0, countActiveQuest * 90f);
+        _completeQuests.sizeDelta = new Vector2(0, countCompleteQuest * 90f);
+
     }
 }

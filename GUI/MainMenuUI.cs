@@ -10,10 +10,14 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject DangeonOptions;
     [SerializeField] private GameObject CreateNewCharacter;
     [SerializeField] private GameObject Storage;
-    [SerializeField] private GameObject Settings;
+    [SerializeField] private GameObject SettingsPanel;
     [SerializeField] private GameObject _craftingMenu;
     [SerializeField] private GameObject _shopingMenu;
+    [SerializeField] private GameObject _playerMenu;
     [SerializeField] private Inventory _inv;
+    [SerializeField] private PlayerLevelingUI _playerLevelingUI;
+    [SerializeField] private PlayerUI _playerUI;
+    [SerializeField] private CharacterUI _characterUIStats;
     [SerializeField] private NetworkCreateGame _networkCreateGame;
     [SerializeField] private CharacterUI _characterUI;
     [SerializeField] private ShopingUI _shopingUI;
@@ -27,38 +31,48 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        CreateNewCharacter.SetActive(true);
+        // для инициалзации Instance у объектов
+        SwitchPanels(true);
+        //
+        SwitchPanels(false);
         Profile.SetActive(false);
-        if (PlayerPrefs.HasKey("numRooms"))
-        {
-            numRooms = PlayerPrefs.GetInt("numRooms");
-        }
-        foreach (Text _numRooms in NumRooms)
-        {
-            _numRooms.text = numRooms.ToString();
-        }
         SelectProfile.SetActive(true);
-        CreateNewCharacter.SetActive(false);
+        FillUIRooms();
         if (!CheckHasSaving())
         {
-            CloseAllPanels();
-            CreateNewCharacter.SetActive(true);
+            PlayerPrefs.SetInt("activeSlot", 1);
+            ClickCreateNewCharacter();
+            Settings.Instance.SetDefaultSettings();
         }
     }
-
-    public void CloseAllPanels()
+    public void SwitchPanels(bool status)
     {
-        CreateNewCharacter.SetActive(false);
-        DangeonOptions.SetActive(false);
-        Storage.SetActive(false);
-        SelectProfile.SetActive(false);
-        _craftingMenu.SetActive(false);
-        _shopingMenu.SetActive(false);
-        Settings.SetActive(false);
+        CreateNewCharacter.SetActive(status);
+        DangeonOptions.SetActive(status);
+        Storage.SetActive(status);
+        SelectProfile.SetActive(status);
+        _craftingMenu.SetActive(status);
+        _shopingMenu.SetActive(status);
+        _playerMenu.SetActive(status);
+        SettingsPanel.SetActive(status);
+    }
+    public void ClickPlayer()
+    {
+        ClickStorage();
+        plStats.SetInventory(_inv);
+        _characterUIStats.SetPlayerStats(plStats);
+        _playerUI.SetPlayerStats(plStats);
+        _playerUI.FillPlayerUI();
+        _characterUIStats.UpdateButtons();
+        _playerLevelingUI.FillLevelingUI();
+
+        SwitchPanels(false);
+        _playerMenu.SetActive(true);
+
     }
     public void ClickShoping()
     {
-        CloseAllPanels();
+        SwitchPanels(false);
         _shopingMenu.SetActive(true);
         _shopingUI.SetPlayerStats(plStats);
     }
@@ -69,7 +83,7 @@ public class MainMenuUI : MonoBehaviour
     }
     public void ClickCreateNewCharacter()
     {
-        CloseAllPanels();
+        SwitchPanels(false);
         CreatePlayerStats();
         CreateNewCharacter.SetActive(true);
         Profile.SetActive(true);
@@ -78,26 +92,31 @@ public class MainMenuUI : MonoBehaviour
     }
     public void ClickSelSlot()
     {
-        CloseAllPanels();
+        SwitchPanels(false);
         _inv.LoadItemsId();
         _inv.SetInvSlotsFromItemsIDs();
         _propertyUI.UpdateProperty();
         _networkCreateGame.CheckPlayerName();
+
+
+
         Profile.SetActive(true);
         DangeonOptions.SetActive(true);
+
     }
     public void AppExit()
     {
+        // добавить запрос на подтверждение вдиалоговом окне
         Application.Quit();
     }
     public void ClickDunOpts()
     {
-        CloseAllPanels();
+        SwitchPanels(false);
         DangeonOptions.SetActive(true);
     }
     public void ClickCraftingMenu()
     {
-        CloseAllPanels();
+        SwitchPanels(false);
         _craftingMenu.SetActive(true);
         CraftingUI craftingUI = _craftingMenu.GetComponent<CraftingUI>();
         craftingUI.SetPlayerStats(plStats);
@@ -105,11 +124,10 @@ public class MainMenuUI : MonoBehaviour
     }
     public void ClickStorage()
     {
-        CloseAllPanels();
+        SwitchPanels(false);
         Storage.SetActive(true);
         Storage storage = Storage.GetComponent<Storage>();
-        storage.PlStats = plStats;
-        storage.LoadingStorage();
+        storage.SetPlayerStats(plStats);
         storage.FillStorageSlotsUI();
     }
     public void CreatePlayerStats()
@@ -123,8 +141,8 @@ public class MainMenuUI : MonoBehaviour
     }
     public void ClickSettings()
     {
-        CloseAllPanels();
-        Settings.SetActive(true);
+        SwitchPanels(false);
+        SettingsPanel.SetActive(true);
     }
     public void SaveAttributesToSlot()
     {
@@ -141,12 +159,24 @@ public class MainMenuUI : MonoBehaviour
         }
         PlayerPrefs.SetInt("numRooms", numRooms);
     }
+    private void FillUIRooms()
+    {
+        if (PlayerPrefs.HasKey("numRooms"))
+        {
+            numRooms = PlayerPrefs.GetInt("numRooms");
+        }
+        else { numRooms = 30; }
+        foreach (Text _numRooms in NumRooms)
+        {
+            _numRooms.text = numRooms.ToString();
+        }
+    }
     public void ClickChangeSlot()
     {
         UpdateProfileSlots();
         Profile.SetActive(false);
         _networkCreateGame.DisconnecteFromServer();
-        CloseAllPanels();
+        SwitchPanels(false);
         Destroy(this.GetComponent<PlayerStats>());
         Destroy(this.GetComponent<PlayerStats>());
         Destroy(this.GetComponent<PlayerStats>());
@@ -162,7 +192,7 @@ public class MainMenuUI : MonoBehaviour
         bool isHas = false;
         for (int i = 0; i < _profileSlots.Count; i++)
         {
-            if (PlayerPrefs.HasKey(i + "_slot_level")) isHas = true;
+            if (PlayerPrefs.GetInt(i + "_slot_level") >= 1) isHas = true;
         }
         return isHas;
     }

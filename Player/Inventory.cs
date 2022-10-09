@@ -384,6 +384,7 @@ public class InventorySlot
         SlotNum = slotNum;
 
     }
+    public static InventorySlot CreateSlot(Item item, int count = 1) { InventorySlot slot = new InventorySlot(item, count); return slot; }
     public void SetSlotNum(int value) => SlotNum = value;
     // получает лист с items, складывает одинаковые, и получается лист InvSlots
     public static List<InventorySlot> CreateListInvSlots(List<Item> items)

@@ -32,6 +32,11 @@ public class ItemRequirement : ScriptableObject
 
     public bool CheckReqirement(PlayerStats playerStats)
     {
+
+        if (checkOthers() && checkSkills() && checkAttributes())
+        { return true; }
+        else { return false; }
+
         bool checkAttributes()
         {
             int succPass = 0;
@@ -56,13 +61,11 @@ public class ItemRequirement : ScriptableObject
         }
         bool checkOthers()
         {
-            if (playerStats.stats.Level >= _needPlayerLevel && GameManager.Instance.GetDungeonLevel >= _needDungeonLevel)
+            if (playerStats.stats.Level >= _needPlayerLevel && ProcessCommand.GetDungeonLevel >= _needDungeonLevel)
                 return true;
             else return false;
         }
-        if (checkOthers() && checkSkills() && checkAttributes())
-        { return true; }
-        else { return false; }
+
     }
 }
 public class RequirementField

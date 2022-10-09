@@ -27,6 +27,7 @@ public class PlayerStats : Photon.MonoBehaviour
     private int server_Ping;
     //
 
+    public void SetInventory(Inventory inv) { _inventory = inv; _inventory.SetInvSlotsFromItemsIDs(); CheckStatusEquip(); UpdateArmor(); }
     private void Awake() { SetStats(); }
     private void Start()
     {
@@ -35,6 +36,7 @@ public class PlayerStats : Photon.MonoBehaviour
         isTakeDamage = true;
         ChangeSpeed();
         _spawnPosition = transform.position;
+        PlayerLeveling.Instance.SetPlayerStats(this);
     }
 
     // обновление сетевых переменных
@@ -209,6 +211,7 @@ public class PlayerStats : Photon.MonoBehaviour
             { PointStat -= 1; }
             if (i_attr == 2) { HealPlayer(); }
             ChangeSpeed();
+            CheckStatusEquip();
             stats.recount();
             return true;
         }
@@ -241,7 +244,6 @@ public class PlayerStats : Photon.MonoBehaviour
         else Debug.Log("Null Buff");
         Debug.Log("Add buff: " + id.ToString() + "with id: " + buff.BuffId);
         ChangeSpeed();
-        GlobalSounds.Instance.PGetBuff(this.transform);
     }
 
     // понижение атрибута
@@ -258,15 +260,18 @@ public class PlayerStats : Photon.MonoBehaviour
     // Обновление атаки в stats
     public void CheckStatusEquip()
     {
-        int attackWeapon = 0;
-        if (_inventory.GetEquipSlot(0) != null)
-        { attackWeapon += _inventory.GetEquipSlot(0).item.Attack; }
-        if (_inventory.GetEquipSlot(5) != null)
-        { attackWeapon += _inventory.GetEquipSlot(5).item.Attack; }
-        if (_inventory.GetEquipSlot(6) != null)
-        { attackWeapon += _inventory.GetEquipSlot(6).item.Attack; }
-        stats.SetAttackWeapon(attackWeapon);
-        stats.newArmDmg();
+        if (_inventory)
+        {
+            int attackWeapon = 0;
+            if (_inventory.GetEquipSlot(0) != null)
+            { attackWeapon += _inventory.GetEquipSlot(0).item.Attack; }
+            if (_inventory.GetEquipSlot(5) != null)
+            { attackWeapon += _inventory.GetEquipSlot(5).item.Attack; }
+            if (_inventory.GetEquipSlot(6) != null)
+            { attackWeapon += _inventory.GetEquipSlot(6).item.Attack; }
+            stats.SetAttackWeapon(attackWeapon);
+            stats.newArmDmg();
+        }
     }
     private void DeathPlayer()
     {
@@ -302,23 +307,25 @@ public class PlayerStats : Photon.MonoBehaviour
     // обновление брони в stats
     public void UpdateArmor()
     {
-        int armor = 0;
-        int critValue = 0;
-        int critChance = 0;
-        int equipModif = 0;
-        for (int i = 0; i < 7; i++)
+        if (_inventory)
         {
-            InventorySlot eqArmor = _inventory.GetEquipSlot(i);
-            if (eqArmor == null) continue;
-            armor += eqArmor.item.Armor;
-            critChance += eqArmor.item.CritChance;
-            critValue += eqArmor.item.CritValue;
-            if (eqArmor.item.armorTupe != ArmorTupe.Amulet || eqArmor.item.armorTupe != ArmorTupe.Ring)
-                equipModif += 1;
+            int armor = 0;
+            int critValue = 0;
+            int critChance = 0;
+            int equipModif = 0;
+            for (int i = 0; i < 7; i++)
+            {
+                InventorySlot eqArmor = _inventory.GetEquipSlot(i);
+                if (eqArmor == null) continue;
+                armor += eqArmor.item.Armor;
+                critChance += eqArmor.item.CritChance;
+                critValue += eqArmor.item.CritValue;
+                if (eqArmor.item.armorTupe != ArmorTupe.Amulet || eqArmor.item.armorTupe != ArmorTupe.Ring)
+                    equipModif += 1;
+            }
+            stats.SetArmorEquip(armor, equipModif);
+            stats.SetCritEquip(critChance, critValue);
         }
-        stats.SetArmorEquip(armor, equipModif);
-        stats.SetCritEquip(critChance, critValue);
-        stats.newArmDmg();
     }
     // Обновление здоровья
     public void UpdateHP()
@@ -351,6 +358,99 @@ public class PlayerStats : Photon.MonoBehaviour
             }
             stats.SaveAttributes();
         }
+    }
+}
+public class InfoPlayerStats
+{
+    public string _strenghText;
+    public string _enduranceText;
+    public string _agilityText;
+    public string _speedText;
+
+    public string _attackText;
+    public string _attackEquipText;
+    public string _attackAttrText;
+    public string _attackSkillText;
+    public string _attackBuffText;
+
+    public string _critChanceText;
+    public string _critChanceEquipText;
+    public string _critChanceSkillText;
+    public string _critChanceBuffText;
+
+    public string _critValueText;
+    public string _critValueEquipText;
+    public string _critValueSkillText;
+    public string _critValueBuffText;
+
+    public string _defenceText;
+    public string _defenceEquipText;
+    public string _defenceAttrText;
+    public string _defenceSkillText;
+    public string _defenceBuffText;
+
+    public string _moveSpeedText;
+    public string _moveSpeedAttrText;
+    public string _moveSpeedBuffText;
+
+    public string _healthText;
+    public string _regenValue;
+    public string _timeRegen;
+
+    public string _blockText;
+    public string _damageText;
+    public string _kickStrenght;
+
+
+    public string _curLvlText;
+    public string _curExpText;
+    public InfoPlayerStats(PlayerStats plstast)
+    {
+        _strenghText = plstast.stats.Attributes[0].Level.ToString();
+        _enduranceText = plstast.stats.Attributes[1].Level.ToString();
+        _agilityText = plstast.stats.Attributes[2].Level.ToString();
+        _speedText = plstast.stats.Attributes[3].Level.ToString();
+
+        _attackText = plstast.stats.attack.ToString();
+        _attackEquipText = plstast.stats.attackWeapon.ToString();
+        _attackAttrText = plstast.stats.GetAttackAttr().ToString();
+        _attackSkillText = plstast.stats.attackSkill.ToString();
+        _attackBuffText = plstast.stats.buffAttack.ToString();
+
+        _critChanceText = plstast.stats.critChance.ToString() + " %";
+        _critChanceEquipText = plstast.stats.critChanceEquip.ToString() + " %";
+        _critChanceSkillText = plstast.stats.critChanceSkill.ToString() + " %";
+        _critChanceBuffText = plstast.stats.buffCritChance.ToString() + " %";
+
+        _critValueText = plstast.stats.critValue.ToString() + " %";
+        _critValueEquipText = plstast.stats.critValueEquip.ToString() + " %";
+        _critValueSkillText = plstast.stats.critValueSkill.ToString() + " %";
+        _critValueBuffText = plstast.stats.buffCritValue.ToString() + " %";
+
+        _defenceText = plstast.stats.armor.ToString();
+        _defenceEquipText = plstast.stats.armorEquip.ToString();
+        _defenceAttrText = plstast.stats.GetDefenceAttr().ToString();
+        _defenceSkillText = plstast.stats.armorSkill.ToString();
+        _defenceBuffText = plstast.stats.buffDefence.ToString();
+
+        _moveSpeedText = plstast.stats.moveSpeed.ToString();
+        _moveSpeedAttrText = plstast.stats.moveSpeedAttr.ToString();
+        _moveSpeedBuffText = plstast.stats.buffSpeed.ToString();
+
+        _healthText = plstast.stats.HP.ToString();
+        _regenValue = plstast.stats.GetAddHP().ToString() + " HP";
+        _timeRegen = plstast.stats.GetTimeRegenHP().ToString() + " SEC";
+
+        _blockText = plstast.stats.minusDMG.ToString() + " to " + plstast.stats.GetMaxBlockDamage().ToString();
+        _damageText = plstast.stats.minDMG.ToString() + " to " + plstast.stats.maxDMG.ToString();
+        _kickStrenght = plstast.stats.KickStrenght().ToString();
+
+
+        _curLvlText = plstast.stats.Level.ToString();
+        string curExp = plstast.curEXP.ToString();
+        string needExp = PlayerLeveling.Instance.GetHeedExp(plstast.stats.Level).ToString();
+        _curExpText = curExp + " / " + needExp;
+
     }
 }
 

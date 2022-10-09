@@ -5,6 +5,7 @@ using UnityEngine;
 public class InteriorSelecter : Photon.MonoBehaviour
 {
     [Range(0, 100)]
+    [Header("Spawn chance of each object in collection")]
     [SerializeField] private int _spawnChanceObjects;
     [SerializeField] private List<InteriorObject> _objects = new List<InteriorObject>();
     [SerializeField] private List<DestroyedObject> _destroyedObject = new List<DestroyedObject>();

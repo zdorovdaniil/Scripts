@@ -12,20 +12,19 @@ public class ClothAdder : MonoBehaviour
     [SerializeField] private SkinnedMeshRenderer playerSkin;
     // ссылка на mesh персонажа, для восстановления исходного mesh персонажа
     [SerializeField] private SkinnedMeshRenderer FullMeshBody;
-    [SerializeField] private SkinnedMeshRenderer OnlyTorsMeshBody;
-    [SerializeField] private SkinnedMeshRenderer OnlyPantsMeshBody;
-    [SerializeField] private SkinnedMeshRenderer NoMeshBody;
-    public Inventory inv;
+    [SerializeField] private SkinnedMeshRenderer MeshWithoutShoes;
+    [SerializeField] private Inventory _inv;
+    [SerializeField] private Item _emptyPantsSlot;
 
     // проверка одежды (удаляется вся одежда с персонажа, а затем добавляется снова из инвентаря)
     public void IterateCloth()
     {
-        if (inv != null)
+        if (_inv != null)
         {
             // удаление одежды с персонажа
             DeleteAllCloth();
-            inv.SetEquipSlotFromItemsIDs();
-            foreach (InventorySlot _equip in inv.GetEquipsSlots())
+            _inv.SetEquipSlotFromItemsIDs();
+            foreach (InventorySlot _equip in _inv.GetEquipsSlots())
             {
                 if (_equip != null)
                 {
@@ -42,6 +41,7 @@ public class ClothAdder : MonoBehaviour
         Destroy(Tors); Tors = null;
         Destroy(Pants); Pants = null;
         Destroy(Shoes); Shoes = null;
+        UpdateProxy();
     }
     // функция добавления одежды
     public void addClothes(InventorySlot _slot)
@@ -103,27 +103,33 @@ public class ClothAdder : MonoBehaviour
     }
     private void UpdateProxy()
     {
+        // если есть ботинки, то активирует proxe без голеней
+        if (Shoes) { playerSkin.sharedMesh = MeshWithoutShoes.sharedMesh; } else { playerSkin.sharedMesh = FullMeshBody.sharedMesh; }
         // если есть шлем то волосы убираются
-        if (Helmet != null) { Hair.SetActive(false); }
+        if (Helmet) { Hair.SetActive(false); }
         else Hair.SetActive(true);
+        // если нет штанов, то добавляются шорты
+        if (!Pants) { addClothes(InventorySlot.CreateSlot(_emptyPantsSlot)); }
 
-
-        if (Tors == null && Pants == null) // если нет ни торса ни штанов
-        {
-            playerSkin.sharedMesh = FullMeshBody.sharedMesh;
-        }
-        if (Tors == null && Pants != null)
-        {
-            playerSkin.sharedMesh = OnlyTorsMeshBody.sharedMesh;
-        }
-        if (Tors != null && Pants == null)
-        {
-            playerSkin.sharedMesh = OnlyPantsMeshBody.sharedMesh;
-        }
-        if (Tors != null && Pants != null)
-        {
-            playerSkin.sharedMesh = NoMeshBody.sharedMesh;
-        }
+        // 
+        /*
+            if (Tors == null && Pants == null) // если нет ни торса ни штанов
+            {
+                playerSkin.sharedMesh = FullMeshBody.sharedMesh;
+            }
+            if (Tors == null && Pants != null)
+            {
+                playerSkin.sharedMesh = OnlyTorsMeshBody.sharedMesh;
+            }
+            if (Tors != null && Pants == null)
+            {
+                playerSkin.sharedMesh = OnlyPantsMeshBody.sharedMesh;
+            }
+            if (Tors != null && Pants != null)
+            {
+                playerSkin.sharedMesh = NoMeshBody.sharedMesh;
+            }
+        */
     }
 
 

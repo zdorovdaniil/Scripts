@@ -15,7 +15,8 @@ public class EnemyController : MonoBehaviour
     private Vector3 startPos;
     [Header("Parametrs of Enemy")]
     [SerializeField] private float timeToResetKick = 1f; // время через которое противник придет в себя после попадания в него удара
-    [SerializeField] private float timeBetweenAttack = 1.3f; // время между сериями атак
+    [SerializeField] private Vector2 RandomValueBetweenAttack = new Vector2(1.3f, 1.3f);
+    [SerializeField] private float timeBetweenAttack; // время между сериями атак
     [SerializeField] private float attackDuration = 1.2f;
     [SerializeField] private float speedRotation = 5f; // скорость поворота к игроку
     [SerializeField] private float speedMoving; // скорость движения
@@ -49,7 +50,10 @@ public class EnemyController : MonoBehaviour
         agent.speed = speedMoving;
         if (!SetTargets()) isDeath = true;
         else isDeath = false;
+        NewTimeBetweenAttack();
     }
+    private void NewTimeBetweenAttack()
+    { timeBetweenAttack = UnityEngine.Random.Range(RandomValueBetweenAttack.x, RandomValueBetweenAttack.y); }
     public void SetActionDoing(EnemyFightingType type)
     {
         if (type == EnemyFightingType.Distance || type == EnemyFightingType.DistanceCrosser)
@@ -139,7 +143,7 @@ public class EnemyController : MonoBehaviour
         {
             agent.SetDestination(transform.position);
             // Атака цели
-            EnemyAttack();
+            if (!EnemyAttack()) anim.SetBool("Idle", true); ;
             // Поворот к цели
             FaceToTarget();
             anim.SetBool("Run", false);
@@ -239,7 +243,7 @@ public class EnemyController : MonoBehaviour
 
     }
 
-    private void EnemyAttack()
+    private bool EnemyAttack()
     {
         timer += Time.deltaTime;
         if (isFirstAttack == true)
@@ -250,15 +254,16 @@ public class EnemyController : MonoBehaviour
             else { numAttack = -1; }
             SetAnimEnemyAttack(numAttack);
             isFirstAttack = false;
-
+            return true;
         }
         else if (timer > timeBetweenAttack)
         {
             timer = 0;
             int numAttack = UnityEngine.Random.Range(1, countAttackAnim + 1);
             SetAnimEnemyAttack(numAttack);
-
+            return true;
         }
+        else return false;
     }
     private void FaceToTarget()
     {
@@ -298,6 +303,7 @@ public class EnemyController : MonoBehaviour
     // воспроизведение анимации атаки
     private void SetAnimEnemyAttack(int _numAttack)
     {
+        NewTimeBetweenAttack();
         StopCoroutine(ResetAttack());
         anim.SetInteger("Attack", _numAttack);
         StartCoroutine(ResetAttack());

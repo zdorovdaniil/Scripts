@@ -7,32 +7,34 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private Inventory _inventory;
     [SerializeField] private PlayerUpdate _playerUpdate;
-    [SerializeField] private ClothAdder _clothAdder;
     [SerializeField] private Transform _spawnReferenceGUI;
     [SerializeField] private GameObject _prefReferenceGUI;
     [SerializeField] private SlotsUI _invSlots;
     [SerializeField] private SlotsUI _equipSlots;
+    [SerializeField] private ViewStatsUI _viewStatsUI;
+
+
     private void Start() { Instance = this; }
 
+    public void SetInventory(Inventory inv) => _inventory = inv;
+    public void SetPlayerStats(PlayerStats plS) => _playerStats = plS;
     public void SwitchPlayerUIObject(bool status)
     {
-        _playerUIObject.SetActive(status);
+        if (_playerUIObject) _playerUIObject.SetActive(status);
         if (!status) GlobalSounds.Instance.SCloseWindow();
         else GlobalSounds.Instance.SOpenWindow();
     }
     public void FillPlayerUI()
     {
         _playerStats.UpdateArmor();
-        _invSlots.FullSlots(_inventory.GetItems);
-        _equipSlots.FullSlots(_inventory.GetEquipsList());
-        ViewStatsUI.Instance.UpdateViewStatsUI(_playerStats);
+        _playerStats.CheckStatusEquip();
+        if (_invSlots) _invSlots.FullSlots(_inventory.GetItems);
+        if (_equipSlots) _equipSlots.FullSlots(_inventory.GetEquipsList());
+        if (_viewStatsUI) _viewStatsUI.UpdateViewStatsUI(_playerStats);
     }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
     {
-        for (int i = 0; i < _spawnReferenceGUI.childCount; i++)
-        {
-            Destroy(_spawnReferenceGUI.GetChild(i).gameObject);
-        }
+        ProcessCommand.ClearChildObj(_spawnReferenceGUI);
         Instantiate(_prefReferenceGUI, _spawnReferenceGUI).GetComponent<ReferenceUI>().SetValueSlot(slot, buttonType);
     }
     public void RemoveEquipSlot(Item item)

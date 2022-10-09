@@ -5,7 +5,6 @@ public class BulletMove : Photon.MonoBehaviour
 {
     [SerializeField] private float _timeToDestruct = 5f;
     public int StartSpeed = 2;
-    [SerializeField] private bool _destroyOnTrigger = true;
     [SerializeField] private bool _includeToObjectOnTrigger = true;
     [SerializeField] private EffectType _effectOnHit = EffectType.None;
     [SerializeField] private ParticleSystem _flyTrail;
@@ -36,21 +35,9 @@ public class BulletMove : Photon.MonoBehaviour
                 if (_isActivingOneTime) _isActivatedEventOnHit = true;
                 HitEffects();
                 HitToObject(other);
-                /*if (_destroyOnTrigger)
-                {
-                    /*DestroyDamageZone();
-                    this.enabled = false;
-                }*/
             }
         }
     }
-    /*
-    private void DestroyDamageZone()
-    {
-        if (this.gameObject.GetComponent<DamageZone>())
-        { Destroy(this.gameObject.GetComponent<DamageZone>()); }
-    }
-    */
     private void HitToObject(Collider other)
     {
         rb.Sleep();

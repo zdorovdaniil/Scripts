@@ -47,11 +47,14 @@ namespace stats
 
         public void SetAttackWeapon(int value)
         {
+            recount();
             if (value != 0) attackSkill = Mathf.Floor(((Skills[6].Level * 0.2f)) * 100.00f) * 0.01f; else attackSkill = 0;
             attackWeapon = Mathf.Floor((value) * 100.00f) * 0.01f;
+            recount();
         }
         public void SetCritEquip(int critChanceE, int critValueE)
         {
+            recount();
             critChanceEquip = critChanceE;
             critChanceSkill = Skills[6].Level * 2;
             critValueEquip = critValueE;
@@ -59,11 +62,15 @@ namespace stats
 
             critChance = 2 + critChanceEquip + critChanceSkill + buffCritChance;
             critValue = 100 + critValueEquip + critValueSkill + buffCritValue;
+
+            recount();
         }
         public void SetArmorEquip(int value, int countModifire)
         {
+            recount();
             if (countModifire != 0) armorSkill = Mathf.Floor(((Skills[5].Level * 0.2f * countModifire)) * 100.00f) * 0.01f; else armorEquip = 0;
             armorEquip = Mathf.Floor((value) * 100.00f) * 0.01f;
+            recount();
         }
         public float GetBuyModif()
         {
@@ -203,11 +210,11 @@ namespace stats
         //функция вызываемая при повышении уровня
         public void lvlUP()
         {
-            if (Level <= PlayerLeveling.instance.LevelScore.Length)
+            if (Level <= PlayerLeveling.Instance.LevelScore.Length)
             {
                 Level += 1;
                 PlayerQuest.instance.UpdateProcessQuests(null, null, "level_up");
-                EXP = PlayerLeveling.instance.LevelScore[Level - 1];
+                EXP = PlayerLeveling.Instance.LevelScore[Level - 1];
             }
         }
 

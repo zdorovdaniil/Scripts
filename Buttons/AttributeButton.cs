@@ -9,7 +9,9 @@ public class AttributeButton : MonoBehaviour
     [SerializeField] private TMP_Text _maxLevel;
     [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private Transform _buttonUp;
-    public bool IsAskConfirm;
+    private CharacterUI _characterUI;
+    private bool _isAskConfirm;
+    private bool _isSavePlStats;
 
     public void GetReport(ReportType reportType)
     {
@@ -21,20 +23,25 @@ public class AttributeButton : MonoBehaviour
     private void UpAttribute()
     {
         if (!_playerStats.UpAttribute(_attribute.Attr.Id)) { MsgBoxUI.Instance.ShowAttention("not enought attribute points"); }
-        CharacterUI.Instance.UpdateButtons();
+        _playerStats.UpdateArmor();
+        _playerStats.CheckStatusEquip();
+        _characterUI.UpdateButtons();
         GlobalSounds.Instance.SAttributeUp();
+        if (_isSavePlStats) _playerStats.SaveStatsToSlot(ProcessCommand.CurActiveSlot, _playerStats.stats);
     }
     public void ClickUpAttribute()
     {
-        if (IsAskConfirm)
+        if (_isAskConfirm)
         { MsgBoxUI.Instance.Show(this.gameObject, "upgrade attribute", "do you really want to spend 1 attribute point to upgrade attribute?"); }
         else UpAttribute();
     }
-    public void SetText(PlayerStats playerStats, AttributeStat attribute, bool isAsk)
+    public void SetText(PlayerStats playerStats, AttributeStat attribute, bool isAsk, bool isSaving, CharacterUI characterUI)
     {
+        _characterUI = characterUI;
         _attribute = attribute;
         _playerStats = playerStats;
-        IsAskConfirm = isAsk;
+        _isAskConfirm = isAsk;
+        _isSavePlStats = isSaving;
         if (_attribute.IsAvaibleToLevelUp(_playerStats.GetPointStat)) _buttonUp.gameObject.SetActive(true);
         else { _buttonUp.gameObject.SetActive(false); }
         _nameAttribute.text = _attribute.Attr.Name;

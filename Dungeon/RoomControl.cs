@@ -199,6 +199,7 @@ public class RoomControl : Photon.MonoBehaviour
         if (ListPlayers.Count <= 0) SwitchDoorsInChunk(false);
         UpdateParametrs();
         if (_roomType == RoomType.MiniBoss) HealEnemyesInRoom();
+        DungeonObjects.Instance.UnlockAllAmbushRooms();
     }
     private void HealEnemyesInRoom()
     {

@@ -26,7 +26,7 @@ public class PlayerUpdate : MonoBehaviour
     {
         _playerStats = GetComponent<PlayerStats>();
         _sliderHP.minValue = 0;
-        _playerLeveling = PlayerLeveling.instance;
+        _playerLeveling = PlayerLeveling.Instance;
     }
     private void UpdateHPSlider()
     {

@@ -16,8 +16,7 @@ public class Storage : MonoBehaviour
     [SerializeField] private Transform _spawnReferenceGUI;
     [SerializeField] private GameObject _prefReferenceGUI;
     [SerializeField] private Inventory _inv;
-    public PlayerStats PlStats;
-
+    private PlayerStats PlStats; public void SetPlayerStats(PlayerStats plS) => PlStats = plS;
     [SerializeField] private Improve _improve;
     [SerializeField] private TMP_Text _countItemsInStorage;
     [SerializeField] private TMP_Text _textStorageCapacity;
@@ -65,7 +64,7 @@ public class Storage : MonoBehaviour
         else if (_slot.item.CheckReqirement(PlStats))
         {
             _inv.SetToEquipSlot(_slot, numE);
-            _inv.DeleteItemId(_slot.item.Id, 1);
+            _inv.DeleteSlot(_slot, 1);
         }
         else MsgBoxUI.Instance.ShowInfo("armor", "not requiment player stats");
     }
@@ -78,7 +77,7 @@ public class Storage : MonoBehaviour
             else if (slot.item.CheckReqirement(PlStats))
             {
                 _inv.SetToEquipSlot(slot, 0);
-                _inv.DeleteItemId(slot.item.Id, 1);
+                _inv.DeleteSlot(slot, 1);
             }
             else MsgBoxUI.Instance.ShowInfo("equip", "not requiment player stats");
         }
@@ -95,13 +94,9 @@ public class Storage : MonoBehaviour
         _inv.SaveItemsId();
         FillStorageSlotsUI();
     }
-    public void MoveToStorageSlot(Item item, int amount)
+    public void MoveToStorageSlot(InventorySlot slot, int amount)
     {
-        if (AddStorage(item, amount))
-        {
-            //Debug.Log("Перемещение на склад предмета успешно!");
-            _inv.DeleteItemId(item.Id, amount);
-        }
+        if (AddStorage(slot.item, amount)) { _inv.DeleteSlot(slot, amount); }
         else MsgBoxUI.Instance.ShowInfo("storage", "inventory ii full");
         _inv.SaveItemsId();
         _invSlots.FullSlots(_inv.GetItems);
@@ -128,7 +123,6 @@ public class Storage : MonoBehaviour
         else MsgBoxUI.Instance.ShowInfo("storage", "inventory ii full");
         SaveStorageId();
         FillStorageSlotsUI();
-
     }
 
     public void DeleteItemFromInvId(int id)
