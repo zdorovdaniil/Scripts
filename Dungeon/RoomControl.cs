@@ -7,9 +7,10 @@ public enum RoomType
 public class RoomControl : Photon.MonoBehaviour
 {
     [SerializeField] private RoomType _roomType; public RoomType GetRoomType => _roomType;
-    [SerializeField] private List<Transform> _teleportPointRoom;
-    // места спавна противников
-    [SerializeField] private List<Transform> _spawnPointsForEnemy = new List<Transform>();
+    // точки спавна для противников, что меняют свое местоположение
+    [SerializeField] private Transform _teleportPointRoom;
+    // места появления противников
+    [SerializeField] private Transform _spawnPointsForEnemy;
     // противники которые могут появиться в _spawnPointsForEnemy
     [SerializeField] private Enemy[] _enemysForSpawn;
     [SerializeField] private Vector2Int _rangeSpawnEnemyOf;
@@ -154,25 +155,28 @@ public class RoomControl : Photon.MonoBehaviour
     }
     public float[] GetRandomTeleportPointRoom()
     {
-        int num = Random.Range(0, _teleportPointRoom.Count);
-        Vector3 vector3 = _teleportPointRoom[num].transform.position;
+        // получаем доверние обьъекты у transform
+        Transform[] teleportPoints = _teleportPointRoom.GetComponentsInChildren<Transform>();
+        int num = Random.Range(0, teleportPoints.Length);
+        Vector3 vector3 = teleportPoints[num].transform.position;
         float[] newPos = new float[3];
         newPos[0] = vector3.x; newPos[1] = vector3.y; newPos[2] = vector3.z;
         return newPos;
     }
     public IEnumerator SpawnEnemy()
     {
+        Transform[] spawnPoints = _spawnPointsForEnemy.GetComponentsInChildren<Transform>();
         yield return new WaitForSecondsRealtime(_doorClosingTime);
         {
-            if (_spawnPointsForEnemy.Count != 0)
+            if (spawnPoints.Length != 0)
             {
-                for (int i = 0; i < _spawnPointsForEnemy.Count; i++)
+                for (int i = 0; i < spawnPoints.Length; i++)
                 {
                     if (_countSpawnedEnemyes < _countEnemy)
                     {
                         int randomEnemy = Random.Range(0, _enemysForSpawn.Length);
                         {
-                            GameObject _enemy = GameManager.SpawnEnemyIn(_spawnPointsForEnemy[i], _enemysForSpawn[randomEnemy].PrefabEnemy);
+                            GameObject _enemy = GameManager.SpawnEnemyIn(spawnPoints[i], _enemysForSpawn[randomEnemy].PrefabEnemy);
                             if (_enemy)
                             {
                                 EnemyStats _enemyStats = _enemy.GetComponent<EnemyStats>();

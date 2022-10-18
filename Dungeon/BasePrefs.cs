@@ -4,6 +4,7 @@ using UnityEngine;
 public class BasePrefs : MonoBehaviour
 {
     public static BasePrefs instance; void Awake() { instance = this; }
+    [SerializeField] private TextLanguage[] _avaibleLanguages; public TextLanguage GetTextLanguage(int id) => _avaibleLanguages[id];
     public List<Skill> AvaibleSkills = new List<Skill>();
     public List<Attribut> AvaibleAttributes = new List<Attribut>();
     [SerializeField] private ItemRequirement _emptyRequirement; public ItemRequirement GetEmptyRequirement => _emptyRequirement;

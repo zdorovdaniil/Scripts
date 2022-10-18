@@ -57,11 +57,6 @@ public class ChunkPlacer : MonoBehaviour
         {
             _dungeonObjects.NetworkSendData();
         }
-        else
-        {
-            _dungeonObjects.UpdatePortalsInRooms();
-        }
-
     }
     private void RespawnFirstRoom()
     {

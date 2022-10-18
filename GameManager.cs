@@ -173,7 +173,6 @@ public class GameManager : Photon.MonoBehaviour
             SceneLoadingUI.Instance.CloseLoadingUI();
             PlayerQuest.instance.InstainceQuests();
             DungeonObjects.Instance.UpdateParametrsRooms();
-            DungeonObjects.Instance.UpdatePortalsInRooms();
         }
     }
     [PunRPC]

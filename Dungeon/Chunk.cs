@@ -8,7 +8,7 @@ public class Chunk : Photon.MonoBehaviour
     public RoomControl GetRoomControl => this.gameObject.GetComponent<RoomControl>();
     [SerializeField] private Vector2Int _positionCoordinate; // позиция комнаты на карте Чанков
     // Порталы
-    [SerializeField] private List<NavMeshLink> _portals = new List<NavMeshLink>();
+    // [SerializeField] private List<NavMeshLink> _portals = new List<NavMeshLink>();
     [SerializeField] private List<GameObject> _doorBlock = new List<GameObject>();
     public List<DoorBlock> DoorBlocks = new List<DoorBlock>();
 
@@ -32,7 +32,7 @@ public class Chunk : Photon.MonoBehaviour
     public GameObject WallD;
 
     [SerializeField] private GameObject _fog; // Туман над комнатой, изчезает после первого захода в комнату
-    [SerializeField] private MeshRenderer _floorMesh; // пол комнаты
+    //[SerializeField] private MeshRenderer _floorMesh; // пол комнаты
     // все соседние комнаты
     [SerializeField] private List<Chunk> _nearConnectedRooms; public void AddNearConnectedRoom(Chunk chunk) { _nearConnectedRooms.Add(chunk); }
 
@@ -75,10 +75,6 @@ public class Chunk : Photon.MonoBehaviour
         photonView.RPC("SetChunkPosition", PhotonTargets.AllBuffered, (float[])pos);
         //float[] rot = GetChunkRot();
         //photonView.RPC("SetChunkRotation", PhotonTargets.AllBuffered, (float[])rot);
-    }
-    public void SendUpdatePortals()
-    {
-        photonView.RPC("UpdatePortals", PhotonTargets.AllBuffered);
     }
     public void EnterPlayer()
     {
@@ -137,7 +133,7 @@ public class Chunk : Photon.MonoBehaviour
     public void EnterFirst()
     {
         _isEnterPlayer = true;
-        _floorMesh.material = BasePrefs.instance.GetGreyMaterial;
+        //_floorMesh.material = BasePrefs.instance.GetGreyMaterial;
         if (_fog.transform.GetChild(0) != null) Destroy(_fog.transform.GetChild(0).gameObject);
         server_isEnterPlayer = true;
         if (_isSupportBiggest && _nearConnectedRooms != null)
@@ -148,9 +144,6 @@ public class Chunk : Photon.MonoBehaviour
                 if (fChunk.IsSupportBiggest) fChunk.SwitchFog(false);
             }
         }
-
-        UpdatePortals();
-
     }
     [PunRPC]
     public void SwitchDoorBlocks(bool status)
@@ -160,14 +153,6 @@ public class Chunk : Photon.MonoBehaviour
             obj.GetComponent<NavMeshObstacle>().size = new Vector3(2f, 2f, 1.1f);
             obj.GetComponent<NavMeshObstacle>().carving = true;
             obj.SetActive(status);
-        }
-    }
-    [PunRPC]
-    public void UpdatePortals()
-    {
-        foreach (NavMeshLink portal in _portals)
-        {
-            if (portal != null) portal.UpdateLink();
         }
     }
     [PunRPC]
@@ -203,7 +188,7 @@ public class Chunk : Photon.MonoBehaviour
     private void SetFog(bool status)
     {
         if (_fog != null) _fog.SetActive(status);
-        if (_floorMesh != null) _floorMesh.material = BasePrefs.instance.GetGreyMaterial;
+        //if (_floorMesh != null) _floorMesh.material = BasePrefs.instance.GetGreyMaterial;
     }
     public float[] GetChunkPos()
     {

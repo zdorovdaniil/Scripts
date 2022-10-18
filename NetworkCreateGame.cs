@@ -7,16 +7,15 @@ using System.Collections;
 // скрипт назнает ник игрока и устанавливает подключение к комнате и лобби
 public class NetworkCreateGame : Photon.MonoBehaviour
 {
+    public static NetworkCreateGame Instance; private void Awake() { Instance = this; }
     public Text LogText;
     public InputField NickNameField;
     [SerializeField] private Transform _enterPlayerName;
     private string _nickName;
     [SerializeField] private bool _isConnectedMasterServer;
     [SerializeField] private bool _isConnectedToLobby;
-    private int _curRegion;
-    [SerializeField] private TMP_Dropdown _regionDropdown;
     [SerializeField] private ServerStatusUI _serverStatsUI;
-    private CloudRegionCode _regionCode = 0;
+
     private void Start()
     {
         if (PhotonNetwork.connected) { PhotonNetwork.Disconnect(); }
@@ -38,23 +37,13 @@ public class NetworkCreateGame : Photon.MonoBehaviour
             }
         }
     }
-    public void SetRegionDropdown()
-    {
-        _regionDropdown.value = PlayerPrefs.GetInt("region");
-    }
-    public void ChangeServer(int dropDownValue)
+    public void OnChangedServer()
     {
         DisconnecteFromServer();
-        SetRegionCode(dropDownValue);
-        PlayerPrefs.SetInt("region", dropDownValue);
         StartCoroutine(ConnectToServerWithDelay());
     }
-    private void SetRegionCode(int code)
-    {
-        if (code == 0) { _regionCode = CloudRegionCode.eu; }
-        else if (code == 1) { _regionCode = CloudRegionCode.ru; }
-        else if (code == 2) { _regionCode = CloudRegionCode.rue; }
-    }
+
+
     // попытка подключения к мастеру сервера
     public void TryToConnectMasterServer()
     {
@@ -67,8 +56,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         _nickName = NickNameField.text;
         PlayerPrefs.SetString(id + "_slot_nickName", _nickName);
         PhotonNetwork.playerName = _nickName;
-        SetRegionCode(PlayerPrefs.GetInt("region"));
-        PhotonNetwork.ConnectToRegion(_regionCode, PhotonNetwork.gameVersion);
+        PhotonNetwork.ConnectToRegion(Network.ConvertToRegionCode(Settings.RegionCode), PhotonNetwork.gameVersion);
         _enterPlayerName.gameObject.SetActive(false);
         _serverStatsUI.SetNewStatus("connecting . . .", Color.white);
         StopCoroutine(CheckConnectToServer());
@@ -93,7 +81,6 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     // подключение к мастер серверу успешно
     public virtual void OnConnectedToMaster()
     {
-        _curRegion = ((int)PhotonNetwork.CloudRegion);
         _isConnectedMasterServer = true;
         PhotonNetwork.JoinLobby();
     }
@@ -156,7 +143,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
             if (PhotonNetwork.room != null)
             {
                 LobbyRoomUI.instance.ClearFields();
-                if (PhotonNetwork.room.PlayerCount >= 2 || Settings.Instance.GetIsAlwayesNetwork)
+                if (PhotonNetwork.room.PlayerCount >= 2 || Settings.IsAlwayesNetwork)
                 {
                     PhotonNetwork.room.IsOpen = false;
                     photonView.RPC("SendLoadScene", PhotonTargets.All);

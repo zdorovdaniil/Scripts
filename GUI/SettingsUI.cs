@@ -1,20 +1,15 @@
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 public class SettingsUI : MonoBehaviour
 {
-    [SerializeField] private AudioMixer _audioMixer;
     [SerializeField] private Slider _sliderSound;
     [SerializeField] private Slider _sliderMusic;
     [SerializeField] private TMP_Dropdown _dropdownQuality;
-    [SerializeField] private PlayerStats _playerStats;
-    [SerializeField] private float _soundsValue;
-    [SerializeField] private float _musicValue;
-    [SerializeField] private int _dungeonLevel;
-    [SerializeField] private int _qualityLevel;
-    [SerializeField] private bool _isAlwayesNetwork;
+    [SerializeField] private TMP_Dropdown _regionDropdown;
+    [SerializeField] private TMP_Dropdown _languageDropdown;
+    [SerializeField] private PlayerStats _playerStats; public void SetPlayerStats(PlayerStats playerStats) => _playerStats = playerStats;
     private GameManager _gameManager;
     [SerializeField] private bool _isGoingGame; // Происходит ли сейас активный процесс игры в подземелье
     [SerializeField] private TMP_Text _dungeonLevelText;
@@ -25,10 +20,12 @@ public class SettingsUI : MonoBehaviour
     public void ActivateUI(bool status)
     {
         _gameManager = FindObjectOfType<GameManager>();
-        LoadSetting();
+        Settings.Instance.LoadingSettings();
         this.gameObject.SetActive(status);
         if (status)
         {
+            SetUI();
+            Settings.Instance.UpdateMixer();
             if (_isGoingGame)
             {
                 ActivateGoingGameObjs();
@@ -42,66 +39,69 @@ public class SettingsUI : MonoBehaviour
         }
         else { return; }
     }
-    private void SaveSettings()
+    private void SetUI()
     {
-        PlayerPrefs.SetFloat("musicValue", _musicValue);
-        PlayerPrefs.SetFloat("soundsValue", _soundsValue);
-        PlayerPrefs.SetInt("qualityLevel", _qualityLevel);
-        if (_isAlwayesNetwork) PlayerPrefs.SetInt("alwayesNetwork", 1);
-        else PlayerPrefs.SetInt("alwayesNetwork", 0);
+        if (_sliderSound) _sliderSound.value = Settings.SoundsValue;
+        if (_sliderMusic) _sliderMusic.value = Settings.MusicValue;
+        if (_dropdownQuality) _dropdownQuality.value = Settings.QualityLevel;
+        if (_regionDropdown) _regionDropdown.value = Settings.RegionCode;
+        if (_dungeonLevelText) _dungeonLevelText.text = ProcessCommand.GetDungeonLevel.ToString();
+        if (_isAlwayesNetworkToggle) _isAlwayesNetworkToggle.isOn = Settings.IsAlwayesNetwork;
+        if (_languageDropdown) _languageDropdown.value = Settings.CurLanguage;
+    }
+    private void SaveSettings() { Settings.SaveSettings(); }
+    public void ChangeLanguage(int dropDownValue)
+    {
+        Settings.CurLanguage = dropDownValue;
+        SaveSettings();
+        Settings.Instance.SendUpdateLanguage();
+        Debug.Log(Settings.CurLanguage);
+    }
+    public void ChangeServer(int dropDownValue)
+    {
+        Settings.RegionCode = dropDownValue;
+        SaveSettings();
+        Debug.Log(Settings.RegionCode);
+        NetworkCreateGame.Instance.OnChangedServer();
     }
     public void ChangeAlwayesNetwork(bool status)
     {
-        _isAlwayesNetwork = status;
+        Settings.IsAlwayesNetwork = status;
         SaveSettings();
+        Debug.Log(Settings.IsAlwayesNetwork);
     }
     public void ChangeSoundsValue(float value)
     {
-        _soundsValue = value;
-        _audioMixer.SetFloat("Sounds", Mathf.Lerp(-80, 0, value));
+        Settings.SoundsValue = value;
+        Settings.Instance.UpdateMixer();
         SaveSettings();
+        Debug.Log(Settings.SoundsValue);
 
     }
     public void ChangeMusicValue(float value)
     {
-        _musicValue = value;
-        _audioMixer.SetFloat("Music", Mathf.Lerp(-80, 0, value));
+        Settings.MusicValue = value;
+        Settings.Instance.UpdateMixer();
         SaveSettings();
     }
     public void SetQuality(int qualityIndex)
     {
-        _qualityLevel = qualityIndex;
+        Settings.QualityLevel = qualityIndex;
         QualitySettings.SetQualityLevel(qualityIndex);
         SaveSettings();
-    }
-    public void LoadSetting()
-    {
-        int id = PlayerPrefs.GetInt("activeSlot");
-        _dungeonLevel = PlayerPrefs.GetInt(id + "_slot_dungeonLevel");
-        _musicValue = PlayerPrefs.GetFloat("musicValue");
-        _soundsValue = PlayerPrefs.GetFloat("soundsValue");
-        _qualityLevel = PlayerPrefs.GetInt("qualityLevel");
-        if (PlayerPrefs.GetInt("alwayesNetwork") == 1) _isAlwayesNetwork = true;
-        else _isAlwayesNetwork = false;
-        _sliderMusic.value = _musicValue;
-        _sliderSound.value = _soundsValue;
-        _dropdownQuality.value = _qualityLevel;
-        if (_isAlwayesNetworkToggle != null) _isAlwayesNetworkToggle.isOn = _isAlwayesNetwork;
     }
     public void ClickDungeonLevelDown()
     {
         MsgBoxUI.Instance.Show(this.gameObject, "down dungeon level", "select button", "dungeonLevelDown");
-
     }
     private void DungeonLevelDown()
     {
         int id = PlayerPrefs.GetInt("activeSlot");
-        if (_dungeonLevel <= 1)
+        if (ProcessCommand.GetDungeonLevel <= 1)
             MsgBoxUI.Instance.ShowInfo("attention", "dungeon level is already minimum");
         else
         {
-            _dungeonLevel -= 1;
-            PlayerPrefs.SetInt(id + "_slot_dungeonLevel", _dungeonLevel);
+            ProcessCommand.SetDungeonLevel(ProcessCommand.GetDungeonLevel - 1);
         }
         ActivateUI(true);
     }
@@ -115,8 +115,6 @@ public class SettingsUI : MonoBehaviour
     public void ClickLeaveDungeon()
     {
         MsgBoxUI.Instance.Show(this.gameObject, "Exit from dungeon", "select button", "dungeonLeave");
-        // если выходит владелец подземелья, то выкидываюся все игроки
-
     }
     private void CheckLeaveDengeon()
     {
@@ -139,10 +137,7 @@ public class SettingsUI : MonoBehaviour
     }
     private void ActivateMainMenuObjs()
     {
-        _dungeonLevelText.text = _dungeonLevel.ToString();
         _exitFromDungeonButton.gameObject.SetActive(false);
         _changeLevelDungeonPanel.gameObject.SetActive(true);
     }
-    public void SetPlayerStats(PlayerStats playerStats)
-    { _playerStats = playerStats; }
 }

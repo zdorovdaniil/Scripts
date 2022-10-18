@@ -1,5 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using System;
+using System.Collections;
+
+
 
 public class DungeonObjects : MonoBehaviour
 {
@@ -10,10 +15,12 @@ public class DungeonObjects : MonoBehaviour
 
     public int GetNumChestsInDungeon => _chestsDungeon.Count;
     private DungeonStats _dungeonStats;
+    private NavMeshSurface _navMeshSurface;
 
     private void Start()
     {
         _dungeonStats = DungeonStats.Instance;
+        _navMeshSurface = GetComponent<NavMeshSurface>();
     }
     public void AddChunk(Chunk chunk)
     {
@@ -31,6 +38,7 @@ public class DungeonObjects : MonoBehaviour
         {
             chunk.gameObject.GetComponent<RoomControl>().UpdateParametrs();
         }
+        StartCoroutine(Wait());
     }
     public void UnlockAllAmbushRooms()
     {
@@ -40,19 +48,17 @@ public class DungeonObjects : MonoBehaviour
                 chunk.photonView.RPC("UnlockDoors", PhotonTargets.All);
         }
     }
+    private IEnumerator Wait()
+    {
+        yield return new WaitForSecondsRealtime(2f);
+        { _navMeshSurface.BuildNavMesh(); }
+
+    }
     public void NetworkSendData()
     {
         foreach (Chunk chunk in _roomsDungeon)
         {
             chunk.SendAllThisChunkData();
-            chunk.SendUpdatePortals();
-        }
-    }
-    public void UpdatePortalsInRooms()
-    {
-        foreach (Chunk chunk in _roomsDungeon)
-        {
-            chunk.UpdatePortals();
         }
     }
     public Chest ReturnRandomClosedChest()
@@ -66,7 +72,7 @@ public class DungeonObjects : MonoBehaviour
         if (closedChests.Count <= 0) return null;
         else
         {
-            int randomValue = Random.Range(0, closedChests.Count);
+            int randomValue = UnityEngine.Random.Range(0, closedChests.Count);
             return closedChests[randomValue];
         }
     }

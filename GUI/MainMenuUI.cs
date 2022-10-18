@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class MainMenuUI : MonoBehaviour
 {
     public static MainMenuUI Instance; private void Awake() { Instance = this; }
+    [SerializeField] private GameObject SelectLanguagePanel;
     [SerializeField] private GameObject Profile;
     [SerializeField] private GameObject SelectProfile;
     [SerializeField] private GameObject DangeonOptions;
@@ -36,6 +37,7 @@ public class MainMenuUI : MonoBehaviour
         //
         SwitchPanels(false);
         Profile.SetActive(false);
+        SelectLanguagePanel.SetActive(false);
         SelectProfile.SetActive(true);
         FillUIRooms();
         if (!CheckHasSaving())
@@ -43,6 +45,7 @@ public class MainMenuUI : MonoBehaviour
             PlayerPrefs.SetInt("activeSlot", 1);
             ClickCreateNewCharacter();
             Settings.Instance.SetDefaultSettings();
+            SelectLanguagePanel.SetActive(true);
         }
     }
     public void SwitchPanels(bool status)
@@ -97,12 +100,8 @@ public class MainMenuUI : MonoBehaviour
         _inv.SetInvSlotsFromItemsIDs();
         _propertyUI.UpdateProperty();
         _networkCreateGame.CheckPlayerName();
-
-
-
         Profile.SetActive(true);
         DangeonOptions.SetActive(true);
-
     }
     public void AppExit()
     {
