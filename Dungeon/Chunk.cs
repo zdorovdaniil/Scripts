@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+/// <summary>
+/// Скрипт отвечает за объекты расположенные в комнате. Изменяет их состояния от ChunkPlacer и других событий
+/// </summary>
 public class Chunk : Photon.MonoBehaviour
 {
-    public RoomControl GetRoomControl => this.gameObject.GetComponent<RoomControl>();
-    [SerializeField] private Vector2Int _positionCoordinate; // позиция комнаты на карте Чанков
-    // Порталы
-    // [SerializeField] private List<NavMeshLink> _portals = new List<NavMeshLink>();
+    [Header("Local Objects of Chunk")]
     [SerializeField] private List<GameObject> _doorBlock = new List<GameObject>();
     public List<DoorBlock> DoorBlocks = new List<DoorBlock>();
-
     [SerializeField] private bool _isSupportRotation; public bool IsSupportRotation => _isSupportRotation; // поддерживает ли эта комната повороты
     [SerializeField] private bool _isSupportBiggest; public bool IsSupportBiggest => _isSupportBiggest; // поддерживает ли присоединение к комнатам без стен
-    public void SetPositionCoordinate(Vector2Int vector2) { _positionCoordinate = vector2; }
+
     // Локальные объекты чанка
     public GameObject DoorU;
     public GameObject DoorR;
@@ -30,14 +28,15 @@ public class Chunk : Photon.MonoBehaviour
     public GameObject WallR;
     public GameObject WallL;
     public GameObject WallD;
-
     [SerializeField] private GameObject _fog; // Туман над комнатой, изчезает после первого захода в комнату
-    //[SerializeField] private MeshRenderer _floorMesh; // пол комнаты
-    // все соседние комнаты
-    [SerializeField] private List<Chunk> _nearConnectedRooms; public void AddNearConnectedRoom(Chunk chunk) { _nearConnectedRooms.Add(chunk); }
-
+    [Header("Objects after create Dungeon")]
+    [SerializeField] private Vector2Int _positionCoordinate; // позиция комнаты на карте Чанков
+    [SerializeField] private List<Chunk> _nearConnectedRooms; public void AddNearConnectedRoom(Chunk chunk) => _nearConnectedRooms.Add(chunk);
     private bool _isEnterPlayer; public bool IsPlayerInter => _isEnterPlayer;
     private bool server_isEnterPlayer;
+
+    public void SetPositionCoordinate(Vector2Int vector2) => _positionCoordinate = vector2;
+    public RoomControl GetRoomControl => this.gameObject.GetComponent<RoomControl>();
     private void Start()
     {
         SwitchDoorBlocks(false);
@@ -73,8 +72,6 @@ public class Chunk : Photon.MonoBehaviour
         photonView.RPC("SetChunk", PhotonTargets.AllBuffered, (bool[])data);
         float[] pos = GetChunkPos();
         photonView.RPC("SetChunkPosition", PhotonTargets.AllBuffered, (float[])pos);
-        //float[] rot = GetChunkRot();
-        //photonView.RPC("SetChunkRotation", PhotonTargets.AllBuffered, (float[])rot);
     }
     public void EnterPlayer()
     {
@@ -100,6 +97,20 @@ public class Chunk : Photon.MonoBehaviour
             }
         }
 
+    }
+    public void ResetTriggerTPOnDoorBlock()
+    {
+        if (PhotonNetwork.offlineMode) SendToResetTriggerDoorBlock();
+        photonView.RPC("SendToResetTriggerDoorBlock", PhotonTargets.AllBuffered);
+    }
+
+    [PunRPC]
+    public void SendToResetTriggerDoorBlock()
+    {
+        foreach (DoorBlock door in DoorBlocks)
+        {
+            door.ResetTriggerZone();
+        }
     }
     [PunRPC]
     public void UnlockDoors()
@@ -133,7 +144,6 @@ public class Chunk : Photon.MonoBehaviour
     public void EnterFirst()
     {
         _isEnterPlayer = true;
-        //_floorMesh.material = BasePrefs.instance.GetGreyMaterial;
         if (_fog.transform.GetChild(0) != null) Destroy(_fog.transform.GetChild(0).gameObject);
         server_isEnterPlayer = true;
         if (_isSupportBiggest && _nearConnectedRooms != null)
@@ -188,7 +198,6 @@ public class Chunk : Photon.MonoBehaviour
     private void SetFog(bool status)
     {
         if (_fog != null) _fog.SetActive(status);
-        //if (_floorMesh != null) _floorMesh.material = BasePrefs.instance.GetGreyMaterial;
     }
     public float[] GetChunkPos()
     {

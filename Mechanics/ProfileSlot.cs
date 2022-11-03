@@ -3,25 +3,25 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
-
 public class ProfileSlot : MonoBehaviour
 {
-    public MainMenuUI menuUI;
+    private MainMenuUI menuUI; public void SetMainMenuUI(MainMenuUI mainMenuUI) => menuUI = mainMenuUI;
     public int NumSlot;
     // GU интерфейс для слотов
-    public Text SlotID;
     public Text SlotName;
     public Text SlotLevel;
     public List<TMP_Text> AttributesText = new List<TMP_Text>();
     public GameObject FreeSlot;
+    [SerializeField] private RawImage _characterScr;
 
     private void Start()
     {
+        menuUI = MainMenuUI.Instance;
         OpenStatsToSlot();
     }
     public void OpenStatsToSlot()
     {
-        SlotID.text = NumSlot.ToString();
+        _characterScr.texture = BasePrefs.instance.GetTexture2DCrsCharacter(NumSlot);
         SlotName.text = PlayerPrefs.GetString(NumSlot + "_slot_nickName");
         for (int i = 0; i < BasePrefs.instance.AvaibleAttributes.Count; i++)
         {
@@ -90,7 +90,7 @@ public class ProfileSlot : MonoBehaviour
         PlayerPrefs.DeleteKey(_slot + "_slot_hacking");
         PlayerPrefs.DeleteKey(_slot + "_slot_wearArmor");
         PlayerPrefs.DeleteKey(_slot + "_slot_wieldSword");
-
+        PlayerPrefs.DeleteKey(_slot + "_slot_MaxDungeonLevel");
         // очистка данных инвентаря
         for (int i = 0; i < 32; i++)
         {
@@ -122,6 +122,9 @@ public class ProfileSlot : MonoBehaviour
         {
             PlayerPrefs.SetInt(_slot + "_slot_" + i + "_attribute", 10);
         }
+        // удаление изображения скриншота персонажа
+        SaveRenderTextureToFile.SaveT2DToFile(_slot, BasePrefs.instance.GetNullImage);
+
     }
 
 }

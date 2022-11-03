@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System;
-using System.Collections;
 
-
-
+/// <summary>
+///  Скрипт отвечает за хранение основных объектов подземелья: комнаты, сундуки, противники.
+///  Генерирует NavMesh Для перемещения противников
+/// </summary>
 public class DungeonObjects : MonoBehaviour
 {
     public static DungeonObjects Instance; private void Awake() { Instance = this; }
@@ -22,6 +22,11 @@ public class DungeonObjects : MonoBehaviour
         _dungeonStats = DungeonStats.Instance;
         _navMeshSurface = GetComponent<NavMeshSurface>();
     }
+    public void CloseFogOfVar()
+    {
+        foreach (Chunk chunk in _roomsDungeon)
+        { chunk.SwitchFog(false); }
+    }
     public void AddChunk(Chunk chunk)
     {
         _roomsDungeon.Add(chunk);
@@ -35,11 +40,10 @@ public class DungeonObjects : MonoBehaviour
     public void UpdateParametrsRooms()
     {
         foreach (Chunk chunk in _roomsDungeon)
-        {
-            chunk.gameObject.GetComponent<RoomControl>().UpdateParametrs();
-        }
-        StartCoroutine(Wait());
+        { chunk.gameObject.GetComponent<RoomControl>().UpdateParametrs(); }
     }
+    public void BuildNavMeshSurface()
+    { _navMeshSurface.BuildNavMesh(); }
     public void UnlockAllAmbushRooms()
     {
         foreach (Chunk chunk in _roomsDungeon)
@@ -48,18 +52,10 @@ public class DungeonObjects : MonoBehaviour
                 chunk.photonView.RPC("UnlockDoors", PhotonTargets.All);
         }
     }
-    private IEnumerator Wait()
-    {
-        yield return new WaitForSecondsRealtime(2f);
-        { _navMeshSurface.BuildNavMesh(); }
-
-    }
     public void NetworkSendData()
     {
         foreach (Chunk chunk in _roomsDungeon)
-        {
-            chunk.SendAllThisChunkData();
-        }
+        { chunk.SendAllThisChunkData(); }
     }
     public Chest ReturnRandomClosedChest()
     {

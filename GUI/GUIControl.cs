@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GUIControl : MonoBehaviour
 {
-    public static GUIControl Instance;
+    public static GUIControl Instance; private void Awake() { Instance = this; }
     public GameObject Player;
     // GUI элементы
     public GameObject PlayerUIObject;
@@ -22,6 +22,7 @@ public class GUIControl : MonoBehaviour
     public GameObject DeathWindow;
     [SerializeField] private Camera minMapCamera;
     [SerializeField] private QuestUI _questUI;
+    [SerializeField] private PropertyUI _propertyUI;
     [SerializeField] private Text fpsText;
     private GameManager _gameManager;
     private PlayerStats _playerStats;
@@ -31,13 +32,13 @@ public class GUIControl : MonoBehaviour
     private IEnumerator Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
-        Instance = this;
         SwitchAllPanels(true);
         minMapCamera.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.2f);
         {
             _playerStats = Player.GetComponent<PlayerStats>();
             _inventory = Player.GetComponent<Inventory>();
+            _propertyUI.UpdateProperty();
             SwitchAllPanels(false);
         }
         CloseBigMap();
@@ -91,10 +92,10 @@ public class GUIControl : MonoBehaviour
         DeathWindow.SetActive(status);
         UseButton.SetActive(status);
     }
-    public void ClickDungeonUp()
+    /*public void ClickDungeonUp()
     {
         _gameManager.CheckDungeonLevel();
-    }
+    }*/
     public void OpenQuests()
     {
         QuestPanel.SetActive(true);
@@ -120,6 +121,10 @@ public class GUIControl : MonoBehaviour
         minMapCamera.gameObject.SetActive(true);
         GlobalSounds.Instance.SButtonClick();
     }
+    public void ClickCloseFogOfVar()
+    {
+        DungeonObjects.Instance.CloseFogOfVar();
+    }
     public void CloseBigMap()
     {
         _gameManager.SwitchAllMapCamera(false);
@@ -133,13 +138,17 @@ public class GUIControl : MonoBehaviour
     {
         ChestButton.SetActive(_status);
     }
-
+    public void CompleteDungeon()
+    {
+        ProcessCommand.CheckIsLevelUpDungeonLevel();
+    }
     public void GameSave()
     {
+        PlayerUI.Instance.MakePhotoPlayer();
         DungeonQuests.Instance.SaveQuestsValue();
         PlayerStats LinkPlayerStats = Player.GetComponent<PlayerStats>();
         Inventory inv = Player.GetComponent<Inventory>();
-        inv.DeleteCollectionItems(_gameManager.GetRules.GetDeletingItems);
+        inv.DeleteCollectionItems(DungeonStats.Instance.Rule.GetDeletingItems);
         LinkPlayerStats.SaveStatsToSlot(ProcessCommand.CurActiveSlot, LinkPlayerStats.stats);
         inv.SaveItemsId();
     }

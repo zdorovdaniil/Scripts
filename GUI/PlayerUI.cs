@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class PlayerUI : MonoBehaviour
 {
     public static PlayerUI Instance;
@@ -12,7 +13,6 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private SlotsUI _invSlots;
     [SerializeField] private SlotsUI _equipSlots;
     [SerializeField] private ViewStatsUI _viewStatsUI;
-
 
     private void Start() { Instance = this; }
 
@@ -56,9 +56,14 @@ public class PlayerUI : MonoBehaviour
         _inventory.DeleteSlot(slot, 1);
         FillPlayerUI();
     }
+    public void MakePhotoPlayer()
+    {
+        BasePrefs.instance.SetImageCharacter(_characterViewCamera.targetTexture, ProcessCommand.CurActiveSlot);
+    }
     public void SwitchCharacterCamera(bool status)
     {
-        _characterViewCamera.gameObject.SetActive(status);
+        if (_characterViewCamera) { _characterViewCamera.gameObject.SetActive(status); }
+
     }
     public void PlaySound()
     {

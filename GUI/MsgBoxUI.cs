@@ -30,17 +30,37 @@ public class MsgBoxUI : MonoBehaviour
     }
     public void ShowAttention(string description)
     {
-        _box.gameObject.SetActive(true);
-        StartCoroutine(ActiveBox());
+        _title.text = TextBase.Field(1);
         _description.text = description;
-        CloseButtons();
-        _buttonOkey.gameObject.SetActive(true);
+        ActivateOKButton();
         GlobalSounds.Instance.SAttention();
     }
+    public void ShowAttention(TextLocalize textLocalize)
+    {
+        _title.text = TextBase.Field(1);
+        _description.text = textLocalize.Text();
+        ActivateOKButton();
+    }
+    public void ShowInfo(TextLocalize textLocalize)
+    {
+        _title.text = TextBase.Field(0);
+        _description.text = textLocalize.Text();
+        ActivateOKButton();
+    }
+    /*public void ShowFullInfo(TextLocalize title, TextLocalize description)
+    {
+        _title.text = title.Text();
+        _description.text = description.Text();
+        ActivateOKButton();
+    }*/
     public void ShowInfo(string title, string description)
     {
         _title.text = title;
         _description.text = description;
+        ActivateOKButton();
+    }
+    private void ActivateOKButton()
+    {
         _box.gameObject.SetActive(true);
         StartCoroutine(ActiveBox());
         CloseButtons();

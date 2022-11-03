@@ -128,7 +128,7 @@ public class RoomControl : Photon.MonoBehaviour
     {
         if (!chunk.IsPlayerInter)
         {
-            StartCoroutine(SpawnEnemy());
+            if (_spawnPointsForEnemy) StartCoroutine(SpawnEnemy());
             chunk.EnterPlayer();
             chunk.EnterFirst();
             if (_countEnemy >= 1)
@@ -204,6 +204,7 @@ public class RoomControl : Photon.MonoBehaviour
         UpdateParametrs();
         if (_roomType == RoomType.MiniBoss) HealEnemyesInRoom();
         DungeonObjects.Instance.UnlockAllAmbushRooms();
+        chunk.ResetTriggerTPOnDoorBlock();
     }
     private void HealEnemyesInRoom()
     {

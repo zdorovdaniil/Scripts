@@ -31,11 +31,12 @@ public class Chest : MonoBehaviour
     public void SpawnItemsInChest()
     {
         // от уровня подземелья зависит ценность дропа в каждом слоте
-        int dungeonLevel = GameManager.Instance.GetDungeonLevel;
+        //int dungeonLevel = DungeonStats.Instance.GetDungeonLevel;
         int willSpanwItems = 0;
         int spawnedItems = 0;
         // чем выше, тем больше шанс появления предмета в слоте сундука от 50 до 75. Зависит от уровня подземелья.
-        int coffSpawnSlot = Mathf.FloorToInt((dungeonLevel * 5) + 45); ;
+        int coffSpawnSlot = DungeonStats.Instance.Rule.GetModifSpawnItemsChest(DungeonStats.Instance.GetDungeonLevel);
+        //
         foreach (ItemTupe type in _typeInSlots)
         {
             if (type == ItemTupe.Nothing) { continue; }

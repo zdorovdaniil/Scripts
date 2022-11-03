@@ -47,11 +47,13 @@ public class Settings : MonoBehaviour
     }
     private void UpdateLanguage()
     {
-        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[CurLanguage];
+        Debug.Log("Set Language id " + CurLanguage);
         TextBase.SetTextLanguage(BasePrefs.instance.GetTextLanguage(CurLanguage));
+        if (LocalizationSettings.AvailableLocales.Locales[CurLanguage])
+        { LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[CurLanguage]; }
     }
     IEnumerator Dalay()
-    { yield return new WaitForSecondsRealtime(1f); { UpdateLanguage(); } }
+    { yield return new WaitForSecondsRealtime(5f); { UpdateLanguage(); } }
 
     public static void SaveSettings()
     {

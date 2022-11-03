@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+///  Скрипт отвечает за сетевую инциализацию начала игры
+/// </summary>
 public class GameManager : Photon.MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance; private void Awake() { Instance = this; }
     private DungeonStats _dungeonStats;
-    [SerializeField] private int _dungeonLevel = 1; // уровень подземелья
-    public int GetDungeonLevel => _dungeonLevel;
+    //[SerializeField] private int _dungeonLevel = 1; // уровень подземелья
+    //public int GetDungeonLevel => _dungeonLevel;
     public int GetCountPlayers => PhotonPlayers.Count;
 
     public GameObject tempView;
@@ -18,17 +22,13 @@ public class GameManager : Photon.MonoBehaviour
     public Transform SpawnPointOwner;
     public Transform SpawnPointClient;
     [SerializeField] private Transform _errorPoint;
-    [SerializeField] private DungeonRules _dungeonRules; public DungeonRules GetRules => _dungeonRules;
+
     public ChunkPlacer chunkPlacer;
     private float _timerDungeonGoing; public float GetTimeDungeonGoing => _timerDungeonGoing;
     [SerializeField] private GameObject _allMapCamera; // камера которая делает карту
     [Header("Cheats")]
     [SerializeField] private bool _disableFog; public bool IsDisabledFog => _disableFog;
 
-    private void Awake()
-    {
-        Instance = this;
-    }
     private void Start()
     {
         Application.targetFrameRate = 60;
@@ -52,7 +52,7 @@ public class GameManager : Photon.MonoBehaviour
         else { PhotonPlayers[0].AddBuffPlayer(id); }
 
     }
-    public bool CheckDungeonLevel()
+    /*public bool CheckDungeonLevel()
     {
         if (PhotonNetwork.isMasterClient || PhotonNetwork.isNonMasterClientInRoom)
         {
@@ -69,11 +69,14 @@ public class GameManager : Photon.MonoBehaviour
             else { Debug.Log("Dungeon level is already max"); return false; }
         }
     }
+    */
+    /*
     private void UpDungeonLevel()
     {
         _dungeonLevel += 1;
         PlayerPrefs.SetInt(PlayerPrefs.GetInt("activeSlot") + "_slot_dungeonLevel", _dungeonLevel);
     }
+    */
     private void CreatePlayerPrefab()
     {
         GameObject obj;
@@ -81,7 +84,7 @@ public class GameManager : Photon.MonoBehaviour
         {
             obj = PhotonNetwork.Instantiate(PlayerPrefab.name, SpawnPointOwner.position, SpawnPointOwner.rotation, 0);
             obj.name = "1Player";
-            KnowDungeonLevelFromSave();
+            DungeonStats.Instance.SetDungeonLevel(ProcessCommand.GetDungeonLevel);
         }
         // появление клиента (2 игрока)
         else if (PhotonNetwork.isNonMasterClientInRoom)
@@ -134,24 +137,16 @@ public class GameManager : Photon.MonoBehaviour
         // в myltiplayer подземелье создает вледелец сервера
         if (PhotonNetwork.isMasterClient || PhotonNetwork.isNonMasterClientInRoom)
         {
-            if (chunkPlacer != null)
+            chunkPlacer.isMyltiplayer = true;
+            if (PhotonNetwork.isMasterClient)
             {
-                chunkPlacer.isMyltiplayer = true;
-                if (PhotonNetwork.isMasterClient)
-                {
-                    KnowDungeonLevelFromSave();
-                    photonView.RPC("SetDungeonLevel", PhotonTargets.AllBuffered, (int)_dungeonLevel);
-                    StartCoroutine(chunkPlacer.StartRespawnRooms(this));
-                }
-                else
-                {
-                    // клиент
-                }
+                photonView.RPC("SetDungeonLevel", PhotonTargets.AllBuffered, (int)ProcessCommand.GetDungeonLevel);
+                StartCoroutine(chunkPlacer.StartRespawnRooms(this));
             }
         }
         else
         {
-            KnowDungeonLevelFromSave();
+            DungeonStats.Instance.SetDungeonLevel(ProcessCommand.GetDungeonLevel);
             StartCoroutine(chunkPlacer.StartRespawnRooms(this));
         }
 
@@ -192,14 +187,14 @@ public class GameManager : Photon.MonoBehaviour
         photonView.RPC("LeaveDungeon", PhotonTargets.AllBuffered);
     }
     // Получение уровня подземелья от владельца сервера
+
     [PunRPC]
     public void SetDungeonLevel(int level)
-    { _dungeonLevel = level; }
+    { DungeonStats.Instance.SetDungeonLevel(level); }
 
     [PunRPC]
     public void LeaveDungeon()
     {
-
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LoadLevel("Menu");
     }
@@ -263,11 +258,7 @@ public class GameManager : Photon.MonoBehaviour
         }
         else return null;
     }
-    // установка _dungeonLevel владельцем подземелья
-    private void KnowDungeonLevelFromSave()
-    {
-        int id = PlayerPrefs.GetInt("activeSlot");
-        _dungeonLevel = PlayerPrefs.GetInt(id + "_slot_dungeonLevel");
-    }
+
+
 }
 

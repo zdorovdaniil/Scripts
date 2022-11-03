@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 public class ChunkPlacer : MonoBehaviour
 {
     // настройка шаблона появления комнат в подземелье
@@ -27,7 +26,7 @@ public class ChunkPlacer : MonoBehaviour
     public IEnumerator StartRespawnRooms(GameManager gameManager)
     {
         _gameManager = gameManager;
-        if (PlayerPrefs.HasKey("numRooms")) { NumRooms = PlayerPrefs.GetInt("numRooms"); }
+        NumRooms = DungeonStats.Instance.GetNumRooms;
         _dungeonConfig.SetCountRooms(NumRooms);
         _dungeonConfig.DefinePercents();
         SpawnedRooms = new Chunk[11, 11];
@@ -41,8 +40,9 @@ public class ChunkPlacer : MonoBehaviour
         }
         if (NumFailSpawned <= 0)
         {
-            _gameManager.DungeonSuccessGenerated();
             _dungeonObjects.UpdateParametrsRooms();
+            _dungeonObjects.BuildNavMeshSurface();
+            _gameManager.DungeonSuccessGenerated();
             UpdateDataInChunks();
         }
         else
@@ -54,9 +54,7 @@ public class ChunkPlacer : MonoBehaviour
     private void UpdateDataInChunks()
     {
         if (!PhotonNetwork.offlineMode)
-        {
-            _dungeonObjects.NetworkSendData();
-        }
+        { _dungeonObjects.NetworkSendData(); }
     }
     private void RespawnFirstRoom()
     {

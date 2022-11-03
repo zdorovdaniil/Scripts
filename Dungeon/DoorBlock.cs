@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DoorBlock : MonoBehaviour
@@ -23,6 +21,13 @@ public class DoorBlock : MonoBehaviour
         if (other.tag == "Player")
         {
             _isEnterPlayerInDoor = true;
+        }
+    }
+    public void ResetTriggerZone()
+    {
+        if (_trigerTeleporter)
+        {
+            _trigerTeleporter.gameObject.GetComponent<TriggerZone>().Reset();
         }
     }
     public void SwitchDoor(bool status, bool avaibleTriggerTeleporter = true)

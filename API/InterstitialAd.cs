@@ -34,7 +34,9 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         // Note that if the ad content wasn't previously loaded, this method will fail
         Debug.Log("Showing Ad: " + _adUnitId);
-        Advertisement.Show(_adUnitId, this);
+        if (Advertisement.isInitialized)
+        { Advertisement.Show(_adUnitId, this); }
+        else { Debug.Log("Ads is not initialized " + _adUnitId); SendToRespawnPlayer(); }
     }
 
     // Implement Load Listener and Show Listener interface methods:  
@@ -42,16 +44,23 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         // Optionally execute code if the Ad Unit successfully loads content.
     }
+    public void OnInitializationFailed(UnityAdsInitializationError error, string message)
+    {
+        Debug.Log($"Error Initialization Ad Unit {_adUnitId}: {error.ToString()} - {message}");
+        SendToRespawnPlayer();
+    }
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
     {
         Debug.Log($"Error loading Ad Unit: {_adUnitId} - {error.ToString()} - {message}");
+        SendToRespawnPlayer();
         // Optionally execute code if the Ad Unit fails to load, such as attempting to try again.
     }
 
     public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
     {
         Debug.Log($"Error showing Ad Unit {_adUnitId}: {error.ToString()} - {message}");
+        SendToRespawnPlayer();
         // Optionally execute code if the Ad Unit fails to show, such as loading another ad.
     }
 
@@ -60,6 +69,10 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     public bool IsAdViewed = false;
     public void OnUnityAdsShowComplete(string adUnitId, UnityAdsShowCompletionState showCompletionState)
+    {
+        SendToRespawnPlayer();
+    }
+    private void SendToRespawnPlayer()
     {
         IsAdViewed = true;
         if (GUIControl.Instance != null) { GUIControl.Instance.CheckPlayerReborn(); }

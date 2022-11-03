@@ -14,9 +14,9 @@ public class PropertyUI : MonoBehaviour
     public int GetCoins => _coins;
     public int GetGems => _gems;
 
-    private void Awake()  { instance = this;}
+    private void Awake() { instance = this; }
     public void UpdateProperty()
-    {   
+    {
         int id = PlayerPrefs.GetInt("activeSlot");
         _coins = PlayerPrefs.GetInt(id + "_slot_curGOLD");
         _gems = PlayerPrefs.GetInt(id + "_slot_curGEMS");
@@ -36,11 +36,12 @@ public class PropertyUI : MonoBehaviour
         PlayerPrefs.SetInt(id + "_slot_curGOLD", _coins);
         PlayerPrefs.SetInt(id + "_slot_curGEMS", _gems);
     }
+    public void AddCoins(int value) => SetCoins(_coins + value);
     public void SetCoins(int value)
     {
         _coins = value;
         int id = PlayerPrefs.GetInt("activeSlot");
-        PlayerPrefs.SetInt(id + "_slot_curGOLD",_coins);
+        PlayerPrefs.SetInt(id + "_slot_curGOLD", _coins);
 
         UpdateUI();
     }
@@ -48,7 +49,7 @@ public class PropertyUI : MonoBehaviour
     {
         _gems = value;
         int id = PlayerPrefs.GetInt("activeSlot");
-        PlayerPrefs.SetInt(id + "_slot_curGEMS",_gems);
+        PlayerPrefs.SetInt(id + "_slot_curGEMS", _gems);
 
         UpdateUI();
     }

@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class DungeonStats : Photon.MonoBehaviour
 {
-    #region Singleton
-    private void Awake() { Instance = this; }
-
-    #endregion
-    public static DungeonStats Instance;
+    public static DungeonStats Instance; private void Awake() { Instance = this; }
+    [SerializeField] private DungeonRules _dungeonRules; public DungeonRules Rule => _dungeonRules;
+    [SerializeField] private bool _isCompleteDungeon = false; public bool IsCompleteDungeon => _isCompleteDungeon;
+    [SerializeField] private int _dungeonLevel; public void SetDungeonLevel(int value) => _dungeonLevel = value; public int GetDungeonLevel => _dungeonLevel;
 
     // Статистика за подземелье
     public int numEnemyInDungeon; // общее количество противников в подземелье
@@ -44,6 +43,16 @@ public class DungeonStats : Photon.MonoBehaviour
         allKills += 1;
         if (PhotonNetwork.offlineMode != true) { photonView.RPC("CountKills", PhotonTargets.All); }
         else curKills += 1;
+    }
+    public int GetNumRooms => Rule.NumRoomsFromLevel(_dungeonLevel);
+
+    /// <summary>
+    /// Вызывается из TriggerZone
+    /// </summary>
+    [PunRPC]
+    public void CompleteDungeon()
+    {
+        _isCompleteDungeon = true;
     }
     [PunRPC]
     public void CountKills()

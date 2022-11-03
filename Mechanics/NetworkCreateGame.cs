@@ -1,7 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 using System.Collections;
 
 // скрипт назнает ник игрока и устанавливает подключение к комнате и лобби
@@ -42,7 +41,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         DisconnecteFromServer();
         StartCoroutine(ConnectToServerWithDelay());
     }
-
+    //public void StopChekingConnectToServer(){ StopCoroutine(CheckConnectToServer());}
 
     // попытка подключения к мастеру сервера
     public void TryToConnectMasterServer()
@@ -62,14 +61,17 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         StopCoroutine(CheckConnectToServer());
         StartCoroutine(CheckConnectToServer());
     }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    { }
     private IEnumerator CheckConnectToServer()
     {
+        Debug.Log("Try Connecting ...");
         bool isConnectFirsTime = false;
         yield return new WaitForSecondsRealtime(2f);
         {
             if (!_isConnectedMasterServer) isConnectFirsTime = true;
         }
-        yield return new WaitForSecondsRealtime(1.5f);
+        yield return new WaitForSecondsRealtime(4f);
         {
             if (!_isConnectedMasterServer && isConnectFirsTime)
             {
@@ -81,6 +83,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     // подключение к мастер серверу успешно
     public virtual void OnConnectedToMaster()
     {
+        Debug.Log("Joing to lobby ...");
         _isConnectedMasterServer = true;
         PhotonNetwork.JoinLobby();
     }
@@ -88,9 +91,11 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     // подключение к лобби успешно
     public virtual void OnJoinedLobby()
     {
+        Debug.Log("Connected to Lobby");
         LobbyRoomUI.instance.SetRoomsList();
         _isConnectedToLobby = true;
         _serverStatsUI.SetNewStatus("connected!", Color.green);
+        StopCoroutine(CheckConnectToServer());
     }
     public void DisconnecteFromServer()
     {
@@ -98,10 +103,11 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         _isConnectedToLobby = false;
         if (PhotonNetwork.connected) PhotonNetwork.Disconnect();
         _serverStatsUI.SetNewStatus("disconnected!", Color.red);
+        StopCoroutine(CheckConnectToServer());
     }
     public void ClickCreateOwnRoom()
     {
-        LobbyRoomUI.instance.ClearFields();
+        LobbyRoomUI.instance.ClearField();
         if (_isConnectedMasterServer && _isConnectedToLobby)
         {
             string roomName = NickNameField.text.ToLower();
@@ -110,20 +116,20 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         }
         else
         {
-            LobbyRoomUI.instance.SetSingleplayerRoom();
+            SelectDungeonUI.Instance.SetSingleplayerRoom();
         }
 
     }
     public void ClickKickOutFromRoom()
     {
         photonView.RPC("DisconnectFromRoom", PhotonTargets.Others);
-        LobbyRoomUI.instance.ClearSecondNickName();
+        SelectDungeonUI.Instance.ClearSecondNickName();
     }
     public void ClickDisconnectFromRoom()
     {
         if (!PhotonNetwork.connected)
         {
-            LobbyRoomUI.instance.OpenlostRoomsLobby();
+            SelectDungeonUI.Instance.OpenlostRoomsLobby();
         }
         else if (PhotonNetwork.isMasterClient)
         { photonView.RPC("DisconnectFromRoom", PhotonTargets.All); }
@@ -133,7 +139,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     public void DisconnectFromRoom()
     {
         PhotonNetwork.LeaveRoom();
-        LobbyRoomUI.instance.OpenlostRoomsLobby();
+        SelectDungeonUI.Instance.OpenlostRoomsLobby();
     }
     public void ClickCreateRoom()
     {
@@ -142,7 +148,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         {
             if (PhotonNetwork.room != null)
             {
-                LobbyRoomUI.instance.ClearFields();
+                LobbyRoomUI.instance.ClearField();
                 if (PhotonNetwork.room.PlayerCount >= 2 || Settings.IsAlwayesNetwork)
                 {
                     PhotonNetwork.room.IsOpen = false;
@@ -177,7 +183,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     }
     public void JoinToRoom()
     {
-        LobbyRoomUI.instance.ClearFields();
+        LobbyRoomUI.instance.ClearField();
         RoomInfo roomInfo = LobbyRoomUI.instance.GetRoomInfo;
         if (roomInfo != null)
         {
@@ -191,8 +197,8 @@ public class NetworkCreateGame : Photon.MonoBehaviour
     // подключение к комнате успешно
     public void OnJoinedRoom()
     {
-        if (PhotonNetwork.isMasterClient) { LobbyRoomUI.instance.StartCreateRoom(); }
-        else LobbyRoomUI.instance.SetRoomInfo();
+        if (PhotonNetwork.isMasterClient) { SelectDungeonUI.Instance.StartCreateRoom(); }
+        else SelectDungeonUI.Instance.SetRoomInfo();
         _serverStatsUI.SetNewStatus("in room!", Color.white);
     }
     public IEnumerator ConnectToServerWithDelay()

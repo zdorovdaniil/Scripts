@@ -23,6 +23,7 @@ public class Quest : ScriptableObject
     public PriceType priceType { get { return m_PriceType; } set { m_PriceType = value; } }
 
     public int priceModificator;
+    public int priceValue;
 
     public List<Item> priceItems = new List<Item>();
 

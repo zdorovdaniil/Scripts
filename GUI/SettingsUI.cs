@@ -9,7 +9,6 @@ public class SettingsUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown _dropdownQuality;
     [SerializeField] private TMP_Dropdown _regionDropdown;
     [SerializeField] private TMP_Dropdown _languageDropdown;
-    [SerializeField] private PlayerStats _playerStats; public void SetPlayerStats(PlayerStats playerStats) => _playerStats = playerStats;
     private GameManager _gameManager;
     [SerializeField] private bool _isGoingGame; // Происходит ли сейас активный процесс игры в подземелье
     [SerializeField] private TMP_Text _dungeonLevelText;

@@ -9,13 +9,16 @@ public class DungeonConfigurator : ScriptableObject
     [SerializeField] private float _factorBossRooms;
     [SerializeField] private float _factorBigRooms;
     [SerializeField] private float _factorAmbushRoom;
-    public int _countRooms = 0; public void SetCountRooms(int count) { _countRooms = count; }
-    public float _percentEndRooms;
-    public float _percentBeetweedRooms;
-    public float _percentStandartRooms;
-    public float _percentBossRooms;
-    public float _percentBigRooms;
-    public float _percentAmbushRoom;
+    [SerializeField] private int _countRooms = 0; public void SetCountRooms(int count) { _countRooms = count; }
+
+    // переменные вычисляемы в процессе создания подземелья
+    [SerializeField] private float _percentEndRooms;
+    [SerializeField] private float _percentBeetweedRooms;
+    [SerializeField] private float _percentStandartRooms;
+    [SerializeField] private float _percentBossRooms;
+    [SerializeField] private float _percentBigRooms;
+    [SerializeField] private float _percentAmbushRoom;
+
 
     public void DefinePercents()
     {

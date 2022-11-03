@@ -3,6 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum ZoneType
+{
+    Default,
+    Exit,
+    DestroyWithDelay, // ����������� ������� � ���������
+    AddQuest, // ������ ������
+    CheckContainItem, // �������� ������� �������� � ������ 
+    SpawnItemInRandomChest,
+    HasPlayers,
+    CompleteDungeon,
+}
 public class TriggerZone : MonoBehaviour
 {
     [SerializeField] private ZoneType _type = ZoneType.Default;
@@ -16,6 +27,7 @@ public class TriggerZone : MonoBehaviour
     public int CountPlayersInZone => _playersInZone.Count;
     [SerializeField] private UnityEvent onTriggerExe;
 
+    public void Reset() { _isActiveted = false; }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
@@ -42,10 +54,23 @@ public class TriggerZone : MonoBehaviour
         AddPlayerToZone(playerStats);
         if (_type == ZoneType.HasPlayers)
         {
-            foreach (PlayerStats playerSt in _playersInZone)
+            /*
+            //Debug.Log(CountPlayersInZone + " |(>=) " + GameManager.Instance.GetCountPlayers);
+            //if (CountPlayersInZone >= GameManager.Instance.GetCountPlayers)
             {
-                playerSt.gameObject.transform.position = _objs[0].transform.position;
+                foreach (PlayerStats playerSt in _playersInZone)
+                {
+                    //if (PhotonNetwork.offlineMode) playerSt.gameObject.transform.position = _objs[0].transform.position;
+                    //else 
+                    {
+                        float[] pos = new float[3]; pos[0] = _objs[0].transform.position.x; pos[1] = _objs[0].transform.position.y; pos[2] = _objs[0].transform.position.z;
+                        playerSt.photonView.RPC("TeleportTo", PhotonTargets.AllBuffered, (float[])pos);
+                    }
+                }
             }
+            //else return;
+            */
+            onTriggerExe.Invoke();
         }
         if (_type == ZoneType.Exit)
         {
@@ -55,6 +80,15 @@ public class TriggerZone : MonoBehaviour
                 foreach (PlayerStats playerSt in _playersInZone)
                 {
                     playerSt.GetComponent<PlayerQuest>().UpdateProcessQuests(null, null, "completeDungeon");
+                    int check = ProcessCommand.CheckIsLevelUpDungeonLevel();
+                    if (check == 0)
+                    {
+                        MsgBoxUI.Instance.ShowInfo(TextBase.Field(2), TextBase.Field(3) + " " + ProcessCommand.MaxDungeonLevel);
+                    }
+                    else if (check == 1)
+                    {
+                        MsgBoxUI.Instance.ShowInfo(TextBase.Field(2), TextBase.Field(4));
+                    }
                 }
             }
         }
@@ -100,6 +134,14 @@ public class TriggerZone : MonoBehaviour
                 }
             }
         }
+        if (_type == ZoneType.CompleteDungeon)
+        {
+            /*
+            ProcessCommand.CheckIsLevelUpDungeonLevel();
+            if (PhotonNetwork.offlineMode) DungeonStats.Instance.CompleteDungeon();
+            else { DungeonStats.Instance.photonView.RPC("CompleteDungeon", PhotonTargets.AllBuffered); }
+            */
+        }
 
         onTriggerExe.Invoke();
     }
@@ -139,13 +181,4 @@ public class TriggerZone : MonoBehaviour
         }
     }
 }
-public enum ZoneType
-{
-    Default,
-    Exit,
-    DestroyWithDelay, // ����������� ������� � ���������
-    AddQuest, // ������ ������
-    CheckContainItem, // �������� ������� �������� � ������ 
-    SpawnItemInRandomChest,
-    HasPlayers,
-}
+

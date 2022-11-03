@@ -27,7 +27,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private List<ProfileSlot> _profileSlots;
     private PlayerStats plStats;
 
-    [SerializeField] private List<Text> NumRooms = new List<Text>(); // GUI выбора колво комнат
+    //[SerializeField] private List<Text> NumRooms = new List<Text>(); // GUI выбора колво комнат
     private int numRooms = 30; // Стандартное количество комнат
 
     private void Start()
@@ -39,7 +39,7 @@ public class MainMenuUI : MonoBehaviour
         Profile.SetActive(false);
         SelectLanguagePanel.SetActive(false);
         SelectProfile.SetActive(true);
-        FillUIRooms();
+        //FillUIRooms();
         if (!CheckHasSaving())
         {
             PlayerPrefs.SetInt("activeSlot", 1);
@@ -135,7 +135,6 @@ public class MainMenuUI : MonoBehaviour
         plStats.SetStats();
         _propertyUI.UpdateProperty();
         _characterUI.SetPlayerStats(plStats);
-        _settingsUI.SetPlayerStats(plStats);
         _characterUI.UpdateButtons();
     }
     public void ClickSettings()
@@ -147,28 +146,6 @@ public class MainMenuUI : MonoBehaviour
     {
         int _slot = PlayerPrefs.GetInt("activeSlot");
         plStats.SaveStatsToSlot(_slot, plStats.stats);
-    }
-    public void ChangeRooms(bool isUp)
-    {
-        if (isUp && numRooms < 90) { numRooms += 5; }
-        if (!isUp && numRooms > 30) { numRooms -= 5; }
-        foreach (Text _numRooms in NumRooms)
-        {
-            _numRooms.text = numRooms.ToString();
-        }
-        PlayerPrefs.SetInt("numRooms", numRooms);
-    }
-    private void FillUIRooms()
-    {
-        if (PlayerPrefs.HasKey("numRooms"))
-        {
-            numRooms = PlayerPrefs.GetInt("numRooms");
-        }
-        else { numRooms = 30; }
-        foreach (Text _numRooms in NumRooms)
-        {
-            _numRooms.text = numRooms.ToString();
-        }
     }
     public void ClickChangeSlot()
     {
@@ -183,7 +160,7 @@ public class MainMenuUI : MonoBehaviour
     }
     public void UpdateProfileSlots()
     {
-        foreach (ProfileSlot slot in _profileSlots) { slot.OpenStatsToSlot(); }
+        foreach (ProfileSlot slot in _profileSlots) { slot.SetMainMenuUI(this); slot.OpenStatsToSlot(); }
     }
 
     private bool CheckHasSaving()

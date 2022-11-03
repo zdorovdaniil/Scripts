@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
 
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerUpdate : MonoBehaviour
@@ -60,6 +59,7 @@ public class PlayerUpdate : MonoBehaviour
             _flyingSlashButton.UpdateButton(_playerStats.stats.Skills[6].Level);
             if (_playerLeveling) needEXP = _playerLeveling.GetHeedExp(_playerStats.stats.Level);
         }
+
     }
     private void UpdateBuffFields()
     {

@@ -1,23 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DungeonQuests : MonoBehaviour
 {
-    public static DungeonQuests Instance;
+    public static DungeonQuests Instance; private void Awake() { Instance = this; }
     [SerializeField] private int _countDunQuest;
     [SerializeField] private List<Quest> _allQuests = new List<Quest>();
-    private void Awake() { ResetQuestsValue(); Instance = this; }
-    private void Start() { }
+
+    private void Start() { ResetQuestsValue(); }
+
     private void ResetQuestsValue()
-    {
-        foreach (Quest quest in _allQuests)
-        {
-            quest.Reset();
-        }
-    }
+    { foreach (Quest quest in _allQuests) { quest.Reset(); } }
     public List<Quest> GenerateActiveQuests()
     {
+        _countDunQuest = DungeonStats.Instance.Rule.AddQuestFromLevel(DungeonStats.Instance.GetDungeonLevel);
         List<Quest> listActiveQuest = new List<Quest>();
         List<Quest> listOnlyDunList = new List<Quest>();
         // заполнение списка основных квестов и квестов для подземелья

@@ -7,16 +7,13 @@ public class DungeonUI : MonoBehaviour
     [SerializeField] private Transform _tabPlayers;
     [SerializeField] private TMP_Text _1playerNameTMP;
     [SerializeField] private TMP_Text _1playerConditionTMP;
-    [SerializeField] private TMP_Text _1PingTMP;
     [SerializeField] private TMP_Text _2playerNameTMP;
     [SerializeField] private TMP_Text _2playerConditionTMP;
-    [SerializeField] private TMP_Text _2PingTMP;
     [SerializeField] private TMP_Text _timerTMP;
     [SerializeField] private TMP_Text _enemyiesDefeated;
     [SerializeField] private TMP_Text _dungeonLevelTMP;
     [SerializeField] private TMP_Text _roomsPassed;
     [SerializeField] private TMP_Text _chestsOpened;
-    private bool _isUpdatingFields;
     private GameManager _gameManager;
     private DungeonStats _dungeonStats;
 
@@ -47,7 +44,7 @@ public class DungeonUI : MonoBehaviour
     private void SetValuesInFields()
     {
         DungeonStats dungeonStats = DungeonStats.Instance;
-        _dungeonLevelTMP.text = _gameManager.GetDungeonLevel.ToString();
+        _dungeonLevelTMP.text = dungeonStats.GetDungeonLevel.ToString();
         _enemyiesDefeated.text = dungeonStats.curKills.ToString() + " of " + dungeonStats.numEnemyInDungeon.ToString();
         _roomsPassed.text = dungeonStats.passedRoom.ToString() + " of " + dungeonStats.numRoomsInDungeon.ToString();
         _chestsOpened.text = dungeonStats.numOpenChest.ToString() + " of " + dungeonStats.numChestsInDungeon.ToString();

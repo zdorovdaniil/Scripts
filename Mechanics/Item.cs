@@ -15,7 +15,7 @@ public class Item : ScriptableObject
     public int Attack = 0;
     public int Armor = 0;
     public int cost = 0;
-    [Multiline(2)] public string Features;
+    [SerializeField] private TextLocalize _descriptionText; public string Description() { return _descriptionText ? _descriptionText.Text() : "description id NULL"; }
     [Space]
     [SerializeField] ItemTupe m_ItemTupe = ItemTupe.Nothing;
     public ItemTupe itemTupe { get { return m_ItemTupe; } set { m_ItemTupe = value; } }
@@ -49,7 +49,6 @@ public class Item : ScriptableObject
         }
         else if (item.itemTupe == ItemTupe.Poison) { GlobalSounds.Instance.SUsePoison(); }
         else if (item.itemTupe == ItemTupe.Food) { GlobalSounds.Instance.SUseFood(); }
-
 
 
     }
@@ -124,6 +123,7 @@ public class Item : ScriptableObject
         else { return false; }
         return false;
     }
+
 }
 
 

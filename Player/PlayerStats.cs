@@ -25,8 +25,17 @@ public class PlayerStats : Photon.MonoBehaviour
     private float server_curHP;
     private float server_HP;
     private int server_Ping;
-    //
 
+    public void ReturnToRespawn()
+    {
+        float[] vector = ProcessCommand.ConvertVector3ToFloat(_spawnPosition);
+        if (PhotonNetwork.offlineMode)
+            TeleportTo(vector);
+        else photonView.RPC("TeleportTo", PhotonTargets.AllBuffered, (float[])vector);
+    }
+
+    [PunRPC]
+    public void TeleportTo(float[] pos) { this.transform.position = new Vector3(pos[0], pos[1], pos[2]); Debug.Log("Teleport To: " + pos[0] + ":" + pos[1] + ":" + pos[2]); }
     public void SetInventory(Inventory inv) { _inventory = inv; _inventory.SetInvSlotsFromItemsIDs(); CheckStatusEquip(); UpdateArmor(); }
     private void Awake() { SetStats(); }
     private void Start()
@@ -163,7 +172,8 @@ public class PlayerStats : Photon.MonoBehaviour
         foreach (Skill skill in BasePrefs.instance.AvaibleSkills)
         { skill.Reset(); }
         PlayerPrefs.SetInt(_id + "_for_new_game", 1);
-        PlayerPrefs.SetInt(_id + "_slot_dungeonLevel", 1);
+        ProcessCommand.SetDungeonLevel(1);
+        ProcessCommand.SetMaxDungeonLevel(1);
         DungeonStats.Instance.ResetDungeonStats();
         SaveStatsToSlot(_id, stats);
     }
@@ -300,7 +310,7 @@ public class PlayerStats : Photon.MonoBehaviour
             yield return new WaitForSecondsRealtime(2f);
             {
                 gUIControl.DeathWindow.SetActive(true);
-                this.transform.position = _spawnPosition;
+                ReturnToRespawn();
             }
         }
     }

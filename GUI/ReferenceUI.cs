@@ -225,7 +225,7 @@ public class ReferenceUI : MonoBehaviour
         ItemTupe _tupe = item.itemTupe;
         _itemType.text = _tupe.ToString().ToLower();
         _level.text = item.Level.ToString();
-        _features.text = item.Features;
+        _features.text = item.Description();
         if (IsFighting())
         {
             _fightingList.gameObject.SetActive(true);

@@ -20,7 +20,7 @@ public class LootDrop : MonoBehaviour
             int countSpawnItems = 0;
             int countWillSpawn;
             int dungeonLevel;
-            dungeonLevel = _isDependOnDungeonLevel ? GameManager.Instance.GetDungeonLevel : 1;
+            dungeonLevel = _isDependOnDungeonLevel ? DungeonStats.Instance.GetDungeonLevel : 1;
             int valueMaxDrop = Mathf.FloorToInt(_multiplierPerLvl * 100 * dungeonLevel) + _valueMaxDrop - 25;
             int totalDrop = Random.Range(_valueMinDrop, valueMaxDrop);
             countWillSpawn = Mathf.FloorToInt(totalDrop / _valueOneDrop);

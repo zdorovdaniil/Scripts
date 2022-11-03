@@ -21,7 +21,7 @@ public class EnemyStats : Photon.MonoBehaviour
     private HumanEffects _humanEffects;
     void Start()
     {
-        int level = GameManager.Instance.GetDungeonLevel;
+        int level = DungeonStats.Instance.Rule.EnemyLevel(DungeonStats.Instance.GetDungeonLevel);
         stats = new Stats(level, 0);
         SetAttributesToStats(level);
         RequireStartComponents();

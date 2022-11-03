@@ -6,7 +6,6 @@ using System.Collections;
 public class PlayerSetup : Photon.MonoBehaviour
 {
     // компоненты или объекты которые необходмо отключить
-
     [SerializeField] Behaviour[] componentsToDisable;
     [SerializeField] GameObject[] gameobjectToDisable;
     [SerializeField] private TextMeshPro _nickNameText; // Игровое имя текущего игрока
@@ -33,7 +32,6 @@ public class PlayerSetup : Photon.MonoBehaviour
             startRotationCamPlayer = _camPlayer.transform.rotation;
             startRotationCamMiniMap = _camMiniMap.transform.rotation;
         }
-        // если мультиплеер
         if (PhotonNetwork.offlineMode != true)
         {
             _playerType = PlayerType.Guest;
@@ -68,6 +66,7 @@ public class PlayerSetup : Photon.MonoBehaviour
     }
     private float timer = 0;
     // Update Работает у всех игроков на которых висит PlayerSetup
+    // Update в скрипте выполнятсе у всех сетевых игроков
     private void Update()
     {
         _camPlayer.transform.rotation = startRotationCamPlayer;
@@ -82,7 +81,6 @@ public class PlayerSetup : Photon.MonoBehaviour
     // отключение игровых объектов для сетевой игры
     private void DisableGameObjects()
     {
-        // если не мастер клиент
         if ((!photonView.isMine) && (PhotonNetwork.isMasterClient || PhotonNetwork.isNonMasterClientInRoom))
         {
             for (int i = 0; i < componentsToDisable.Length; i++)

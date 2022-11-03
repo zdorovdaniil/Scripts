@@ -36,6 +36,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private List<DamageZone> damageZone = new List<DamageZone>();
     [SerializeField] private float timer;
     [SerializeField] private bool isFirstAttack;
+    [SerializeField] private bool isControlLocal; // задает контроль над поведением противника
 
     private GameManager gameManager;
     private Animator anim;
@@ -56,10 +57,17 @@ public class EnemyController : MonoBehaviour
     { timeBetweenAttack = UnityEngine.Random.Range(RandomValueBetweenAttack.x, RandomValueBetweenAttack.y); }
     public void SetActionDoing(EnemyFightingType type)
     {
+        if (PhotonNetwork.isMasterClient || PhotonNetwork.offlineMode) isControlLocal = true;
+        else
+        {
+            actionDoing = Inaction; isControlLocal = false; return;
+        }
         if (type == EnemyFightingType.Distance || type == EnemyFightingType.DistanceCrosser)
             actionDoing = EnemyDoingDistance;
         else actionDoing = EnemyDoingMelee;
     }
+    private void Inaction()
+    { return; }
     private bool SetTargets()
     {
         if (gameManager.GetPlayerIndex(0) != null)
@@ -126,7 +134,7 @@ public class EnemyController : MonoBehaviour
                 // установление ближней цели к противнику
                 SelectActiveTarget();
                 // перемещение, поворот, атака
-                actionDoing.Invoke();
+                if (isControlLocal) actionDoing.Invoke();
             }
             else
             {

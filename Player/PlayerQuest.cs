@@ -76,7 +76,7 @@ public class PlayerQuest : MonoBehaviour
                     break;
                 case QuestType.GetDungeonLevel:
                     {
-                        quest.progressStatus = GameManager.Instance.GetDungeonLevel;
+                        quest.progressStatus = ProcessCommand.MaxDungeonLevel;
                     }
                     break;
                 case QuestType.PassTotalRooms:
@@ -130,7 +130,7 @@ public class PlayerQuest : MonoBehaviour
         {
             if (quest.priceType == PriceType.Money)
             {
-                //_plStats.GainGold(quest.priceValue);
+                PropertyUI.instance.AddCoins(quest.priceValue);
             }
 
             if (quest.priceType == PriceType.Item)
