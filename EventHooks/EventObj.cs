@@ -35,11 +35,11 @@ public class EventObj : Photon.MonoBehaviour
     {
         if (IsForAllPlayers)
         {
-            GameManager.Instance.SendAllBuff(_buff.BuffId);
+            if (_buff) GameManager.Instance.SendAllBuff(_buff.BuffId);
         }
         else
         {
-            playerStats.AddBuffPlayer(_buff.BuffId);
+            if (_buff) playerStats.AddBuffPlayer(_buff.BuffId);
         }
         if (!PhotonNetwork.offlineMode)
             photonView.RPC("Activate", PhotonTargets.All);

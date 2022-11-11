@@ -15,11 +15,14 @@ public class Chest : MonoBehaviour
     [SerializeField] private List<Item> _defaultItemsInChest = new List<Item>(8);
     // База данных предметов от куда будут браться предметы для спавна
     [SerializeField] private ItemDatabase _itemDatabase;
-    // 
     private bool _isOpened = false; public bool IsOpened => _isOpened;
+    // чем выше, тем больше шанс появления предмета в слоте сундука от 50 до 75. Зависит от уровня подземелья.
+    // устанавливается уровнем подземелья
+    private int _coffSpawnSlot;
     private void Start()
     {
         DungeonObjects.Instance.AddChest(this);
+        _coffSpawnSlot = DungeonStats.Instance.Rule.GetModifSpawnItemsChest(DungeonStats.Instance.GetDungeonLevel);
     }
     public void ChangeMesh(bool status)
     {
@@ -30,13 +33,8 @@ public class Chest : MonoBehaviour
 
     public void SpawnItemsInChest()
     {
-        // от уровня подземелья зависит ценность дропа в каждом слоте
-        //int dungeonLevel = DungeonStats.Instance.GetDungeonLevel;
         int willSpanwItems = 0;
         int spawnedItems = 0;
-        // чем выше, тем больше шанс появления предмета в слоте сундука от 50 до 75. Зависит от уровня подземелья.
-        int coffSpawnSlot = DungeonStats.Instance.Rule.GetModifSpawnItemsChest(DungeonStats.Instance.GetDungeonLevel);
-        //
         foreach (ItemTupe type in _typeInSlots)
         {
             if (type == ItemTupe.Nothing) { continue; }
@@ -48,7 +46,7 @@ public class Chest : MonoBehaviour
                 sortedItems = _itemDatabase.GetListItemsByType(type);
                 int countItems = sortedItems.Count;
                 int chance = Random.Range(0, 100);
-                if (chance >= coffSpawnSlot) continue;
+                if (chance >= _coffSpawnSlot) continue;
                 else
                 {
                     spawnedItems += 1;
@@ -58,7 +56,7 @@ public class Chest : MonoBehaviour
             }
         }
         if (willSpanwItems != 0 && spawnedItems != 0)
-        { Debug.Log("WillSpawn: " + willSpanwItems + " . Spawned: " + spawnedItems + " Coff: " + spawnedItems * 100 / willSpanwItems + ". ChanceSpawnSlot:" + coffSpawnSlot); }
+        { Debug.Log("WillSpawn: " + willSpanwItems + " . Spawned: " + spawnedItems + " Coff: " + spawnedItems * 100 / willSpanwItems + ". ChanceSpawnSlot:" + _coffSpawnSlot); }
         // добавление предметов в сундук по умолчанию
         foreach (Item item in _defaultItemsInChest)
         { AddItemToChest(item, 1); }

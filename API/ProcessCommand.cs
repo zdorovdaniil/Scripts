@@ -53,8 +53,7 @@ public class ProcessCommand : MonoBehaviour
         {
             if (GetDungeonLevel == MaxDungeonLevel)
             {
-                Debug.Log("Level up MaxDungeon level from " + GetDungeonLevel + " to " + GetDungeonLevel + 1);
-                SetMaxDungeonLevel(GetDungeonLevel + 1);
+                Debug.Log("Level up MaxDungeon level from " + GetDungeonLevel + " to " + (GetDungeonLevel + 1));
                 return 0;
             }
             else { return 1; };
@@ -63,7 +62,7 @@ public class ProcessCommand : MonoBehaviour
     }
     public static void SetMaxDungeonLevel(int value)
     {
-        if (value < CONSTmaxDungeonLevel && value >= 1) PlayerPrefs.SetInt(CurActiveSlot + "_slot_MaxDungeonLevel", value); else return;
+        if ((value <= CONSTmaxDungeonLevel) && (value < (CONSTmaxDungeonLevel + 1))) PlayerPrefs.SetInt(CurActiveSlot + "_slot_MaxDungeonLevel", value); else Debug.Log("Set Max Dungeon Level - " + value + " CONSTANTdungeonLVl " + CONSTmaxDungeonLevel);
     }
     public static int CurActiveSlot => PlayerPrefs.GetInt("activeSlot");
     public static int GetDungeonLevel => PlayerPrefs.GetInt("dungeonLevel");

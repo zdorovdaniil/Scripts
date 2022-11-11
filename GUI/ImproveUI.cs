@@ -1,49 +1,58 @@
 ﻿using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Скрипт выводит информацию с Improve на экран
+/// </summary>
 public class ImproveUI : MonoBehaviour
 {
-    public Improve Improve;
+    public Improve _improve;
     [SerializeField] private TMP_Text _description;
     [SerializeField] private TMP_Text _curLvl;
     [SerializeField] private TMP_Text _maxLvl;
     [SerializeField] private TMP_Text _cost;
     [SerializeField] private Transform _buttonLvlUp;
-    public void SetUI()
+    [SerializeField] private Transform _isMaxLvlText;
+    public void SetImprove(Improve improve)
     {
-        Improve.LoadImprove();
-        _description.text = Improve.GetDescription;
-        _curLvl.text = Improve.GetCurLvl.ToString();
-        _maxLvl.text = Improve.GetMaxLvl.ToString();
-        if (Improve.IsLvlUp()) _cost.text = Improve.GetCurCost().ToString();
-        else _cost.text = "max level";
+        _improve = improve;
+        UpdateUI();
+    }
+    public void UpdateUI()
+    {
+        _improve.LoadImprove();
+        _description.text = _improve.GetDescription;
+        _curLvl.text = _improve.GetCurLvl.ToString();
+        _maxLvl.text = _improve.GetMaxLvl.ToString();
+        _isMaxLvlText.gameObject.SetActive(false);
+        if (_improve.IsLvlUp()) _cost.text = _improve.GetCurCost().ToString();
+        else { _isMaxLvlText.gameObject.SetActive(true); _cost.text = "-"; }
         IsLvlUp();
     }
     public void IsLvlUp()
     {
-        if (Improve.IsLvlUp() && PropertyUI.instance.GetCoins >= Improve.GetCurCost())
+        if (_improve.IsLvlUp() && PropertyUI.instance.GetCoins >= _improve.GetCurCost())
         { _buttonLvlUp.gameObject.SetActive(true); }
         else { _buttonLvlUp.gameObject.SetActive(false); }
     }
     public void ClickLvlUp()
     {
         GlobalSounds.Instance.SButtonClick();
-        if (Improve.IsLvlUp())
+        if (_improve.IsLvlUp())
         {
             MsgBoxUI.Instance.Show(this.gameObject, "improve", "do you really want to spend coins on ipgrades");
-            SetUI();
         }
-        SetUI();
+        UpdateUI();
     }
     public void GetReport(ReportType report)
     {
         if (report == ReportType.Accept) LvlUp();
-        SetUI();
+        UpdateUI();
     }
     private void LvlUp()
     {
-        PropertyUI.instance.MinusCoins(Improve.GetCurCost());
-        Improve.LvlUp();
+        PropertyUI.instance.MinusCoins(_improve.GetCurCost());
+        _improve.LvlUp();
     }
 }
 

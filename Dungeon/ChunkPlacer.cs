@@ -26,30 +26,37 @@ public class ChunkPlacer : MonoBehaviour
     public IEnumerator StartRespawnRooms(GameManager gameManager)
     {
         _gameManager = gameManager;
-        NumRooms = DungeonStats.Instance.GetNumRooms;
-        _dungeonConfig.SetCountRooms(NumRooms);
-        _dungeonConfig.DefinePercents();
-        SpawnedRooms = new Chunk[11, 11];
-        RespawnFirstRoom();
-        for (int i = 0; i < NumRooms; i++)
+        if (_gameManager.IsCreatingDungeon)
         {
-            yield return new WaitForSecondsRealtime(0.025f);
+            NumRooms = DungeonStats.Instance.GetNumRooms;
+            _dungeonConfig.SetCountRooms(NumRooms);
+            _dungeonConfig.DefinePercents();
+            SpawnedRooms = new Chunk[11, 11];
+            RespawnFirstRoom();
+            for (int i = 0; i < NumRooms; i++)
             {
-                PlaceOneRoom();
+                yield return new WaitForSecondsRealtime(0.025f);
+                {
+                    PlaceOneRoom();
+                }
             }
-        }
-        if (NumFailSpawned <= 0)
-        {
-            _dungeonObjects.UpdateParametrsRooms();
-            _dungeonObjects.BuildNavMeshSurface();
-            _gameManager.DungeonSuccessGenerated();
-            UpdateDataInChunks();
+            if (NumFailSpawned <= 0)
+            {
+                _dungeonObjects.UpdateParametrsRooms();
+                _dungeonObjects.BuildNavMeshSurface();
+                _gameManager.DungeonSuccessGenerated();
+                UpdateDataInChunks();
+            }
+            else
+            {
+                _gameManager.DungeonFailGenerated();
+            }
         }
         else
         {
-            _gameManager.DungeonFailGenerated();
+            _dungeonObjects.BuildNavMeshSurface();
+            _gameManager.DungeonSuccessGenerated();
         }
-
     }
     private void UpdateDataInChunks()
     {

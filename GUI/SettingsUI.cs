@@ -121,11 +121,10 @@ public class SettingsUI : MonoBehaviour
 
         // если выходит владелец подземелья, то выкидываюся все игроки
         if (PhotonNetwork.offlineMode == true)
-        { PhotonNetwork.offlineMode = false; SceneManager.LoadScene("Menu"); }
+        { SceneManager.LoadScene("Menu"); }
         else if (PhotonNetwork.isMasterClient)
         {
-            if (_gameManager != null) { GameManager.Instance.SendAllLeaveDungeon(); }
-            else GameManager.Instance.LeaveDungeon();
+            GameManager.Instance.SendAllLeaveDungeon(); 
         }
         else { GameManager.Instance.LeaveDungeon(); }
     }

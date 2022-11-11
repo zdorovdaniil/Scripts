@@ -39,9 +39,9 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
         if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
         {
             Debug.Log("Unity Ads Rewarded Ad Completed");
-            // Выдача награды
-            GUIControl.Instance.RewardPlayer();
-            MsgBoxUI.Instance.ShowInfo("reward","your received: 200 coins");
+            // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            GUIControl.Instance.RewardPlayer(50);
+            MsgBoxUI.Instance.ShowInfo("reward", "your received: 200 coins");
 
             // Load another ad:
             Advertisement.Load(_adUnitId, this);

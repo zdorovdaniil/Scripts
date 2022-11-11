@@ -22,18 +22,20 @@ public class ContainSlot : MonoBehaviour
         _imageSlot.sprite = _Slot.item.Icon;
         int level = _Slot.item.Level;
         _backgroungSlot.sprite = BasePrefs.instance.GetIcon(level - 1);
+
         if (_containerType == ContainerType.CraftingInfo || _containerType == ContainerType.LevelingInfo)
         {
-            int haveCount = _inv.GetCountItemsWithId(slot.item.Id);
-            int needCount = slot.amount;
-            _description.text = haveCount.ToString() + " / " + needCount.ToString();
-            _amountItems.text = "";
+            if (_inv)
+            {
+                int haveCount = _inv.GetCountItemsWithId(slot.item.Id);
+                int needCount = slot.amount;
+                _description.text = haveCount.ToString() + " / " + needCount.ToString();
+                _amountItems.text = "";
+            }
         }
         else if (slot.amount > 1)
         { _amountItems.text = slot.amount.ToString(); ; }
         else { _amountItems.text = ""; }
-
-
     }
     public void ClearClot()
     {
@@ -43,62 +45,79 @@ public class ContainSlot : MonoBehaviour
         _amountItems.text = "";
         _containerType = ContainerType.None;
     }
-    /*private void SaveNumSlot()
-    {
-        PlayerPrefs.SetInt("selectedSlot",)
-    }*/
     public void ClickOnSlot()
     {
-        if (_containerType == ContainerType.Crafting)
+        switch (_containerType)
         {
-            CraftingUI.instance.FillSecondUI(_Slot);
-        }
-        if (_containerType == ContainerType.Shop)
-        {
-            ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Sell);
+            case ContainerType.CraftingInfo: CraftingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.None); break;
+            case ContainerType.Crafting: CraftingUI.instance.FillSecondUI(_Slot); break;
+            case ContainerType.Shop: ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Sell); break;
+            case ContainerType.ShopInfo: ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Buy); break;
+            case ContainerType.Storage: Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Move); break;
+            case ContainerType.StorageInfo: Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Get); break;
+            case ContainerType.Equip:
+                if (Storage.instance != null)
+                { Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Equip); }
+                else PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Equip); break;
+            case ContainerType.LevelingInfo: PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.None); break;
+            case ContainerType.Inventory: PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Inventory); break;
+            case ContainerType.Chest: ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.ToChest); break;
+            case ContainerType.ChestInfo: ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest); break;
+            case ContainerType.Info: ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest); break;
 
         }
-        if (_containerType == ContainerType.ShopInfo)
-        {
-            ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Buy);
-        }
-        if (_containerType == ContainerType.Storage)
-        {
-            Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Move);
-        }
-        if (_containerType == ContainerType.StorageInfo)
-        {
-            Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Get);
-        }
-        if (_containerType == ContainerType.Equip)
-        {
-            if (Storage.instance != null)
-            { Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Equip); }
-            else PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Equip);
-        }
-        if (_containerType == ContainerType.Inventory)
-        {
-            PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Inventory);
-        }
-        if (_containerType == ContainerType.Chest)
-        {
-            ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.ToChest);
-        }
-        if (_containerType == ContainerType.ChestInfo)
-        {
-            ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest);
-        }
-        if (_containerType == ContainerType.Info)
-        {
-            ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest);
-        }
-
-
         if (_Slot.item.itemTupe == ItemTupe.Poison)
         {
             GlobalSounds.Instance.SClickGlass();
         }
         else { GlobalSounds.Instance.SClickItem(); }
+        /*
+                if (_containerType == ContainerType.Crafting)
+                {
+                    CraftingUI.instance.FillSecondUI(_Slot);
+                }
+                if (_containerType == ContainerType.Shop)
+                {
+                    ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Sell);
+
+                }
+                if (_containerType == ContainerType.ShopInfo)
+                {
+                    ShopingUI.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Buy);
+                }
+                if (_containerType == ContainerType.Storage)
+                {
+                    Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Move);
+                }
+                if (_containerType == ContainerType.StorageInfo)
+                {
+                    Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Get);
+                }
+                if (_containerType == ContainerType.Equip)
+                {
+                    if (Storage.instance != null)
+                    { Storage.instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Equip); }
+                    else PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Equip);
+                }
+                if (_containerType == ContainerType.Inventory)
+                {
+                    PlayerUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.Inventory);
+                }
+                if (_containerType == ContainerType.Chest)
+                {
+                    ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.ToChest);
+                }
+                if (_containerType == ContainerType.ChestInfo)
+                {
+                    ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest);
+                }
+                if (_containerType == ContainerType.Info)
+                {
+                    ChestUI.Instance.SpawnReferenceGUI(_Slot, ReferenceButtonType.TakeFromChest);
+                }
+        */
+
+
 
     }
 

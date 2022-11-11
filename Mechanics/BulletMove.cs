@@ -19,14 +19,23 @@ public class BulletMove : Photon.MonoBehaviour
     private Rigidbody rb;
     private Vector3 _previousStep;
     private bool _isMove = true;
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    { }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         Invoke("DestroyNow", _timeToDestruct);
         rb.velocity = transform.TransformDirection(Vector3.forward * _startSpeed);
         _previousStep = gameObject.transform.position;
+    }
+    private void FixedUpdate()
+    {
+        if (PhotonNetwork.isMasterClient && _isMove)
+        {
+            Quaternion CurrentStep = gameObject.transform.rotation;
+            transform.LookAt(_previousStep, transform.up);
+            gameObject.transform.rotation = CurrentStep;
+            _previousStep = gameObject.transform.position;
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -51,16 +60,7 @@ public class BulletMove : Photon.MonoBehaviour
         if (other.tag != "Player") timeToDestroy = 30f;
         ProcessCommand.DestroyGameObjectDelay(this.gameObject, timeToDestroy);
     }
-    private void FixedUpdate()
-    {
-        if (PhotonNetwork.isMasterClient && _isMove)
-        {
-            Quaternion CurrentStep = gameObject.transform.rotation;
-            transform.LookAt(_previousStep, transform.up);
-            gameObject.transform.rotation = CurrentStep;
-            _previousStep = gameObject.transform.position;
-        }
-    }
+
     private void HitEffects()
     {
         if (_flyTrail)
@@ -82,4 +82,6 @@ public class BulletMove : Photon.MonoBehaviour
     {
         Destroy(this.gameObject);
     }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    { }
 }

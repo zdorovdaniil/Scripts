@@ -38,7 +38,7 @@ public class GUIControl : MonoBehaviour
         {
             _playerStats = Player.GetComponent<PlayerStats>();
             _inventory = Player.GetComponent<Inventory>();
-            _propertyUI.UpdateProperty();
+            _propertyUI.LoadProperty();
             SwitchAllPanels(false);
         }
         CloseBigMap();
@@ -57,9 +57,9 @@ public class GUIControl : MonoBehaviour
     {
         InterstitialAd.S.ShowAd();
     }
-    public void RewardPlayer()
+    public void RewardPlayer(int value)
     {
-        //_playerStats.GainGold(200);
+        PropertyUI.instance.AddCoins(value);
     }
     public void CheckPlayerReborn(bool ignoreCheck = false)
     {
@@ -92,10 +92,6 @@ public class GUIControl : MonoBehaviour
         DeathWindow.SetActive(status);
         UseButton.SetActive(status);
     }
-    /*public void ClickDungeonUp()
-    {
-        _gameManager.CheckDungeonLevel();
-    }*/
     public void OpenQuests()
     {
         QuestPanel.SetActive(true);
@@ -140,10 +136,11 @@ public class GUIControl : MonoBehaviour
     }
     public void CompleteDungeon()
     {
-        ProcessCommand.CheckIsLevelUpDungeonLevel();
+        DungeonStats.Instance.CompleteDungeon();
     }
     public void GameSave()
     {
+        PropertyUI.instance.SaveCurProperty();
         PlayerUI.Instance.MakePhotoPlayer();
         DungeonQuests.Instance.SaveQuestsValue();
         PlayerStats LinkPlayerStats = Player.GetComponent<PlayerStats>();

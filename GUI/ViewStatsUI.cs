@@ -67,7 +67,7 @@ public class ViewStatsUI : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(time);
         {
-            Debug.Log("Delay:" + time);
+            //Debug.Log("Delay:" + time);
             if (_dungeonStats == null) { _dungeonStats = DungeonStats.Instance; }
             _strenghText.text = _infoStats._strenghText;
             _enduranceText.text = _infoStats._enduranceText;

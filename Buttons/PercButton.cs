@@ -30,6 +30,10 @@ public class PercButton : MonoBehaviour
             }
             else _timerTMP.text = "";
         }
+        else
+        {
+            return;
+        }
     }
     private float PerkTimeReUse(PerkType perkType)
     {
@@ -42,20 +46,25 @@ public class PercButton : MonoBehaviour
     }
     private bool CheckTiming(PerkType perkType)
     {
-        if (_timer >= _timeForReUse && PerkTimeReUse(perkType) >= 1)
+        if (perkType == _perkType)
         {
-            _timer = 0;
-            return true;
+            if (_timer >= _timeForReUse && PerkTimeReUse(perkType) >= 1)
+            {
+                _timer = 0;
+                return true;
+            }
+            else return false;
         }
         else return false;
+
     }
 
-    public void ClickJerk()
+    public void Click()
     {
-        if (CheckTiming(PerkType.Jerc)) _playerController.SetJerk();
-    }
-    public void ClickFlyingSlash()
-    {
-        if (CheckTiming(PerkType.FlyingSlash)) _playerController.SetFlyingSlash();
+        if (_buttonObject.activeSelf)
+        {
+            if (CheckTiming(PerkType.Jerc)) _playerController.SetJerk();
+            if (CheckTiming(PerkType.FlyingSlash)) _playerController.SetFlyingSlash();
+        }
     }
 }

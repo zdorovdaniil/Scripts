@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BasePrefs : MonoBehaviour
 {
-    public static BasePrefs instance; void Awake() { instance = this; }
+    public static BasePrefs instance; void Awake() { instance = this; _itemDatabase.Initialize(); }
     [SerializeField] private TextLanguage[] _avaibleLanguages; public TextLanguage GetTextLanguage(int id) => _avaibleLanguages[id];
     public List<Skill> AvaibleSkills = new List<Skill>();
     public List<Attribut> AvaibleAttributes = new List<Attribut>();
@@ -12,6 +12,7 @@ public class BasePrefs : MonoBehaviour
     // Получение доступа к базе данных предметов
     [SerializeField] private ItemDatabase _itemDatabase; public ItemDatabase GetItemDatabase => _itemDatabase;
     [SerializeField] private BuffDatabase _buffDatabase; public BuffDatabase GetBuffDatabase => _buffDatabase;
+    [SerializeField] private ImproveDatabase _improveDatabase; public ImproveDatabase GetImproveDatabase => _improveDatabase;
 
     // Получение иконки
     [SerializeField] private List<Sprite> _levelIcons = new List<Sprite>(); public Sprite GetIcon(int num) => _levelIcons[num];

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -90,7 +90,7 @@ public class MainMenuUI : MonoBehaviour
         CreatePlayerStats();
         CreateNewCharacter.SetActive(true);
         Profile.SetActive(true);
-        _propertyUI.UpdateProperty();
+        _propertyUI.LoadProperty();
         _networkCreateGame.CheckPlayerName();
     }
     public void ClickSelSlot()
@@ -98,7 +98,7 @@ public class MainMenuUI : MonoBehaviour
         SwitchPanels(false);
         _inv.LoadItemsId();
         _inv.SetInvSlotsFromItemsIDs();
-        _propertyUI.UpdateProperty();
+        _propertyUI.LoadProperty();
         _networkCreateGame.CheckPlayerName();
         Profile.SetActive(true);
         DangeonOptions.SetActive(true);
@@ -133,9 +133,10 @@ public class MainMenuUI : MonoBehaviour
     {
         plStats = this.gameObject.AddComponent<PlayerStats>();
         plStats.SetStats();
-        _propertyUI.UpdateProperty();
+        _propertyUI.LoadProperty();
         _characterUI.SetPlayerStats(plStats);
         _characterUI.UpdateButtons();
+        BasePrefs.instance.GetImproveDatabase.LoadImprovesFromSave();
     }
     public void ClickSettings()
     {
@@ -146,6 +147,10 @@ public class MainMenuUI : MonoBehaviour
     {
         int _slot = PlayerPrefs.GetInt("activeSlot");
         plStats.SaveStatsToSlot(_slot, plStats.stats);
+    }
+    public void ClickOpenSceneLevel_1()
+    {
+        SceneManager.LoadScene("Level_1", LoadSceneMode.Single);
     }
     public void ClickChangeSlot()
     {

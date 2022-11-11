@@ -7,7 +7,7 @@ public class Skill : ScriptableObject
     public int Id;
     public Sprite Icon;
     public string Name;
-    public string Description;
+    [SerializeField] private TextLocalize _descriptionText; public string Description => _descriptionText ? _descriptionText.Text() : " ";
     public int Level;
     public int MaxLevel;
 

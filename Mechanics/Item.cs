@@ -22,6 +22,7 @@ public class Item : ScriptableObject
 
     [SerializeField] ArmorTupe m_ArmorTupe = ArmorTupe.Nothing;
     public ArmorTupe armorTupe { get { return m_ArmorTupe; } set { m_ArmorTupe = value; } }
+    public bool IsSpawnInChest = true;
     [Space]
     public GameObject PrefabItem;
 
@@ -70,7 +71,7 @@ public class Item : ScriptableObject
         }
         if (slot.item.itemTupe == ItemTupe.Weapon)
         {
-            if (inv.GetEquipSlot(0) != null) { MsgBoxUI.Instance.ShowInfo("weapon", "weapon not requiment player stats"); return false; }
+            if (inv.GetEquipSlot(0) != null) { MsgBoxUI.Instance.ShowInfo("weapon", "weapon slot are busy"); return false; }
             else if (_itemRequirement.CheckReqirement(playerStats))
             {
                 inv.SetToEquipSlot(slot, 0);
@@ -79,7 +80,8 @@ public class Item : ScriptableObject
                 LogUI.Instance.Loger("Equip weapon");
                 return true;
             }
-            else { Debug.Log("not requiment player stats"); return false; }
+            else
+            { MsgBoxUI.Instance.ShowAttention("weapon not requiment player stats"); return false; }
         }
         else if (slot.item.itemTupe == ItemTupe.Armor)
         {
@@ -135,13 +137,12 @@ public enum ItemTupe
 {
     Nothing,
     Food, // еда для восстановления HP
-    Armor, // броня (шлемы,корпус,штаны,обувь)
-    Weapon, // оружие
-    Poison, // зелья восстановления и временно повышающие характеристики
-    Usable,
+    Armor, // броня (шлемы,корпус,штаны,обувь,амулет,кольцо)
+    Weapon, // оружие (мечи)
+    Poison, // только зелья (восстановление HP и временно повышающие характеристики)
+    Usable, // предметы что активируют скрипт события при использовании (открытие участка карты, баф на все подземелье)
     Improve, // предметы что повышают на всегда характиристики персонажа
     MonsterDrop, // предметы выпадаемые из монстров. Используются для крафта и повышения уровня персонажа
-    Legandary // легендарные предметы
 }
 public enum ImproveItem
 {

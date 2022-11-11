@@ -133,7 +133,7 @@ public class NetworkCreateGame : Photon.MonoBehaviour
         }
         else if (PhotonNetwork.isMasterClient)
         { photonView.RPC("DisconnectFromRoom", PhotonTargets.All); }
-        else { LobbyRoomUI.instance.photonView.RPC("ClearSecondNickName", PhotonTargets.Others); DisconnectFromRoom(); }
+        else { SelectDungeonUI.Instance.photonView.RPC("ClearSecondNickName", PhotonTargets.Others); DisconnectFromRoom(); }
     }
     [PunRPC]
     public void DisconnectFromRoom()

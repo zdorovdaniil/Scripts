@@ -38,6 +38,7 @@ public class RoomControl : Photon.MonoBehaviour
     // определяет, включены ли объекты после смерти противников
     [SerializeField] private bool _isActivedObject = false;
     public int CountDefeatEnemy;
+    private bool _isSpawnedEnemyes;
     private void Awake()
     {
         _countEnemy = Random.Range(_rangeSpawnEnemyOf.x, _rangeSpawnEnemyOf.y + 1);
@@ -128,7 +129,7 @@ public class RoomControl : Photon.MonoBehaviour
     {
         if (!chunk.IsPlayerInter)
         {
-            if (_spawnPointsForEnemy) StartCoroutine(SpawnEnemy());
+            if (_spawnPointsForEnemy && !_isSpawnedEnemyes) StartCoroutineSpawnEnemy();
             chunk.EnterPlayer();
             chunk.EnterFirst();
             if (_countEnemy >= 1)
@@ -163,8 +164,13 @@ public class RoomControl : Photon.MonoBehaviour
         newPos[0] = vector3.x; newPos[1] = vector3.y; newPos[2] = vector3.z;
         return newPos;
     }
-    public IEnumerator SpawnEnemy()
+    public void StartCoroutineSpawnEnemy()
     {
+        StartCoroutine(SpawnEnemy());
+    }
+    private IEnumerator SpawnEnemy()
+    {
+        _isSpawnedEnemyes = true;
         Transform[] spawnPoints = _spawnPointsForEnemy.GetComponentsInChildren<Transform>();
         yield return new WaitForSecondsRealtime(_doorClosingTime);
         {
@@ -192,7 +198,7 @@ public class RoomControl : Photon.MonoBehaviour
     }
     public IEnumerator AddRoomToDungeonObjects()
     {
-        yield return new WaitForSecondsRealtime(0.05f);
+        yield return new WaitForSecondsRealtime(0.1f);
         {
             DungeonObjects.Instance.AddChunk(chunk);
         }

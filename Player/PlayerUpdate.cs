@@ -7,9 +7,11 @@ public class PlayerUpdate : MonoBehaviour
 {
     private PlayerStats _playerStats;
     private PlayerLeveling _playerLeveling;
-    [SerializeField] private float timerRegenHP = 1f; // колво времени на еденицу регенирации
+    /// <summary> /// время стандартного восстановления HP /// </summary>
+    [SerializeField] private float _timeRegenHP = 1f;
     [SerializeField] private Item usingPoison;
-    [SerializeField] private float timeRegenPoison = 0.1f;
+    /// <summary> /// время пополнения здоровья от зелья /// </summary>
+    [SerializeField] private float _timeRegenPoison = 0.1f;
     [SerializeField] private int numAddHPfromPoison = 0;
     [SerializeField] private TextMeshProUGUI _hpText;
     [SerializeField] private Slider _sliderHP;
@@ -27,6 +29,42 @@ public class PlayerUpdate : MonoBehaviour
         _sliderHP.minValue = 0;
         _playerLeveling = PlayerLeveling.Instance;
     }
+    private void FixedUpdate()
+    {
+        CheckRegeneHP();
+        UpdateUI();
+    }
+
+    private float _timerForRegenHP;
+    private float _timerUpdateUI;
+    private void PoisonRegenHP()
+    {
+        numAddHPfromPoison -= 1;
+        _playerStats.curHP += 1;
+        if (numAddHPfromPoison <= 0) { usingPoison = null; }
+        _playerStats.UpdateHP();
+    }
+    private void DefaultRegenHP()
+    {
+        _timeRegenHP = _playerStats.stats.GetTimeRegenHP();
+        _playerStats.AddHP(_playerStats.stats.GetAddHP());
+        UpdateUI();
+    }
+    private void CheckRegeneHP()
+    {
+        _timerForRegenHP += Time.deltaTime;
+        if (_timerForRegenHP >= _timeRegenHP)
+        {
+            _timerForRegenHP = 0f;
+            DefaultRegenHP();
+        }
+        else if (numAddHPfromPoison <= 0) return;
+        else if (usingPoison != null && _timerForRegenHP >= _timeRegenPoison)
+        {
+            _timerForRegenHP = 0f;
+            PoisonRegenHP();
+        }
+    }
     private void UpdateHPSlider()
     {
         float nowHP = _playerStats.curHP;
@@ -38,13 +76,25 @@ public class PlayerUpdate : MonoBehaviour
         _sliderEXP.maxValue = needEXP;
         _sliderEXP.value = curEXP;
     }
-    private float _timerRegenHP;
-    private float _timerUpdateUI;
-
-    private void FixedUpdate()
+    private float _timeToHeartBeat = 0f;
+    private void CheckHeartBeat()
     {
-        RegeneHP();
-        UpdateUI();
+        if (_playerStats.curHP <= _playerStats.stats.HP * 0.5f)
+        {
+            _timeToHeartBeat += 0.25f;
+            if (_playerStats.curHP <= _playerStats.stats.HP * 0.25f)
+            {
+                // выполняется при 1/4 части ХП
+                if (_timeToHeartBeat >= 0.5f) ExeSoundHeartBeat(); else { return; }
+            }
+        }
+        else { return; }
+    }
+    private void ExeSoundHeartBeat()
+    {
+        Debug.Log("Hearth on " + _timeToHeartBeat.ToString());
+        _timeToHeartBeat = 0;
+        GlobalSounds.Instance.SHeartBeat();
     }
     private void UpdateUI()
     {
@@ -86,42 +136,6 @@ public class PlayerUpdate : MonoBehaviour
             ProcessCommand.ClearChildObj(_containBuffFields);
         }
     }
-    private void RegeneHP()
-    {
-        _timerRegenHP += Time.deltaTime;
-        if (_timerRegenHP >= timerRegenHP)
-        {
-            _timerRegenHP = 0f;
-            DefaultRegenHP();
-        }
-        else if (numAddHPfromPoison <= 0) return;
-        else if (usingPoison != null && _timerRegenHP >= timeRegenPoison)
-        {
-            _timerRegenHP = 0f;
-            PoisonRegenHP();
-        }
-    }
-    private float _timeToHeartBeat = 0f;
-    private void CheckHeartBeat()
-    {
-        if (_playerStats.curHP <= _playerStats.stats.HP * 0.5f)
-        {
-            _timeToHeartBeat += 0.25f;
-            if (_playerStats.curHP <= _playerStats.stats.HP * 0.25f)
-            {
-                // выполняется при 1/4 части ХП
-                if (_timeToHeartBeat >= 0.5f) ExeSoundHeartBeat(); else { return; }
-            }
-        }
-        else { return; }
-    }
-    private void ExeSoundHeartBeat()
-    {
-        Debug.Log("Hearth on " + _timeToHeartBeat.ToString());
-        _timeToHeartBeat = 0;
-        GlobalSounds.Instance.SHeartBeat();
-    }
-
     public void UseHealPoison(Item item)
     {
         usingPoison = item;
@@ -131,17 +145,5 @@ public class PlayerUpdate : MonoBehaviour
                 numAddHPfromPoison = buffClass.Value;
         }
     }
-    private void PoisonRegenHP()
-    {
-        numAddHPfromPoison -= 1;
-        _playerStats.curHP += 1;
-        if (numAddHPfromPoison <= 0) { usingPoison = null; }
-        _playerStats.UpdateHP();
-    }
-    private void DefaultRegenHP()
-    {
-        timerRegenHP = _playerStats.stats.GetTimeRegenHP();
-        _playerStats.AddHP(_playerStats.stats.GetAddHP());
-        UpdateUI();
-    }
+
 }

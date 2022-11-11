@@ -21,8 +21,10 @@ public class Quest : ScriptableObject
     // Тип награды
     [SerializeField] PriceType m_PriceType = PriceType.None;
     public PriceType priceType { get { return m_PriceType; } set { m_PriceType = value; } }
-
-    public int priceModificator;
+    /// <summary>
+    /// Множитель награды за квест. 1 - базоое значение
+    /// </summary>
+    public int priceModificator = 1;
     public int priceValue;
 
     public List<Item> priceItems = new List<Item>();

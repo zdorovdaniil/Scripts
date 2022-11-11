@@ -21,9 +21,12 @@ public class CollectItems : Photon.MonoBehaviour
                 Inventory inventory = other.GetComponent<Inventory>();
                 foreach (Item item in _items)
                 {
-                    if (inventory.AddItems(item, 1))
+                    if (item)
                     {
-                        PlayerQuest.instance.UpdateProcessQuests(null, item);
+                        if (inventory.AddItems(item, 1))
+                        {
+                            PlayerQuest.instance.UpdateProcessQuests(null, item);
+                        }
                     }
                 }
                 if (other.gameObject.GetComponent<Sound>()) { other.gameObject.GetComponent<Sound>().StartSound(SoundType.TakeDrop); }

@@ -12,7 +12,6 @@ public class DungeonStats : Photon.MonoBehaviour
     public int numEnemyInDungeon; // общее количество противников в подземелье
     public int numRoomsInDungeon; // общее количество комнат в подземелье
     public int numChestsInDungeon; // общее количество сундуков в подземелье
-
     public int passedRoom; // количество пройденых комнат в подземелье
     public int curKills; // количество уничтоженных врагов в тукущем подземелье
     public int numOpenChest; // кол-во открытых сундуков
@@ -52,6 +51,16 @@ public class DungeonStats : Photon.MonoBehaviour
     [PunRPC]
     public void CompleteDungeon()
     {
+        int check = ProcessCommand.CheckIsLevelUpDungeonLevel();
+        if (check == 0)
+        {
+            ProcessCommand.SetMaxDungeonLevel(_dungeonLevel + 1);
+            MsgBoxUI.Instance.ShowInfo(TextBase.Field(2), TextBase.Field(3) + " " + ProcessCommand.MaxDungeonLevel);
+        }
+        else if (check == 1)
+        {
+            MsgBoxUI.Instance.ShowInfo(TextBase.Field(2), TextBase.Field(4));
+        }
         _isCompleteDungeon = true;
     }
     [PunRPC]

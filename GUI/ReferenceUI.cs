@@ -146,7 +146,6 @@ public class ReferenceUI : MonoBehaviour
     public void ClickEquipSlotInStorage()
     {
         Storage.instance.Equip(_slot);
-
         Destroy(this.gameObject);
     }
     public void DestroyReferenceUI()
@@ -160,46 +159,74 @@ public class ReferenceUI : MonoBehaviour
     private void CheckReferenceButtonType(ReferenceButtonType buttonsType)
     {
         CloseDoingButtons();
-        if (buttonsType == ReferenceButtonType.Sell)
+        switch (buttonsType)
         {
-            _buttonsSell.gameObject.SetActive(true);
-            _buttonsDelete.gameObject.SetActive(true);
+            case ReferenceButtonType.Sell:
+                _buttonsSell.gameObject.SetActive(true);
+                _buttonsDelete.gameObject.SetActive(true); break;
+            case ReferenceButtonType.Buy: _buttonsBuy.gameObject.SetActive(true); break;
+            case ReferenceButtonType.Move:
+                _buttonsMoveOut.gameObject.SetActive(true);
+                if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
+                { _buttonsEquip.gameObject.SetActive(true); }
+                _buttonsDelete.gameObject.SetActive(true); break;
+            case ReferenceButtonType.Get: _buttonsMoveGet.gameObject.SetActive(true); break;
+            case ReferenceButtonType.Equip: _buttonsRemove.gameObject.SetActive(true); break;
+            case ReferenceButtonType.Inventory:
+                {
+                    if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
+                    { _buttonsUse.gameObject.SetActive(true); }
+                    else if (_slot.item.itemTupe == ItemTupe.Food || _slot.item.itemTupe == ItemTupe.Poison || _slot.item.itemTupe == ItemTupe.Usable || _slot.item.itemTupe == ItemTupe.Improve)
+                    { _buttonsUse.gameObject.SetActive(true); }
+                    _buttonsDelete.gameObject.SetActive(true);
+                }
+                break;
+            case ReferenceButtonType.ToChest: _buttonsMoveToChest.gameObject.SetActive(true); break;
+            case ReferenceButtonType.TakeFromChest: _buttonsMoveFromChest.gameObject.SetActive(true); break;
+            case ReferenceButtonType.None: CloseDoingButtons(); break;
         }
-        else if (buttonsType == ReferenceButtonType.Buy)
-        {
-            _buttonsBuy.gameObject.SetActive(true);
-        }
-        else if (buttonsType == ReferenceButtonType.Move)
-        {
-            _buttonsMoveOut.gameObject.SetActive(true);
-            if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
-            { _buttonsEquip.gameObject.SetActive(true); }
-            _buttonsDelete.gameObject.SetActive(true);
-        }
-        else if (buttonsType == ReferenceButtonType.Get)
-        {
-            _buttonsMoveGet.gameObject.SetActive(true);
-        }
-        else if (buttonsType == ReferenceButtonType.Equip)
-        {
-            _buttonsRemove.gameObject.SetActive(true);
-        }
-        else if (buttonsType == ReferenceButtonType.Inventory)
-        {
-            if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
-            { _buttonsUse.gameObject.SetActive(true); }
-            else if (_slot.item.itemTupe == ItemTupe.Food || _slot.item.itemTupe == ItemTupe.Poison || _slot.item.itemTupe == ItemTupe.Usable || _slot.item.itemTupe == ItemTupe.Improve)
-            { _buttonsUse.gameObject.SetActive(true); }
-            _buttonsDelete.gameObject.SetActive(true);
-        }
-        else if (buttonsType == ReferenceButtonType.ToChest)
-        {
-            _buttonsMoveToChest.gameObject.SetActive(true);
-        }
-        else if (buttonsType == ReferenceButtonType.TakeFromChest)
-        {
-            _buttonsMoveFromChest.gameObject.SetActive(true);
-        }
+        /*
+                if (buttonsType == ReferenceButtonType.Sell)
+                {
+                    _buttonsSell.gameObject.SetActive(true);
+                    _buttonsDelete.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.Buy)
+                {
+                    _buttonsBuy.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.Move)
+                {
+                    _buttonsMoveOut.gameObject.SetActive(true);
+                    if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
+                    { _buttonsEquip.gameObject.SetActive(true); }
+                    _buttonsDelete.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.Get)
+                {
+                    _buttonsMoveGet.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.Equip)
+                {
+                    _buttonsRemove.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.Inventory)
+                {
+                    if (_slot.item.itemTupe == ItemTupe.Armor || _slot.item.itemTupe == ItemTupe.Weapon)
+                    { _buttonsUse.gameObject.SetActive(true); }
+                    else if (_slot.item.itemTupe == ItemTupe.Food || _slot.item.itemTupe == ItemTupe.Poison || _slot.item.itemTupe == ItemTupe.Usable || _slot.item.itemTupe == ItemTupe.Improve)
+                    { _buttonsUse.gameObject.SetActive(true); }
+                    _buttonsDelete.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.ToChest)
+                {
+                    _buttonsMoveToChest.gameObject.SetActive(true);
+                }
+                else if (buttonsType == ReferenceButtonType.TakeFromChest)
+                {
+                    _buttonsMoveFromChest.gameObject.SetActive(true);
+                }
+                */
     }
     public void SetPlayerStats(PlayerStats playerStats)
     {

@@ -8,13 +8,15 @@ public class CraftingUI : MonoBehaviour
 
     [SerializeField] private List<Item> _defaultAvaibleCrafts = new List<Item>();
     [SerializeField] private SlotsUI _inlockedItemsToCraft;
-    [SerializeField] private List<ImproveUI> _improves;
+    [SerializeField] private List<Improve> _improves;
     [SerializeField] private SlotsUI _secondSlotsUI;
     [SerializeField] private Inventory _inv;
 
     private InventorySlot SelectedSlot;
     private List<Item> craftItems = new List<Item>();
     private List<InventorySlot> collection = new List<InventorySlot>();
+    [SerializeField] private Transform _spawnReferenceGUI;
+    [SerializeField] private GameObject _prefReferenceGUI;
 
     [SerializeField] private Transform _buttonCraft;
     [SerializeField] private TextMeshProUGUI _nameSelectedSlot;
@@ -30,6 +32,11 @@ public class CraftingUI : MonoBehaviour
         instance = this;
         _buttonCraft.gameObject.SetActive(false);
     }
+    public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
+    {
+        ProcessCommand.ClearChildObj(_spawnReferenceGUI);
+        Instantiate(_prefReferenceGUI, _spawnReferenceGUI).GetComponent<ReferenceUI>().SetValueSlot(slot, buttonType);
+    }
     public void ClearCraftingUI()
     {
         _secondSlotsUI.ClearSlots();
@@ -40,12 +47,11 @@ public class CraftingUI : MonoBehaviour
         _craftSkill = _playerStats.stats.Skills[4].Level;
         _curCraftSkillText.text = _craftSkill.ToString();
         List<Item> items = new List<Item>(_defaultAvaibleCrafts);
-        foreach (ImproveUI improve in _improves)
+        foreach (Improve improve in _improves)
         {
-            improve.SetUI();
-            if (improve.Improve.GetCurLvl > 1)
+            if (improve.GetCurLvl > 1)
             {
-                items.AddRange(improve.Improve.GetUnlockItems);
+                items.AddRange(improve.GetUnlockItems);
             }
         }
         _inlockedItemsToCraft.FullSlots(InventorySlot.CreateListInvSlots(items));
@@ -59,7 +65,7 @@ public class CraftingUI : MonoBehaviour
         _chanceCraftText.text = _chanceToCraft.ToString();
 
         _buttonCraft.gameObject.SetActive(false);
-        _selectedContainSlot.UpdateSlotInfo(_Slot, null, ContainerType.None);
+        _selectedContainSlot.UpdateSlotInfo(_Slot, null, ContainerType.CraftingInfo);
         SelectedSlot = _Slot;
         _nameSelectedSlot.text = SelectedSlot.item.Name.ToString();
         craftItems = SelectedSlot.item.GetItemsCraft;

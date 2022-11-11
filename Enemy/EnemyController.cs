@@ -52,6 +52,7 @@ public class EnemyController : MonoBehaviour
         if (!SetTargets()) isDeath = true;
         else isDeath = false;
         NewTimeBetweenAttack();
+        SwitchDamageZone(false);
     }
     private void NewTimeBetweenAttack()
     { timeBetweenAttack = UnityEngine.Random.Range(RandomValueBetweenAttack.x, RandomValueBetweenAttack.y); }
@@ -230,9 +231,10 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-
-    // Отталкивает объект относительно точки с указанной силой
-    // Отдача от удара
+    /// <summary>
+    /// Отталкивает объект относительно точки с указанной силой
+    /// </summary>
+    /// <param name="strenghKich"> Отдача от удара </param>
     public void KickBack(float strenghKich = 1)
     {
         StopCoroutine(ResetKick());
@@ -243,6 +245,7 @@ public class EnemyController : MonoBehaviour
         if (agent.isActiveAndEnabled)
         {
             Vector3 pushDirection = posOnKick - activeTarget.position;
+
             // Перемещение 
             agent.Move(pushDirection * strenghKich);
             // Толкаем объект в нужном направлении с силой pushPower

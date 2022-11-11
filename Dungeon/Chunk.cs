@@ -150,8 +150,12 @@ public class Chunk : Photon.MonoBehaviour
         {
             foreach (Chunk fChunk in _nearConnectedRooms)
             {
-                // снятие тумана у соседней комнаты, где IsSupportBiggest = true
-                if (fChunk.IsSupportBiggest) fChunk.SwitchFog(false);
+                // снятие тумана и спавн противников у соседих комнат , где IsSupportBiggest = true
+                if (fChunk.IsSupportBiggest)
+                {
+                    fChunk.SwitchFog(false);
+                    fChunk.GetRoomControl.StartCoroutineSpawnEnemy();
+                }
             }
         }
     }

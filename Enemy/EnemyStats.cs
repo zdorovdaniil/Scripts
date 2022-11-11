@@ -111,9 +111,8 @@ public class EnemyStats : Photon.MonoBehaviour
                     _enemySounds.StartSound(SoundType.Step);
                     if (randomKick < kickChance)
                     {
-                        if (!PhotonNetwork.isMasterClient && !PhotonNetwork.offlineMode)
-                        { photonView.RPC("SendKickBack", PhotonTargets.All, (float)kickStrenght); }
-                        else enemyController.KickBack(kickStrenght);
+                        if (PhotonNetwork.isMasterClient || PhotonNetwork.offlineMode)
+                        { enemyController.KickBack(kickStrenght); }
                     }
                 }
                 else
@@ -140,7 +139,8 @@ public class EnemyStats : Photon.MonoBehaviour
 
     private void SetRandomPositionInRoom()
     {
-        float[] newPos = BelongRoom.GetRandomTeleportPointRoom();
+        float[] newPos = new float[3];
+        if (BelongRoom) newPos = BelongRoom.GetRandomTeleportPointRoom();
         if (!PhotonNetwork.offlineMode)
         { photonView.RPC("SendPosition", PhotonTargets.All, (float[])newPos); }
         else SendPosition(newPos);
@@ -161,7 +161,9 @@ public class EnemyStats : Photon.MonoBehaviour
     [PunRPC]
     private void SendKickBack(float kickStrenght)
     {
-        enemyController.KickBack(kickStrenght);
+        if (!PhotonNetwork.isMasterClient || PhotonNetwork.offlineMode)
+        { enemyController.KickBack(kickStrenght); Debug.Log("Send Kick Back"); }
+
     }
     [PunRPC]
     public void MinusDamage(float damage)
@@ -209,8 +211,8 @@ public class EnemyStats : Photon.MonoBehaviour
         {
             SpawnDrop();
             IsDeath = true;
-            if (BelongRoom != null) BelongRoom.DefeatEnemyInRoom();
-            if (_mapPoint != null) _mapPoint.gameObject.SetActive(false);
+            if (BelongRoom) BelongRoom.DefeatEnemyInRoom();
+            if (_mapPoint) _mapPoint.gameObject.SetActive(false);
             GetComponent<EnemyUpdate>().enabled = false;
             Destroy(_enemyUI.gameObject);
             _enemySounds.StartSound(SoundType.Death);

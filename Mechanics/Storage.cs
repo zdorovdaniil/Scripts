@@ -2,9 +2,12 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Скрипт отвечает за создание Хранилища в которое/из которого можно перемещать предметы в Inventory с объектами GUI
+/// </summary>
 public class Storage : MonoBehaviour
 {
-    public static Storage instance;
+    public static Storage instance; private void Awake() { instance = this; }
     [SerializeField] private List<InventorySlot> storage = new List<InventorySlot>();
     // id-шники загруженных предметов из сохранения
     [SerializeField] private int[] storageIDs = new int[40];
@@ -20,6 +23,7 @@ public class Storage : MonoBehaviour
     [SerializeField] private Improve _improve;
     [SerializeField] private TMP_Text _countItemsInStorage;
     [SerializeField] private TMP_Text _textStorageCapacity;
+
     public void FillStorageSlotsUI()
     {
         ImproveInstance();
@@ -32,10 +36,7 @@ public class Storage : MonoBehaviour
     }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
     {
-        for (int i = 0; i < _spawnReferenceGUI.childCount; i++)
-        {
-            Destroy(_spawnReferenceGUI.GetChild(i).gameObject);
-        }
+        ProcessCommand.ClearChildObj(_spawnReferenceGUI);
         Instantiate(_prefReferenceGUI, _spawnReferenceGUI).GetComponent<ReferenceUI>().SetValueSlot(slot, buttonType);
     }
     //
@@ -44,17 +45,13 @@ public class Storage : MonoBehaviour
         _improve.LoadImprove();
         for (int i = 0; i < _improve.GetLvlValues.Count; i++)
             if (_improve.GetCurLvl == i) StorageCapacity = _improve.GetLvlValues[i];
-
     }
     private void InstanceUI()
     {
         _countItemsInStorage.text = storage.Count.ToString();
         _textStorageCapacity.text = StorageCapacity.ToString();
     }
-    private void Start()
-    {
-        instance = this;
-    }
+
 
     // перемещение экипировки в свободный слот для экипировки
     private void SelectArmor(InventorySlot _slot, int numE, int numI)

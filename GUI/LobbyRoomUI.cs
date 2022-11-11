@@ -3,8 +3,9 @@ using TMPro;
 
 /// <summary>
 /// Скрипт отвечает за формирование скписка доступных из региона комнат, а также реализует функционал подключения к выбранной комнате
+/// Раз в секунду формирует список комнат в регионе
 /// </summary>
-public class LobbyRoomUI : Photon.MonoBehaviour
+public class LobbyRoomUI : MonoBehaviour
 {
     public static LobbyRoomUI instance; private void Awake() { instance = this; }
     [SerializeField] private Transform _roomListTrf;
@@ -16,18 +17,17 @@ public class LobbyRoomUI : Photon.MonoBehaviour
 
     private RoomInfo _selectedRoomInfo;
     public RoomInfo GetRoomInfo => _selectedRoomInfo;
-
-    public void ClearField()
-    {
-        _textNameRoom.text = "";
-        _textNumPlayers.text = "";
-    }
-
     private float _timer;
+
     private void FixedUpdate()
     {
         _timer += Time.deltaTime;
         if (_timer >= 1f) { _timer = 0; SetRoomsList(); }
+    }
+    public void ClearField()
+    {
+        _textNameRoom.text = "";
+        _textNumPlayers.text = "";
     }
 
     public void SetRoomInfoField(RoomInfo roomInfo)

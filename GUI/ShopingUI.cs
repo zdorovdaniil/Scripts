@@ -13,7 +13,7 @@ public class ShopingUI : MonoBehaviour
     [SerializeField] private GameObject _prefReferenceGUI;
     [SerializeField] private SlotsUI _invSlotsUI;
     [SerializeField] private SlotsUI _shopSlotsUI;
-    [SerializeField] private List<ImproveUI> _improves;
+    [SerializeField] private List<Improve> _improves;
 
     [SerializeField] private TextMeshProUGUI _buyModif;
     [SerializeField] private TextMeshProUGUI _sellModif;
@@ -23,17 +23,16 @@ public class ShopingUI : MonoBehaviour
     public void FillShopSlotsUI()
     {
         List<InventorySlot> shopCatalog = new List<InventorySlot>();
-        foreach (ImproveUI improveUI in _improves)
+        foreach (Improve improve in _improves)
         {
-            improveUI.SetUI();
-            if (improveUI.Improve.GetMaxLvl <= improveUI.Improve.GetCurLvl)
+            if (improve.GetMaxLvl <= improve.GetCurLvl)
             {
                 foreach (Item item in _defaultitemsInShop)
                 {
                     InventorySlot itemShop = new InventorySlot(item, 1);
                     if (CheckItemToShopCatalog(itemShop)) shopCatalog.Add(itemShop); else { continue; }
                 }
-                foreach (Item item in improveUI.Improve.GetUnlockItems)
+                foreach (Item item in improve.GetUnlockItems)
                 {
                     InventorySlot itemShop = new InventorySlot(item, 1);
                     if (CheckItemToShopCatalog(itemShop)) shopCatalog.Add(itemShop); else { continue; }
@@ -76,7 +75,6 @@ public class ShopingUI : MonoBehaviour
         int moneyNow = PropertyUI.instance.GetCoins;
         int sellCost = Mathf.FloorToInt(slot.item.cost * _playerStats.stats.GetSaleModif());
         PropertyUI.instance.SetCoins(moneyNow + (sellCost * amount));
-        PropertyUI.instance.UpdateProperty();
         Debug.Log("Sell: " + sellCost);
     }
     public void BuyItem(Item item)
@@ -99,7 +97,6 @@ public class ShopingUI : MonoBehaviour
             else { MsgBoxUI.Instance.ShowAttention("Inventory full"); }
         }
         else { MsgBoxUI.Instance.ShowAttention("Not enought money"); }
-        PropertyUI.instance.UpdateProperty();
     }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
     {

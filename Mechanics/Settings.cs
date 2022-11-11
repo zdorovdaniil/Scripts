@@ -24,6 +24,7 @@ public class Settings : MonoBehaviour
     public void SetDefaultSettings()
     {
         PlayerPrefs.SetInt(ProcessCommand.CurActiveSlot + "_slot_dungeonLevel", 1);
+        PlayerPrefs.SetInt(ProcessCommand.CurActiveSlot + "_slot_MaxDungeonLevel", 1);
         PlayerPrefs.SetInt("region", 0);
         PlayerPrefs.SetFloat("musicValue", 1);
         PlayerPrefs.SetFloat("soundsValue", 1);

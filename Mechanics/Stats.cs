@@ -44,11 +44,10 @@ namespace stats
         public List<Skill> Skills = new List<Skill>(); // список навыков 
         public List<BuffStat> ActiveBuffes = new List<BuffStat>(); // список активных баффов
 
-
         public void SetAttackWeapon(int value)
         {
             recount();
-            if (value != 0) attackSkill = Mathf.Floor(((Skills[6].Level * 0.2f)) * 100.00f) * 0.01f; else attackSkill = 0;
+            if (value != 0) attackSkill = Mathf.Floor(((Skills[6].Level * 0.25f)) * 100.00f) * 0.01f; else attackSkill = 0;
             attackWeapon = Mathf.Floor((value) * 100.00f) * 0.01f;
             recount();
         }
@@ -56,9 +55,9 @@ namespace stats
         {
             recount();
             critChanceEquip = critChanceE;
-            critChanceSkill = Skills[6].Level * 2;
+            critChanceSkill = Skills[6].Level * 1;
             critValueEquip = critValueE;
-            critValueSkill = Skills[6].Level * 4;
+            critValueSkill = Skills[6].Level * 6;
 
             critChance = 2 + critChanceEquip + critChanceSkill + buffCritChance;
             critValue = 100 + critValueEquip + critValueSkill + buffCritValue;
@@ -86,24 +85,17 @@ namespace stats
         }
         public float GetTimeRegenHP()
         {
-            return Mathf.Floor((8 - (Attributes[2].Level / 10)) * 100.00f) * 0.01f;
+            return Mathf.Floor((10 - (Attributes[2].Level / 5)) * 100.00f) * 0.01f;
         }
         public int GetAddHP()
         {
             int skillMedicene = Skills[2].Level;
-            if (skillMedicene >= 0 && skillMedicene < 3)
-            {
-                return 1;
-            }
-            else if (skillMedicene >= 3 && skillMedicene < 5)
-            {
-                return 2;
-            }
-            else if (skillMedicene >= 7)
-            {
-                return 3;
-            }
-            return 1;
+            int addHPvalue = 1;
+            if (skillMedicene == 0) { return addHPvalue; }
+            else if (skillMedicene >= 1 && skillMedicene <= 4) { addHPvalue = 2; }
+            else if (skillMedicene >= 5 && skillMedicene <= 8) { addHPvalue = 3; }
+            else if (skillMedicene >= 9) { addHPvalue = 4; }
+            return addHPvalue;
         }
         public float Damage()
         {
@@ -113,7 +105,7 @@ namespace stats
         // сила отбрасывания от удара
         public float KickStrenght()
         {
-            return Mathf.Floor((((Attributes[0].Level * 0.3f) + (buffKickStrenght * 0.5f) + 10f) * 0.1f) * 100.00f) * 0.01f;
+            return Mathf.Floor((((Attributes[0].Level * 0.25f) + (buffKickStrenght * 0.1f) + 10f) * 0.1f) * 100.00f) * 0.01f;
         }
         public void AddBuff(BuffClass buffClass)
         {
@@ -139,9 +131,9 @@ namespace stats
                 return isContain;
             }
         }
-        public void ResetBuff(BuffStat buffStat)
+        public void ResetBuff(BuffStat buffStat,bool withRemove = true)
         {
-            ActiveBuffes.Remove(buffStat);
+            if (withRemove) ActiveBuffes.Remove(buffStat);
             SetValueBuff(buffStat.BuffClass.Buff, -buffStat.BuffClass.Value);
         }
         private void SetValueBuff(Buff buff, int value)
@@ -162,7 +154,7 @@ namespace stats
         public void ResetAllBuff()
         {
             foreach (BuffStat buffStat in ActiveBuffes)
-            { ResetBuff(buffStat); }
+            { ResetBuff(buffStat,false); }
             ActiveBuffes.Clear();
             recount();
         }
@@ -171,7 +163,7 @@ namespace stats
         { return Mathf.Floor((Attributes[1].Level / 5 + Attributes[2].Level / 5) * 100.00f) * 0.01f; }
         // значение атаки от атрибутов
         public float GetAttackAttr()
-        { return Mathf.Floor((Attributes[1].Level / 5 + Attributes[3].Level / 5) * 100.00f) * 0.01f; }
+        { return Mathf.Floor((Attributes[0].Level / 5 + Attributes[3].Level / 5) * 100.00f) * 0.01f; }
         public Stats(int lvl, int exp)
         {
             Level = lvl;
@@ -221,7 +213,7 @@ namespace stats
         //функция пересчета урона для игрока
         public void newArmDmg()
         {
-            attack = (GetAttackAttr() + attackWeapon + attackSkill + buffAttack);
+            attack = ((GetAttackAttr() + attackWeapon + attackSkill + buffAttack) * 100.00f) * 0.01f;
             armor = Mathf.Floor((GetDefenceAttr() + armorEquip + armorSkill + buffDefence) * 100.00f) * 0.01f;
 
             minDMG = attack;

@@ -80,15 +80,7 @@ public class TriggerZone : MonoBehaviour
                 foreach (PlayerStats playerSt in _playersInZone)
                 {
                     playerSt.GetComponent<PlayerQuest>().UpdateProcessQuests(null, null, "completeDungeon");
-                    int check = ProcessCommand.CheckIsLevelUpDungeonLevel();
-                    if (check == 0)
-                    {
-                        MsgBoxUI.Instance.ShowInfo(TextBase.Field(2), TextBase.Field(3) + " " + ProcessCommand.MaxDungeonLevel);
-                    }
-                    else if (check == 1)
-                    {
-                        MsgBoxUI.Instance.ShowInfo(TextBase.Field(2), TextBase.Field(4));
-                    }
+                    DungeonStats.Instance.CompleteDungeon();
                 }
             }
         }

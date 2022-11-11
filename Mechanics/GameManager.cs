@@ -10,8 +10,6 @@ public class GameManager : Photon.MonoBehaviour
 {
     public static GameManager Instance; private void Awake() { Instance = this; }
     private DungeonStats _dungeonStats;
-    //[SerializeField] private int _dungeonLevel = 1; // уровень подземелья
-    //public int GetDungeonLevel => _dungeonLevel;
     public int GetCountPlayers => PhotonPlayers.Count;
 
     public GameObject tempView;
@@ -28,6 +26,7 @@ public class GameManager : Photon.MonoBehaviour
     [SerializeField] private GameObject _allMapCamera; // камера которая делает карту
     [Header("Cheats")]
     [SerializeField] private bool _disableFog; public bool IsDisabledFog => _disableFog;
+    [SerializeField] private bool _isCreatingDungeon = true; public bool IsCreatingDungeon => _isCreatingDungeon;
 
     private void Start()
     {
@@ -47,36 +46,11 @@ public class GameManager : Photon.MonoBehaviour
         if (!PhotonNetwork.offlineMode)
         {
             foreach (PlayerStats player in PhotonPlayers)
-            { player.photonView.RPC("AddBuff", PhotonTargets.All, (int)id); }
+            { player.photonView.RPC("AddBuffPlayer", PhotonTargets.All, (int)id); }
         }
         else { PhotonPlayers[0].AddBuffPlayer(id); }
 
     }
-    /*public bool CheckDungeonLevel()
-    {
-        if (PhotonNetwork.isMasterClient || PhotonNetwork.isNonMasterClientInRoom)
-        {
-            if (PhotonNetwork.isMasterClient)
-            {
-                if (_dungeonLevel <= 4) { UpDungeonLevel(); return true; }
-                else { Debug.Log("Dungeon level is already max"); return false; }
-            }
-            else { Debug.Log("You no master server"); return false; }
-        }
-        else
-        {
-            if (_dungeonLevel <= 4) { UpDungeonLevel(); return true; }
-            else { Debug.Log("Dungeon level is already max"); return false; }
-        }
-    }
-    */
-    /*
-    private void UpDungeonLevel()
-    {
-        _dungeonLevel += 1;
-        PlayerPrefs.SetInt(PlayerPrefs.GetInt("activeSlot") + "_slot_dungeonLevel", _dungeonLevel);
-    }
-    */
     private void CreatePlayerPrefab()
     {
         GameObject obj;
@@ -124,7 +98,7 @@ public class GameManager : Photon.MonoBehaviour
     {
         StartCoroutine(UpdateTimer());
         SetDungeonStats();
-        if (!PhotonNetwork.offlineMode) photonView.RPC("OnDungeonGenerated", PhotonTargets.AllBuffered);
+        if (PhotonNetwork.isMasterClient && !PhotonNetwork.offlineMode) photonView.RPC("OnDungeonGenerated", PhotonTargets.AllBuffered);
         else { OnDungeonGenerated(); }
     }
     [PunRPC]
@@ -184,10 +158,10 @@ public class GameManager : Photon.MonoBehaviour
     }
     public void SendAllLeaveDungeon()
     {
-        photonView.RPC("LeaveDungeon", PhotonTargets.AllBuffered);
+        photonView.RPC("LeaveDungeon", PhotonTargets.Others);
+        GameManager.Instance.LeaveDungeon();
     }
     // Получение уровня подземелья от владельца сервера
-
     [PunRPC]
     public void SetDungeonLevel(int level)
     { DungeonStats.Instance.SetDungeonLevel(level); }
@@ -195,6 +169,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void LeaveDungeon()
     {
+        StopCoroutine(UpdateTimer());
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LoadLevel("Menu");
     }

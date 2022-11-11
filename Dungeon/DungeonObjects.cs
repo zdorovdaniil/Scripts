@@ -8,7 +8,7 @@ using UnityEngine.AI;
 /// </summary>
 public class DungeonObjects : MonoBehaviour
 {
-    public static DungeonObjects Instance; private void Awake() { Instance = this; }
+    public static DungeonObjects Instance;
     [SerializeField] private List<Chunk> _roomsDungeon = new List<Chunk>();
     [SerializeField] private List<Chest> _chestsDungeon = new List<Chest>();
     [SerializeField] private List<Enemy> _enemyDungeon = new List<Enemy>();
@@ -17,8 +17,9 @@ public class DungeonObjects : MonoBehaviour
     private DungeonStats _dungeonStats;
     private NavMeshSurface _navMeshSurface;
 
-    private void Start()
+    private void Awake()
     {
+        Instance = this;
         _dungeonStats = DungeonStats.Instance;
         _navMeshSurface = GetComponent<NavMeshSurface>();
     }
