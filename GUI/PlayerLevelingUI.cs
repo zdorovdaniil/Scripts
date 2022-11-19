@@ -13,17 +13,24 @@ public class PlayerLevelingUI : MonoBehaviour
     {
         _slotsLeveling.ClearSlots();
         List<InventorySlot> itemsForCurLeveling = PlayerLeveling.Instance.GetItemsForLeveling();
-        if (itemsForCurLeveling != null)
+        if (!PlayerLeveling.Instance.IsMaxLevel())
         {
-            _slotsLeveling.FullSlots(itemsForCurLeveling);
-            if (PlayerLeveling.Instance.IsExpFull() && _inv.CheckContainItemsInCollection(itemsForCurLeveling))
-            { _buttonLevelUp.gameObject.SetActive(true); _levelingText.text = ""; }
-            else { _buttonLevelUp.gameObject.SetActive(false); _levelingText.text = "not enought exp or items"; }
+            if (itemsForCurLeveling != null)
+            {
+                _slotsLeveling.FullSlots(itemsForCurLeveling);
+                if (PlayerLeveling.Instance.IsExpFull() && _inv.CheckContainItemsInCollection(itemsForCurLeveling))
+                { _buttonLevelUp.gameObject.SetActive(true); _levelingText.text = ""; }
+                else { _buttonLevelUp.gameObject.SetActive(false); _levelingText.text = "not enought exp or items"; }
+            }
+            else
+            {
+                if (PlayerLeveling.Instance.IsExpFull()) { _buttonLevelUp.gameObject.SetActive(true); }
+                else { _buttonLevelUp.gameObject.SetActive(false); }
+            }
         }
         else
         {
-            if (PlayerLeveling.Instance.IsExpFull()) { _buttonLevelUp.gameObject.SetActive(true); }
-            else { _buttonLevelUp.gameObject.SetActive(false); }
+            _buttonLevelUp.gameObject.SetActive(false); _levelingText.text = "reached maximum game level";
         }
     }
     public void ClickLevelUp()

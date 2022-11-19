@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class BasePrefs : MonoBehaviour
 {
     public static BasePrefs instance; void Awake() { instance = this; _itemDatabase.Initialize(); }
@@ -22,7 +23,6 @@ public class BasePrefs : MonoBehaviour
     [SerializeField] private Mesh _meshOpenedChest; public Mesh GetMeshOpenedChest => _meshOpenedChest;
     [SerializeField] private Mesh _meshClosedChest; public Mesh GetMeshClosedChest => _meshClosedChest;
     [SerializeField] private Texture2D _nullImage; public Texture2D GetNullImage => _nullImage;
-    [SerializeField] private Texture2D[] _crsCharacterTexture2D;
     public Texture2D GetTexture2DCrsCharacter(int idProfileSlot)
     {
         string path = Application.persistentDataPath + idProfileSlot + ".png";

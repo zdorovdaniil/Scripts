@@ -25,7 +25,8 @@ public class DestroyedObject : MonoBehaviour
         if (_isTakeDamage)
         {
             _isTakeDamage = false;
-            StartCoroutine(ResetDamageGet());
+            StartCoroutine(ProcessCommand.DoActionDelay(ResetDamageGet, 0.5f));
+            //StartCoroutine(ResetDamageGet());
             if (_interiorSelecter && !PhotonNetwork.offlineMode)
             {
                 _interiorSelecter.photonView.RPC("SendDamageDestroyObject", PhotonTargets.All, (int)_id, (float)value);
@@ -56,9 +57,9 @@ public class DestroyedObject : MonoBehaviour
         foreach (Transform trf in _destroyObjects) { if (trf) Destroy(trf.gameObject); }
         Destroy(this.gameObject);
     }
-    private IEnumerator ResetDamageGet()
+    private void ResetDamageGet()
     {
-        yield return new WaitForSecondsRealtime(0.6f);
+        //yield return new WaitForSecondsRealtime(0.6f);
         {
             _isTakeDamage = true;
         }

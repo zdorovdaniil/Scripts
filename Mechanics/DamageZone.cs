@@ -31,6 +31,7 @@ public class DamageZone : MonoBehaviour
                     {
                         DungeonStats.Instance.DefeatEnemy();
                         PlayerQuest.instance.UpdateProcessQuests(otherEnemyStats, null, "kill_enemy");
+                        playerStats.GainExperience(otherEnemyStats.GetStats.ExpStatsValues());
                         if (otherEnemyStats.enemyTupe.IsBoss)
                         {
                             PlayerQuest.instance.UpdateProcessQuests(null, null, "kill_boss");

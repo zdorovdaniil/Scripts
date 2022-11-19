@@ -23,6 +23,13 @@ public class DungeonObjects : MonoBehaviour
         _dungeonStats = DungeonStats.Instance;
         _navMeshSurface = GetComponent<NavMeshSurface>();
     }
+    /*
+    public void RemoveFogOfVarFromMap()
+    {
+        Vector2Int vector2 = _dungeonStats.Rule.RangeRemoveFogOfVar;
+        int countRooms = Random.Range(vector2.x, vector2.y + 1);
+    }
+    */
     public void CloseFogOfVar()
     {
         foreach (Chunk chunk in _roomsDungeon)

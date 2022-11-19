@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 /// <summary>
 /// Скрипт отвечает за объекты расположенные в комнате. Изменяет их состояния от ChunkPlacer и других событий
 /// </summary>
 public class Chunk : Photon.MonoBehaviour
 {
     [Header("Local Objects of Chunk")]
+    [SerializeField] private TMP_Text _nameRoomOnMap;
     [SerializeField] private List<GameObject> _doorBlock = new List<GameObject>();
     public List<DoorBlock> DoorBlocks = new List<DoorBlock>();
     [SerializeField] private bool _isSupportRotation; public bool IsSupportRotation => _isSupportRotation; // поддерживает ли эта комната повороты
@@ -41,6 +43,7 @@ public class Chunk : Photon.MonoBehaviour
     {
         SwitchDoorBlocks(false);
         if (!_isSupportBiggest) SetDafaultObjStatus();
+        if (_nameRoomOnMap) _nameRoomOnMap.text = this.gameObject.name;
     }
     private void SetDafaultObjStatus()
     {

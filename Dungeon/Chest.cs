@@ -30,8 +30,12 @@ public class Chest : MonoBehaviour
         if (status) meshFilter.mesh = BasePrefs.instance.GetMeshOpenedChest;
         else meshFilter.mesh = BasePrefs.instance.GetMeshClosedChest;
     }
+    private void SpawnItemsFromRule()
+    {
 
-    public void SpawnItemsInChest()
+    }
+
+    private void SpawnItemsInChest()
     {
         int willSpanwItems = 0;
         int spawnedItems = 0;
@@ -42,8 +46,10 @@ public class Chest : MonoBehaviour
             {
                 willSpanwItems += 1;
                 List<Item> sortedItems = new List<Item>();
+                int[] rangeItemsLevel = DungeonStats.Instance.Rule.ItemsLevelRangeInChest(DungeonStats.Instance.GetDungeonLevel);
                 // получение списка предметов по типу в слоте из БД
-                sortedItems = _itemDatabase.GetListItemsByType(type);
+                sortedItems = _itemDatabase.GetListItemsByType(type, rangeItemsLevel, true);
+                if (sortedItems.Count <= 0) Debug.Log("No ITEMS " + type + " type / range " + rangeItemsLevel[0] + " / " + rangeItemsLevel[1]);
                 int countItems = sortedItems.Count;
                 int chance = Random.Range(0, 100);
                 if (chance >= _coffSpawnSlot) continue;
@@ -71,7 +77,6 @@ public class Chest : MonoBehaviour
                 DungeonStats.Instance.allOpenChest += 1;
                 DungeonStats.Instance.numOpenChest += 1;
                 PlayerQuest.instance.UpdateProcessQuests();
-                // Добавление в сундук предметов
                 SpawnItemsInChest();
             }
             PlayerLinks playerLinks = other.GetComponent<PlayerLinks>();

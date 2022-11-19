@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
@@ -164,7 +164,7 @@ public class PlayerController : Photon.MonoBehaviour
     public void PlayerComboAttack()
     {
         anim.SetTrigger("Combo");
-        ChangeComboSpeed(2f);
+        StartCoroutine(ChangeComboSpeed(2f));
     }
     private void GamingGravity()
     {
@@ -192,10 +192,7 @@ public class PlayerController : Photon.MonoBehaviour
     private IEnumerator ChangeComboSpeed(float delay)
     {
         float returnSpeed = _curSpeedMove;
-        _curSpeedMove = 0f;
-        yield return new WaitForSecondsRealtime(delay);
-        {
-            _curSpeedMove = returnSpeed;
-        }
+        _curSpeedMove = 2.5f;
+        yield return new WaitForSecondsRealtime(delay); { _curSpeedMove = returnSpeed;}
     }
 }

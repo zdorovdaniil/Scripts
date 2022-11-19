@@ -13,6 +13,8 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private SlotsUI _invSlots;
     [SerializeField] private SlotsUI _equipSlots;
     [SerializeField] private ViewStatsUI _viewStatsUI;
+    [SerializeField] private Transform NotificateAttributes;
+    [SerializeField] private Transform NotificateSkills;
 
     private void Start() { Instance = this; }
 
@@ -31,6 +33,11 @@ public class PlayerUI : MonoBehaviour
         if (_invSlots) _invSlots.FullSlots(_inventory.GetItems);
         if (_equipSlots) _equipSlots.FullSlots(_inventory.GetEquipsList());
         if (_viewStatsUI) _viewStatsUI.UpdateViewStatsUI(_playerStats);
+
+        bool status1 = _playerStats.GetPointStat >= 1 ? true : false;
+        if (NotificateAttributes) NotificateAttributes.gameObject.SetActive(status1);
+        bool status2 = _playerStats.GetPointSkill >= 1 ? true : false;
+        if (NotificateSkills) NotificateSkills.gameObject.SetActive(status2);
     }
     public void SpawnReferenceGUI(InventorySlot slot, ReferenceButtonType buttonType)
     {

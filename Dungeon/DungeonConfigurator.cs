@@ -1,8 +1,11 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "DungeonConfigurator", menuName = "Project/DungeonConfigurator", order = 3)]
 public class DungeonConfigurator : ScriptableObject
 {
+    [SerializeField] private List<Chunk> _allSimpleRooms = new List<Chunk>();
+    [SerializeField] private List<Chunk> _roomsAppearOnce = new List<Chunk>(); public List<Chunk> RoomsAppearOnce => _roomsAppearOnce;
     [SerializeField] private float _factorEndRooms;
     [SerializeField] private float _factorBeetweedRooms;
     [SerializeField] private float _factorStandartRooms;
@@ -19,7 +22,16 @@ public class DungeonConfigurator : ScriptableObject
     [SerializeField] private float _percentBigRooms;
     [SerializeField] private float _percentAmbushRoom;
 
-
+    public List<Chunk> LishChunksOfType(RoomType roomType)
+    {
+        List<Chunk> chunks = new List<Chunk>();
+        foreach (Chunk chunk in _allSimpleRooms)
+        {
+            if (chunk.gameObject.GetComponent<RoomControl>().GetRoomType == roomType)
+            { chunks.Add(chunk); }
+        }
+        return chunks;
+    }
     public void DefinePercents()
     {
         if (_countRooms != 0)

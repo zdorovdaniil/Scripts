@@ -7,6 +7,7 @@ public class HumanEffects : MonoBehaviour
     private BasePrefs _basePrefs;
     private List<GameObject> _buffEffects = new List<GameObject>();
     [SerializeField] private ParticlePlaces _particlePlaeces;
+    public void AddParticleToContainer(GameObject obj) => obj.transform.SetParent(_particlePlaeces.ParcicleContainer);
     [SerializeField] private GameObject _weaponParticle;
     [SerializeField] private ParticleSystem _jercParticle;
     [SerializeField] private GameObject _flyingSlash;
@@ -65,6 +66,8 @@ public class HumanEffects : MonoBehaviour
         {
             Destroy(buffObj);
         }
+        // удаление частиц в контейнере
+        ProcessCommand.ClearChildObj(_particlePlaeces.ParcicleContainer);
     }
     private IEnumerator DestroyObjWithDelay(GameObject obj, float time)
     {

@@ -15,6 +15,9 @@ public class PlayerLeveling : MonoBehaviour
     public List<Item> ItemsFor5Level = new List<Item>();
     public List<Item> ItemsFor7Level = new List<Item>();
     public List<Item> ItemsFor9Level = new List<Item>();
+    public List<Item> ItemsFor11Level = new List<Item>();
+    public List<Item> ItemsFor13Level = new List<Item>();
+    public List<Item> ItemsFor15Level = new List<Item>();
 
     public List<InventorySlot> GetItemsForLeveling()
     {
@@ -24,8 +27,17 @@ public class PlayerLeveling : MonoBehaviour
             case 4: { return InventorySlot.CreateListInvSlots(ItemsFor5Level); }
             case 6: { return InventorySlot.CreateListInvSlots(ItemsFor7Level); }
             case 8: { return InventorySlot.CreateListInvSlots(ItemsFor9Level); }
+            case 10: { return InventorySlot.CreateListInvSlots(ItemsFor11Level); }
+            case 12: { return InventorySlot.CreateListInvSlots(ItemsFor13Level); }
+            case 14: { return InventorySlot.CreateListInvSlots(ItemsFor15Level); }
         }
         return null;
+    }
+    public bool IsMaxLevel()
+    {
+        if (_plStats.stats.Level >= _maxAvaibleLvl)
+        { return true; }
+        else return false;
     }
     public bool IsExpFull()
     {

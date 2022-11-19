@@ -7,14 +7,12 @@ public class ChunkPlacer : MonoBehaviour
 {
     // настройка шаблона появления комнат в подземелье
     [SerializeField] private DungeonConfigurator _dungeonConfig;
-    [SerializeField] private List<Chunk> AllSimpleRooms = new List<Chunk>();
-    [SerializeField] private List<Chunk> RoomsAppearOnce = new List<Chunk>();
     [Range(9, 100)]
     public int NumRooms = 9; // задает количество комнат
     public int NumSpawnedRooms = 0; // количество появившихся комнат 
     public int NumFailSpawned = 0;
     public int TrySpawnRooms = 0; // попыток спавна комнат
-    private Chunk[,] SpawnedRooms; // Для хранения комнат что появились на карте
+    private Chunk[,] SpawnedRooms = new Chunk[11, 11]; // Для хранения комнат что появились на карте
     [SerializeField] private DungeonObjects _dungeonObjects; // Скрипт содержит объекты подземелья
 
 
@@ -31,7 +29,6 @@ public class ChunkPlacer : MonoBehaviour
             NumRooms = DungeonStats.Instance.GetNumRooms;
             _dungeonConfig.SetCountRooms(NumRooms);
             _dungeonConfig.DefinePercents();
-            SpawnedRooms = new Chunk[11, 11];
             RespawnFirstRoom();
             for (int i = 0; i < NumRooms; i++)
             {
@@ -94,12 +91,13 @@ public class ChunkPlacer : MonoBehaviour
     }
     private Chunk SelectChunkFromCollection(RoomType roomType)
     {
-        List<Chunk> chunks = new List<Chunk>();
-        foreach (Chunk chunk in AllSimpleRooms)
+        //List<Chunk> chunks = new List<Chunk>();
+        List<Chunk> chunks = _dungeonConfig.LishChunksOfType(roomType);
+        /*foreach (Chunk chunk in AllSimpleRooms)
         {
             if (chunk.gameObject.GetComponent<RoomControl>().GetRoomType == roomType)
             { chunks.Add(chunk); }
-        }
+        }*/
         int count = chunks.Count;
         int randomValue = Random.Range(0, count);
         if (chunks[randomValue] == null) Debug.Log("Null Chunk");
@@ -134,19 +132,19 @@ public class ChunkPlacer : MonoBehaviour
                 newRoom = CreateRoomForSinglePlayer(SelectChunkFromCollection(RoomType.Default));
 
         }
-        else if (5 < NumSpawnedRooms && NumSpawnedRooms < NumRooms - 1 - RoomsAppearOnce.Count)
+        else if (5 < NumSpawnedRooms && NumSpawnedRooms < NumRooms - 1 - _dungeonConfig.RoomsAppearOnce.Count)
         {
             if (isMyltiplayer == true)
                 newRoom = CreateRoomForMyltiplayer(SelectChunkFromCollection(_dungeonConfig.GetRoomType()));
             else
                 newRoom = CreateRoomForSinglePlayer(SelectChunkFromCollection(_dungeonConfig.GetRoomType()));
         }
-        else if (NumSpawnedRooms >= NumRooms - 1 - RoomsAppearOnce.Count && NumSpawnedRooms < NumRooms - 1)
+        else if (NumSpawnedRooms >= NumRooms - 1 - _dungeonConfig.RoomsAppearOnce.Count && NumSpawnedRooms < NumRooms - 1)
         {
             if (isMyltiplayer == true)
-                newRoom = CreateRoomForMyltiplayer(RoomsAppearOnce[NumSpawnedRooms - (NumRooms - 1 - RoomsAppearOnce.Count)]);
+                newRoom = CreateRoomForMyltiplayer(_dungeonConfig.RoomsAppearOnce[NumSpawnedRooms - (NumRooms - 1 - _dungeonConfig.RoomsAppearOnce.Count)]);
             else
-                newRoom = CreateRoomForSinglePlayer(RoomsAppearOnce[NumSpawnedRooms - (NumRooms - 1 - RoomsAppearOnce.Count)]);
+                newRoom = CreateRoomForSinglePlayer(_dungeonConfig.RoomsAppearOnce[NumSpawnedRooms - (NumRooms - 1 - _dungeonConfig.RoomsAppearOnce.Count)]);
         }
         if (NumSpawnedRooms == NumRooms - 1)
         {

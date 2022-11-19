@@ -14,7 +14,7 @@ public class BulletMove : Photon.MonoBehaviour
 
     [Header("Phisics parametrs of Moving")]
     [SerializeField] private int _startSpeed = 2;
-    [SerializeField] private float _timeToDestruct = 5f;
+    [SerializeField] private float _timeToDestruct = 25f;
     private bool _isActivatedEventOnHit = false;
     private Rigidbody rb;
     private Vector3 _previousStep;
@@ -23,9 +23,9 @@ public class BulletMove : Photon.MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        Invoke("DestroyNow", _timeToDestruct);
         rb.velocity = transform.TransformDirection(Vector3.forward * _startSpeed);
         _previousStep = gameObject.transform.position;
+        ProcessCommand.DestroyGameObjectDelay(this.gameObject, _timeToDestruct);
     }
     private void FixedUpdate()
     {
@@ -55,10 +55,11 @@ public class BulletMove : Photon.MonoBehaviour
     {
         rb.Sleep();
         _isMove = false;
-        if (_includeToObjectOnTrigger) this.gameObject.transform.SetParent(other.transform);
-        float timeToDestroy = 10f;
-        if (other.tag != "Player") timeToDestroy = 30f;
-        ProcessCommand.DestroyGameObjectDelay(this.gameObject, timeToDestroy);
+        if (_includeToObjectOnTrigger)
+        {
+            HumanEffects humanEffects = other.GetComponent<HumanEffects>();
+            if (humanEffects) humanEffects.AddParticleToContainer(this.gameObject);
+        }
     }
 
     private void HitEffects()
@@ -77,10 +78,6 @@ public class BulletMove : Photon.MonoBehaviour
         {
             GlobalEffects.Instance.CreateParticle(this.transform, _effectOnHit);
         }
-    }
-    private void DestroyNow()
-    {
-        Destroy(this.gameObject);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     { }

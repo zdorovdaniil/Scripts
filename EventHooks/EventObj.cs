@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public class EventObj : Photon.MonoBehaviour
 {
     [SerializeField] private BuffClass _buff;
+    [SerializeField] private Item _item;
     [SerializeField] private bool _forAllPlayers; public bool IsForAllPlayers => _forAllPlayers;
     [SerializeField] private bool _isActivated = false;
     [SerializeField] private UnityEvent onEventExe;
@@ -18,7 +19,17 @@ public class EventObj : Photon.MonoBehaviour
                 guiControl.UseButton.SetActive(true);
                 guiControl.UseButton.GetComponent<ButtonUse>().Activate(this);
             }
+            else if (other.gameObject.GetPhotonView().isMine && _isActivated)
+            {
+                CloseGUIButton(other);
+            }
         }
+    }
+    public void UseItemOnPlS(PlayerStats playerStats, Item item)
+    {
+        InventorySlot invSlot = new InventorySlot(item);
+        item.UsingItem(playerStats, invSlot, null, null);
+        Debug.Log("Use item: " + item.name + " onEvent");
     }
     private void OnTriggerExit(Collider other)
     {
@@ -26,10 +37,14 @@ public class EventObj : Photon.MonoBehaviour
         {
             if (other.gameObject.GetPhotonView().isMine)
             {
-                GUIControl guiControl = other.GetComponent<PlayerLinks>().GetGUIControl;
-                guiControl.UseButton.GetComponent<ButtonUse>().Remove();
+                CloseGUIButton(other);
             }
         }
+    }
+    private void CloseGUIButton(Collider other)
+    {
+        GUIControl guiControl = other.GetComponent<PlayerLinks>().GetGUIControl;
+        guiControl.UseButton.GetComponent<ButtonUse>().Remove();
     }
     public void SendToActivate(PlayerStats playerStats)
     {
@@ -40,6 +55,7 @@ public class EventObj : Photon.MonoBehaviour
         else
         {
             if (_buff) playerStats.AddBuffPlayer(_buff.BuffId);
+            if (_item) UseItemOnPlS(playerStats, _item);
         }
         if (!PhotonNetwork.offlineMode)
             photonView.RPC("Activate", PhotonTargets.All);
@@ -48,6 +64,7 @@ public class EventObj : Photon.MonoBehaviour
     [PunRPC]
     public void Activate()
     {
+        GlobalSounds.Instance.PEventFound(this.transform);
         _isActivated = true;
         onEventExe.Invoke();
     }

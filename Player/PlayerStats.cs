@@ -35,7 +35,14 @@ public class PlayerStats : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void TeleportTo(float[] pos) { this.transform.position = new Vector3(pos[0], pos[1], pos[2]); Debug.Log("Teleport To: " + pos[0] + ":" + pos[1] + ":" + pos[2]); }
+    public void TeleportTo(float[] pos)
+    {
+        GlobalSounds.Instance.PTeleportPlayer(this.transform);
+        GlobalEffects.Instance.CreateParticle(this.transform, EffectType.TeleportTrail);
+        this.transform.position = new Vector3(pos[0], pos[1], pos[2]);
+        Debug.Log("Teleport To: " + pos[0] + ":" + pos[1] + ":" + pos[2]);
+        GlobalEffects.Instance.CreateParticle(this.transform, EffectType.Teleport);
+    }
     public void SetInventory(Inventory inv) { _inventory = inv; _inventory.SetInvSlotsFromItemsIDs(); CheckStatusEquip(); UpdateArmor(); }
     private void Awake() { SetStats(); }
     private void Start()
@@ -139,7 +146,6 @@ public class PlayerStats : Photon.MonoBehaviour
                 gameObject.GetComponent<Sound>().StartSound(SoundType.Hit);
                 GlobalEffects.Instance.CreateParticle(_particlePlaces.HitPlace, EffectType.Hit);
             }
-
             float blockedDamage = Mathf.Floor(value - takeDamage);
             string HitString = "";
             if (isCrit) HitString = " crit you!"; else { HitString = " hit you"; }
@@ -190,7 +196,9 @@ public class PlayerStats : Photon.MonoBehaviour
     // начисление опыта
     public void GainExperience(int _value)
     {
-        curEXP += _value;
+        int withMod = stats.ModifGainExp(_value);
+        Debug.Log("Gain exp: " + _value + " Total with modifaed: " + withMod);
+        curEXP += withMod;
         if (curEXP >= stats.EXP) GlobalSounds.Instance.SAwaibleLvlUp();
     }
     // восстановление здоровья персонажа

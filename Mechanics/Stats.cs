@@ -39,11 +39,27 @@ namespace stats
         public int buffSpeed;
         public int buffKickStrenght;
         public int buffMaxBlock;
+        public int buffGainExp;
 
         public List<AttributeStat> Attributes = new List<AttributeStat>(); // список аттрибутов
         public List<Skill> Skills = new List<Skill>(); // список навыков 
         public List<BuffStat> ActiveBuffes = new List<BuffStat>(); // список активных баффов
 
+        /// <summary>
+        /// Функция возвращает значение опыта, формируемое из аттрибутов и экипированного снаряжения
+        /// </summary>
+        /// <returns></returns>
+        public int ExpStatsValues()
+        {
+            int exp = 0;
+            foreach (AttributeStat attr in Attributes)
+            {
+                exp += attr.Level;
+            }
+            float otherStats = attackWeapon + (armorEquip / 3);
+            exp += Mathf.FloorToInt(otherStats);
+            return exp;
+        }
         public void SetAttackWeapon(int value)
         {
             recount();
@@ -63,6 +79,10 @@ namespace stats
             critValue = 100 + critValueEquip + critValueSkill + buffCritValue;
 
             recount();
+        }
+        public int ModifGainExp(int value)
+        {
+            return Mathf.FloorToInt(value * (buffGainExp * 0.01f + 1));
         }
         public void SetArmorEquip(int value, int countModifire)
         {
@@ -131,7 +151,7 @@ namespace stats
                 return isContain;
             }
         }
-        public void ResetBuff(BuffStat buffStat,bool withRemove = true)
+        public void ResetBuff(BuffStat buffStat, bool withRemove = true)
         {
             if (withRemove) ActiveBuffes.Remove(buffStat);
             SetValueBuff(buffStat.BuffClass.Buff, -buffStat.BuffClass.Value);
@@ -148,13 +168,14 @@ namespace stats
                 case Buff.CritValue: { buffCritValue += value; } break;
                 case Buff.KickStrenght: { buffKickStrenght += value; } break;
                 case Buff.MaxBlock: { buffMaxBlock += value; } break;
+                case Buff.GainExp: { buffGainExp += value; } break;
             }
             recount();
         }
         public void ResetAllBuff()
         {
             foreach (BuffStat buffStat in ActiveBuffes)
-            { ResetBuff(buffStat,false); }
+            { ResetBuff(buffStat, false); }
             ActiveBuffes.Clear();
             recount();
         }

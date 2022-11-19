@@ -1,15 +1,14 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 
 public class DestroyWithDelay : Photon.MonoBehaviour
 {
     [SerializeField] private float _timeToDestroy;
-    [SerializeField] private GameObject _gameObject;
+    [SerializeField] private GameObject[] _gameObjects;
     [SerializeField] private bool _tickWithStart = true;
     private void Start()
     {
-        if (_tickWithStart) StartCoroutine(DestroyThisWithDelay(_timeToDestroy));
+        if (_tickWithStart) StartTick();
     }
     public void StartTick()
     {
@@ -19,9 +18,14 @@ public class DestroyWithDelay : Photon.MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(time);
         {
-            if (!_gameObject)
-                Destroy(this.gameObject);
-            else Destroy(_gameObject);
+            if (_gameObjects.Length > 0)
+            {
+                for (int i = 0; i < _gameObjects.Length; i++)
+                {
+                    if (_gameObjects[i]) Destroy(_gameObjects[i]);
+                }
+            }
+            else Destroy(this.gameObject);
         }
     }
 }

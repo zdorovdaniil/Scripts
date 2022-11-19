@@ -51,4 +51,5 @@ public enum Buff
     CritChance,
     CritValue,
     MaxBlock,
+    GainExp // модификатор получения опыта
 }

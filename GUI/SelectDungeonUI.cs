@@ -22,7 +22,12 @@ public class SelectDungeonUI : Photon.MonoBehaviour
     [SerializeField] private TMP_Text _addQuests;
     [SerializeField] private TMP_Text _enemyLevel;
     [SerializeField] private TMP_Text _modifSpawnItemsChest;
+    [SerializeField] private TMP_Text _levelItemsInChests;
 
+    private void Start()
+    {
+        OpenlostRoomsLobby();
+    }
 
     [PunRPC]
     public void SetUIFromRules(int dungeonLevel)
@@ -30,19 +35,15 @@ public class SelectDungeonUI : Photon.MonoBehaviour
         _dungeonLevelCounter.SetText(dungeonLevel.ToString());
         _numRooms.text = _rules.NumRoomsFromLevel(dungeonLevel).ToString();
         _addQuests.text = _rules.AddQuestFromLevel(dungeonLevel).ToString();
-        //_enemyLevel.text = _rules.EnemyLevel(dungeonLevel).ToString();
         int[] vector = new int[2]; vector = _rules.EnemyLevelRangeFromLevel(dungeonLevel);
         if (vector[0] == vector[1]) _enemyLevel.text = vector[0].ToString();
         else _enemyLevel.text = vector[0].ToString() + " - " + vector[1].ToString();
         _modifSpawnItemsChest.text = _rules.GetModifSpawnItemsChest(dungeonLevel).ToString();
+        int[] vector2 = new int[2]; vector2 = _rules.ItemsLevelRangeInChest(dungeonLevel);
+        if (vector2[0] == vector2[1]) _levelItemsInChests.text = vector2[0].ToString();
+        else _levelItemsInChests.text = vector2[0].ToString() + " - " + vector2[1].ToString();
+    }
 
-    }
-    private void Start()
-    {
-        OpenlostRoomsLobby();
-        //_lobbyRoomPanel.gameObject.SetActive(false);
-        //_selectRoomPanel.gameObject.SetActive(true);
-    }
     public void ClearFields()
     {
         _1PlayerField.text = "";

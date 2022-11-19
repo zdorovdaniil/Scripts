@@ -22,6 +22,7 @@ public class GlobalSounds : MonoBehaviour
     [SerializeField] private AudioSource _sTakeAll; public void STakeAll() { _sTakeAll.Play(); }
     [SerializeField] private AudioSource _sClickItem; public void SClickItem() { Playing(_sClickItem, true); }
     [SerializeField] private AudioSource _sClickGlass; public void SClickGlass() { _sClickGlass.Play(); }
+    [SerializeField] private AudioSource _sClickPaper; public void SClickPaper() { _sClickPaper.Play(); }
     [SerializeField] private AudioSource _sAttention; public void SAttention() { _sAttention.Play(); }
     [SerializeField] private AudioSource _sBuySell; public void SBuySell() { _sBuySell.Play(); }
     [SerializeField] private AudioSource _sEquipArmor; public void SEquipArmor() { _sEquipArmor.Play(); }
@@ -37,6 +38,9 @@ public class GlobalSounds : MonoBehaviour
     [SerializeField] private AudioSource _sCloseChest; public void SCloseChest() { _sCloseChest.Play(); }
     [SerializeField] private GameObject _getBuff; public void PGetBuff(Transform trf) { Instantiate(_getBuff, trf); }
     [SerializeField] private GameObject _crit; public void PCrit(Transform trf) { Instantiate(_crit, trf); }
+    [SerializeField] private GameObject _teleportPlayer; public void PTeleportPlayer(Transform trf) { Instantiate(_teleportPlayer, trf); }
+    [SerializeField] private GameObject _teleportEnemy; public void PTeleportEnemy(Transform trf) { Instantiate(_teleportEnemy, trf); }
+    [SerializeField] private GameObject _eventFound; public void PEventFound(Transform trf) { Instantiate(_eventFound, trf); }
     [SerializeField] private GameObject _wood;
     [SerializeField] private GameObject _stone;
     [SerializeField] private GameObject _glass;

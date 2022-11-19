@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "Item", menuName = "Project/Item", order = 0)]
@@ -109,7 +109,7 @@ public class Item : ScriptableObject
         }
         else if (slot.item.itemTupe == ItemTupe.Improve)
         {
-            inv.DeleteSlot(slot, 1);
+            if (inv) inv.DeleteSlot(slot, 1);
             switch (slot.item.Improve)
             {
                 case ImproveItem.Strenght: playerStats.UpAttribute(0, false); break;
@@ -117,8 +117,10 @@ public class Item : ScriptableObject
                 case ImproveItem.Endurance: playerStats.UpAttribute(2, false); break;
                 case ImproveItem.Speed: playerStats.UpAttribute(3, false); break;
                 case ImproveItem.Detection: playerStats.stats.Skills[0].LevelUp(); break;
-                case ImproveItem.Leap: playerStats.stats.Skills[1].LevelUp(); break;
+                case ImproveItem.Jerk: playerStats.stats.Skills[1].LevelUp(); break;
                 case ImproveItem.Medicine: playerStats.stats.Skills[2].LevelUp(); break;
+                case ImproveItem.Trade: playerStats.stats.Skills[3].LevelUp(); break;
+                case ImproveItem.Craft: playerStats.stats.Skills[4].LevelUp(); break;
             }
             return true;
         }
@@ -143,10 +145,13 @@ public enum ItemTupe
     Usable, // предметы что активируют скрипт события при использовании (открытие участка карты, баф на все подземелье)
     Improve, // предметы что повышают на всегда характиристики персонажа
     MonsterDrop, // предметы выпадаемые из монстров. Используются для крафта и повышения уровня персонажа
+    Material, // предметы появляются в сундуках, и спавнятся в некоторых местах подземелья
+    Jewel, // драгоценные камни и другие редкие предметы
+    BookImprove, // книги, улучшающие скилл или атрибут
 }
 public enum ImproveItem
 {
-    Nothing, Strenght, Agility, Endurance, Speed, Detection, Medicine, Leap
+    Nothing, Strenght, Agility, Endurance, Speed, Detection, Jerk, Medicine, Trade, Craft,
 }
 
 

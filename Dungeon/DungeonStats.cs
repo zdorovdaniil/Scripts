@@ -37,6 +37,7 @@ public class DungeonStats : Photon.MonoBehaviour
             PlayerQuest.instance.UpdateProcessQuests();
         }
     }
+
     public void DefeatEnemy()
     {
         allKills += 1;

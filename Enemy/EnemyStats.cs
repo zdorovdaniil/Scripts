@@ -136,7 +136,6 @@ public class EnemyStats : Photon.MonoBehaviour
         UpdateHP();
         return false;
     }
-
     private void SetRandomPositionInRoom()
     {
         float[] newPos = new float[3];
@@ -153,6 +152,7 @@ public class EnemyStats : Photon.MonoBehaviour
     [PunRPC]
     private void SendPosition(float[] newPos)
     {
+        GlobalSounds.Instance.PTeleportEnemy(this.transform);
         GlobalEffects.Instance.CreateParticle(this.transform, EffectType.TeleportTrail, -1f);
         this.transform.position = new Vector3(newPos[0], newPos[1], newPos[2]);
         enemyController.LookAtActiveTarget();
